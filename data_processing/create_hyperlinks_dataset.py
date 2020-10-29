@@ -1,4 +1,7 @@
 import os
+import json
+
+from pprint import pprint
 
 import altair
 import pandas as pd
@@ -20,19 +23,11 @@ with open(properties_map_yaml_path, 'r') as file:
 
 df = df.loc[df.SOURCE_SUBREDDIT.isin(source_subreddits)]
 
-print(df.head())
-print(df.columns)
-print('filtered data length: ', len(df))
-print('Unique Source Subreddits: ', df.SOURCE_SUBREDDIT.unique())
-print('Number of Unique Source Subreddits: ', len(df.SOURCE_SUBREDDIT.unique()))
-print('Number of Unique Target Subreddits: ', len(df.TARGET_SUBREDDIT.unique()))
-
-df = (
-	df.sort_values('TIMESTAMP', ascending=True)
-		.reset_index(drop=True)
-)
-
-print(df.TIMESTAMP.iloc[0], df.TIMESTAMP.iloc[-1])
+# pprint('Unique Source Subreddits: ')
+# pprint(list(df.SOURCE_SUBREDDIT.unique()))
+# pprint(f'Number of Unique Source Subreddits: {len(df.SOURCE_SUBREDDIT.unique())}')
+# pprint(f'Number of Unique Target Subreddits: {len(df.TARGET_SUBREDDIT.unique())}')
+# pprint(f'Initial filtered data length: {len(df)}')
 
 properties_df = pd.DataFrame(
 	df.PROPERTIES.str.split(',').to_list(), 
@@ -41,6 +36,29 @@ properties_df = pd.DataFrame(
 ).rename(columns=properties_map)
 
 df = pd.concat([df, properties_df], axis=1)
+df.TIMESTAMP = pd.to_datetime(df.TIMESTAMP)
+col_ix = ['SOURCE_SUBREDDIT', 'POST_ID']
 
-with open(target_file_path, 'w'):
-	df.to_json(target_file_path)
+# FYI: Dropping duplicates does result in some record loss, though these seem to be 
+# duplicate posts PJW
+df = (
+	df.sort_values(col_ix + ['TIMESTAMP'], ascending=True)
+		.drop_duplicates(col_ix, keep='last')
+		.reset_index(drop=True)
+		.set_index(col_ix)
+)
+df.TIMESTAMP = df.TIMESTAMP.astype(str)
+# pprint(f'Post duplicate drop filtered data length: {len(df)}')
+
+def nest_df_into_json(df):
+	subreddits_ix = list(df.index.get_level_values(0).unique())
+	output_dict = dict()
+	for subreddit_ix in subreddits_ix:
+		interim_df = df.loc[subreddit_ix]
+		output_dict[subreddit_ix] = interim_df.to_dict(orient='index')
+	return output_dict
+
+nested_data = nest_df_into_json(df)
+
+with open(target_file_path, 'w') as dump_data:
+    json.dump(nested_data, dump_data)
