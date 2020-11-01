@@ -1,0 +1,7 @@
+/* Summary View Stylings */
+
+#summary-view-container {
+	padding: 0px 30px 30px 30px;
+	position: absolute;
+	bottom: 0px;
+}

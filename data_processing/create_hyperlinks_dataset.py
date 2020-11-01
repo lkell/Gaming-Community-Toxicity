@@ -33,7 +33,8 @@ properties_df = pd.DataFrame(
 	df.PROPERTIES.str.split(',').to_list(), 
 	columns=range(1, 87),
 	index=df.index,
-).rename(columns=properties_map)
+).rename(columns=properties_map)#.drop(columns=['PROPERTIES'])
+df = df.drop(columns=['PROPERTIES'])
 
 df = pd.concat([df, properties_df], axis=1)
 df.TIMESTAMP = pd.to_datetime(df.TIMESTAMP)

@@ -1,25 +1,25 @@
 ---
-1: Number of characters
-2: Number of characters without counting white space
-3: Fraction of alphabetical characters
-4: Fraction of digits
-5: Fraction of uppercase characters
-6: Fraction of white spaces
-7: Fraction of special characters, such as comma, exclamation mark, etc.
-8: Number of words
-9: Number of unique works
-10: Number of long words (at least 6 characters)
-11: Average word length
-12: Number of unique stopwords
-13: Fraction of stopwords
-14: Number of sentences
-15: Number of long sentences (at least 10 words)
-16: Average number of characters per sentence
-17: Average number of words per sentence
-18: Automated readability index
-19: Positive sentiment calculated by VADER
-20: Negative sentiment calculated by VADER
-21: Compound sentiment calculated by VADER
+1: NumChars #Number of characters
+2: NumCharsNoWS #Number of characters without counting white space
+3: FracAlphaChars #Fraction of alphabetical characters
+4: FracDigits #Fraction of digits
+5: FracUpperChars #Fraction of uppercase characters
+6: FracWS #Fraction of white spaces
+7: FracSpecChars #Fraction of special characters, such as comma, exclamation mark, etc.
+8: NumWords #Number of words
+9: NumUniqueWords #Number of unique words
+10: NumLongWords #Number of long words (at least 6 characters)
+11: AvgWordLen #Average word length
+12: NumUniqueStopWords #Number of unique stopwords
+13: FracStopWords #Fraction of stopwords
+14: NumSentences #Number of sentences
+15: NumLongSentences #Number of long sentences (at least 10 words)
+16: AvgNumCharsPerSentence #Average number of characters per sentence
+17: AvgNumWordsPerSentence #Average number of words per sentence
+18: AutoReadabilityIndex #Automated readability index
+19: PositiveSentiment #Positive sentiment calculated by VADER
+20: NegativeSentiment #Negative sentiment calculated by VADER
+21: CompoundSentiment #Compound sentiment calculated by VADER
 22: LIWC_Funct
 23: LIWC_Pronoun
 24: LIWC_Ppron
