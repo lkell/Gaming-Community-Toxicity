@@ -7,27 +7,38 @@ import altair
 import pandas as pd
 import yaml
 
-source_file_path = os.path.join('.', 'config', 'soc-redditHyperlinks-body.tsv')
+body_source_file_path = os.path.join('.', 'config', 'soc-redditHyperlinks-body.tsv')
+title_source_file_path = os.path.join('.', 'config', 'soc-redditHyperlinks-title.tsv')
 target_file_path = os.path.join('.', 'config', 'reddit-hyperlinks-body.json')
 subreddits_yaml_path = os.path.join('.', 'config', 'subreddits.yaml')
 properties_map_yaml_path = os.path.join('.', 'config', 'properties_map.yaml')
 
-with open(source_file_path, 'r') as file:
+with open(body_source_file_path, 'r') as file:
 	df = pd.read_csv(file, delimiter='\t')
+
+with open(title_source_file_path, 'r') as file:
+	df = df.append(pd.read_csv(file, delimiter='\t')).reset_index(drop=True)
 
 with open(subreddits_yaml_path, 'r') as file:
 	source_subreddits = yaml.load(file, Loader=yaml.FullLoader)
+	for i in range(len(source_subreddits)):
+		source_subreddits[i] = source_subreddits[i].lower()
 
 with open(properties_map_yaml_path, 'r') as file:
 	properties_map = yaml.load(file, Loader=yaml.FullLoader)
 
+df = df.assign(
+	SOURCE_SUBREDDIT=df.SOURCE_SUBREDDIT.str.lower(),
+	TARGET_SUBREDDIT=df.TARGET_SUBREDDIT.str.lower(),
+)
+
 df = df.loc[df.SOURCE_SUBREDDIT.isin(source_subreddits)]
 
-# pprint('Unique Source Subreddits: ')
-# pprint(list(df.SOURCE_SUBREDDIT.unique()))
-# pprint(f'Number of Unique Source Subreddits: {len(df.SOURCE_SUBREDDIT.unique())}')
-# pprint(f'Number of Unique Target Subreddits: {len(df.TARGET_SUBREDDIT.unique())}')
-# pprint(f'Initial filtered data length: {len(df)}')
+pprint('Unique Source Subreddits: ')
+pprint(list(df.SOURCE_SUBREDDIT.unique()))
+pprint(f'Number of Unique Source Subreddits: {len(df.SOURCE_SUBREDDIT.unique())}')
+pprint(f'Number of Unique Target Subreddits: {len(df.TARGET_SUBREDDIT.unique())}')
+pprint(f'Initial filtered data length: {len(df)}')
 
 properties_df = pd.DataFrame(
 	df.PROPERTIES.str.split(',').to_list(), 
