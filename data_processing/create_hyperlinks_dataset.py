@@ -27,6 +27,7 @@ with open(subreddits_yaml_path, 'r') as file:
 with open(properties_map_yaml_path, 'r') as file:
 	properties_map = yaml.load(file, Loader=yaml.FullLoader)
 
+# FYI: Do not want case sensitivity to affect filtering PJW
 df = df.assign(
 	SOURCE_SUBREDDIT=df.SOURCE_SUBREDDIT.str.lower(),
 	TARGET_SUBREDDIT=df.TARGET_SUBREDDIT.str.lower(),
@@ -34,17 +35,17 @@ df = df.assign(
 
 df = df.loc[df.SOURCE_SUBREDDIT.isin(source_subreddits)]
 
-pprint('Unique Source Subreddits: ')
-pprint(list(df.SOURCE_SUBREDDIT.unique()))
-pprint(f'Number of Unique Source Subreddits: {len(df.SOURCE_SUBREDDIT.unique())}')
-pprint(f'Number of Unique Target Subreddits: {len(df.TARGET_SUBREDDIT.unique())}')
-pprint(f'Initial filtered data length: {len(df)}')
+# pprint('Unique Source Subreddits: ')
+# pprint(list(df.SOURCE_SUBREDDIT.unique()))
+# pprint(f'Number of Unique Source Subreddits: {len(df.SOURCE_SUBREDDIT.unique())}')
+# pprint(f'Number of Unique Target Subreddits: {len(df.TARGET_SUBREDDIT.unique())}')
+# pprint(f'Initial filtered data length: {len(df)}')
 
 properties_df = pd.DataFrame(
 	df.PROPERTIES.str.split(',').to_list(), 
 	columns=range(1, 87),
 	index=df.index,
-).rename(columns=properties_map)#.drop(columns=['PROPERTIES'])
+).rename(columns=properties_map)
 df = df.drop(columns=['PROPERTIES'])
 
 df = pd.concat([df, properties_df], axis=1)
