@@ -1,3 +1,8 @@
+/*Fonts based on Reddit*/
+* {
+	font-family: Verdana, Geneva, sans-serif;
+}
+
 /* Summary View Stylings */
 
 #summary-view-container {
@@ -5,3 +10,6 @@
 	position: absolute;
 	bottom: 0px;
 }
+
+
+/* Overall View Stylings */
