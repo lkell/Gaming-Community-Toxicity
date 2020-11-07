@@ -49,6 +49,9 @@ function objectToArray(data) {
     return outputArray;
 }
 
+// FYI: Used this as a reference for KDE code:
+// https://github.com/asielen/D3_Reusable_Charts/blob/master/distro_chart/distrochart.js
+// PJW
 function kernelDensityEstimator(kernel, x) {
     return function (sample) {
         return x.map(function (x) {
