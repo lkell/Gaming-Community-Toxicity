@@ -8,8 +8,8 @@ class PostsLineChart {
 		this.height = 300;
 		this.svg = d3.select('#summary-view-container')
 	        .append('svg')
-	        .attr('width', this.width)
-	        .attr('height', this.height)
+	        .attr('width', this.width + this.xMargin)
+	        .attr('height', this.height + this.yMargin)
 	        .attr('id', 'summary-post-svg');
     	this.timeScale = this.createTimeScale();
     	this.postScale = this.createPostScale();
@@ -21,39 +21,50 @@ class PostsLineChart {
 		let dateMax = d3.max(tsArray);
 		return d3.scaleTime()
 			.domain([dateMin, dateMax])
-			.range([0, this.width - this.xMargin]);
+			.range([0, this.width]);
 	}
 
 	createPostScale() {
 		let postArray = flattenValues(this.data, 'TIMESTAMP');
+		// TODO: Find better way to get max PJW
+		// for (let [_, value] of Object.entries(this.data)) {
+			// console.log(objectToArray(value).length)
+		// }
 		let postMin = 0;
-		let postMax = postArray.length
+		// let postMax = postArray.length
+		let postMax = 100
 		return d3.scaleLinear()
 			.domain([postMin, postMax])
-			.range([this.height - this.yMargin, 0]);
+			.range([this.height, 0]);
 	}
 
 	draw(sourceSubreddit) {
-		let summaryData = this.data[sourceSubreddit];
+		let summaryData = objectToArray(this.data[sourceSubreddit]);
 
-		// TODO: Get cumulative sum of posts, or count by year PJW
+		summaryData = this.groupByYearAndMonth(summaryData);
+
 		console.log(summaryData)
 
 		this.drawTimeScale();
 		this.drawPostScale();
 
 		let postLineGenerator = d3.line()
-			.x(d => this.timeScale(d.TIMESTAMP))
+			.x(d => this.timeScale(d.key))
 			// TODO: Change once cum sum is figured out PJW
-			.y(d => this.postScale(1));
+			.y(d => this.postScale(d.value));
 
 		let lineChart = d3.select('#summary-post-svg');
 	  
-		lineChart.select("#postLineChart")
-			.datum(this.data)
-			.transition()
-			.duration(1000)
+		lineChart.append('svg:path')
+			.attr('id', 'postLineChart')
+			.datum(summaryData)
+			// .transition()
+			// .duration(1000)
 			.attr("d", postLineGenerator)
+			.attr('fill', 'none')
+			.attr('stroke', 'black')
+			.attr('stroke-width', 1.5)
+			.attr('transform', 'translate(' + this.xMargin + ',0)')
 	}
 
 	drawTimeScale() {
@@ -68,6 +79,18 @@ class PostsLineChart {
 			.attr('transform', 'translate(' + this.xMargin + ', 0)')
 			.call(d3.axisLeft(this.postScale))
 			.attr('id', 'summary-post-y-axis');
+	}
+
+	// FYI: Used this as a reference:
+	// https://stackoverflow.com/questions/39827055/d3-js-how-to-find-average-grouped-by-year-and-month
+	// PJW
+	groupByYearAndMonth(data) {
+		return d3.nest()
+			.key(d => +(new Date(d.TIMESTAMP.getFullYear(), d.TIMESTAMP.getMonth())))
+			.rollup(function(v) {
+				return d3.count(v, d => d.TIMESTAMP)
+			})
+			.entries(data);
 	}
 
 }
