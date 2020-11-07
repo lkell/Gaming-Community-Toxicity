@@ -10,6 +10,7 @@ loadData().then(data => {
             })
         });
     console.log(data)
+    addNavigation();
     drawSummaryView(data);
 });
 
@@ -36,4 +37,17 @@ function flattenValues(data, column) {
         })
     })
     return array;
+}
+
+function addNavigation() {
+    d3.selectAll('#home-toggle').on('click' , ()=>switchView('.home-view'))
+    d3.selectAll('#ranked-toggle').on('click' , ()=>switchView('.ranked-view'))
+    d3.selectAll('#about-toggle').on('click' , ()=>switchView('about'))
+}
+
+function switchView(newView){
+    d3.selectAll(".mainView").style("display","none")
+    d3.select(newView).style("display","grid")
+
+    d3.selectAll('.nav-item').classed("active", false);
 }

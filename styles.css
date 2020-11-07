@@ -1,15 +1,70 @@
-/*Fonts based on Reddit*/
+/*General fonts and styles based on Reddit*/
 * {
 	font-family: Verdana, Geneva, sans-serif;
+	background-color: #DAE0E6;
 }
+
+.card {
+	background-color: white;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+}
+
+svg {
+	background-color: white;
+}
+
+/*Styling toggle between views */
+
+
 
 /* Summary View Stylings */
+/*#summary-view-container {*/
+/*	padding: 0px 30px 30px 30px;*/
+/*	position: absolute;*/
+/*	bottom: 0px;*/
+/*	background: white;*/
+/*}*/
 
-#summary-view-container {
-	padding: 0px 30px 30px 30px;
-	position: absolute;
-	bottom: 0px;
+/* Ranked View Stylings */
+#ranked-view-container {
+	display: none;
+}
+
+.home-view {
+	display: grid;
+	padding:10px;
+	background-color: #DAE0E6;
+	grid-template-columns: repeat(15, 1fr);
+	grid-gap: 10px;
+	grid-auto-rows: minmax(36px, auto);
+}
+
+.ranked-view{
+	display: none;
 }
 
 
-/* Overall View Stylings */
+#node {
+	grid-column: 2/10;
+	grid-row: 1/9;
+}
+
+#node-summary {
+	grid-column: 10/15;
+	grid-row: 1/9;
+}
+
+#summary-view-container {
+	grid-column: 2/7;
+	grid-row: 9/13;
+}
+#summary-two {
+	grid-column: 7/11;
+	grid-row: 9/13;
+}
+
+#summary-three {
+	grid-column: 11/15;
+	grid-row: 9/13;
+}
