@@ -2,14 +2,14 @@ class PostsLineChart {
 
 	constructor(data) {
 		this.data = data;
-		this.xMargin = 40;
-		this.yMargin = 20;
+		this.xMargin = 20;
+		this.yMargin = 10;
 		this.width = 500;
 		this.height = 300;
 		this.svg = d3.select('#summary-view-container')
 	        .append('svg')
-	        .attr('width', this.width + this.xMargin)
-	        .attr('height', this.height + this.yMargin)
+	        .attr('width', this.width + 2 * this.xMargin)
+	        .attr('height', this.height + 2 * this.yMargin)
 	        .attr('id', 'summary-post-svg');
     	this.timeScale = this.createTimeScale();
     	this.postScale = this.createPostScale();
@@ -21,7 +21,7 @@ class PostsLineChart {
 		let dateMax = d3.max(tsArray);
 		return d3.scaleTime()
 			.domain([dateMin, dateMax])
-			.range([0, this.width]);
+			.range([this.xMargin, this.width - this.xMargin]);
 	}
 
 	createPostScale() {
@@ -35,7 +35,7 @@ class PostsLineChart {
 		let postMax = 100
 		return d3.scaleLinear()
 			.domain([postMin, postMax])
-			.range([this.height, 0]);
+			.range([this.height - this.yMargin, this.yMargin]);
 	}
 
 	draw(sourceSubreddit) {
@@ -43,10 +43,8 @@ class PostsLineChart {
 
 		summaryData = this.groupByYearAndMonth(summaryData);
 
-		console.log(summaryData)
-
-		this.drawTimeScale();
-		this.drawPostScale();
+		this.drawTimeAxis();
+		this.drawPostAxis();
 
 		let postLineGenerator = d3.line()
 			.x(d => this.timeScale(d.key))
@@ -58,25 +56,25 @@ class PostsLineChart {
 		lineChart.append('svg:path')
 			.attr('id', 'postLineChart')
 			.datum(summaryData)
-			// .transition()
-			// .duration(1000)
+			.transition()
+			.duration(1000)
 			.attr("d", postLineGenerator)
 			.attr('fill', 'none')
 			.attr('stroke', 'black')
 			.attr('stroke-width', 1.5)
-			.attr('transform', 'translate(' + this.xMargin + ',0)')
+			.attr('transform', 'translate(' + (this.xMargin * 1.75) + ',0)');
 	}
 
-	drawTimeScale() {
+	drawTimeAxis() {
 		this.svg.append('g')
 			.attr('transform', 'translate(' + this.xMargin + ',' + (this.height - this.yMargin) + ')')
 			.call(d3.axisBottom(this.timeScale))
 			.attr('id', 'summary-post-x-axis');
 	}
 
-	drawPostScale() {
+	drawPostAxis() {
 		this.svg.append('g')
-			.attr('transform', 'translate(' + this.xMargin + ', 0)')
+			.attr('transform', 'translate(' + (2 * this.xMargin) + ',0)')
 			.call(d3.axisLeft(this.postScale))
 			.attr('id', 'summary-post-y-axis');
 	}

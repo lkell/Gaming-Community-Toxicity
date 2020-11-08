@@ -26,9 +26,10 @@ function drawSummaryView(data) {
     postsLineChart = new PostsLineChart(data);
     violinPlot = new ViolinPlot(data);
 
-    sentimentBreakout.draw('gaming');
-    postsLineChart.draw('gaming');
-    violinPlot.draw();
+    let defaultSubreddit = 'leagueoflegends';
+    violinPlot.draw(defaultSubreddit);
+    postsLineChart.draw(defaultSubreddit);
+    sentimentBreakout.draw(defaultSubreddit);
 }
 
 function flattenValues(data, column) {
@@ -70,4 +71,56 @@ function eKernelTest(kernel, array) {
     return function (testX) {
         return d3.mean(array, function (v) {return kernel(testX - v);})
     }
+}
+
+function calcMetrics(values) {
+
+    let metrics = { //These are the original non-scaled values
+        max: null,
+        upperOuterFence: null,
+        upperInnerFence: null,
+        quartile3: null,
+        median: null,
+        mean: null,
+        iqr: null,
+        quartile1: null,
+        lowerInnerFence: null,
+        lowerOuterFence: null,
+        min: null
+    };
+
+    metrics.min = d3.min(values);
+    metrics.quartile1 = d3.quantile(values, 0.25);
+    metrics.median = d3.median(values);
+    metrics.mean = d3.mean(values);
+    metrics.quartile3 = d3.quantile(values, 0.75);
+    metrics.max = d3.max(values);
+    metrics.iqr = metrics.quartile3 - metrics.quartile1;
+
+    //The inner fences are the closest value to the IQR without going past it (assumes sorted lists)
+    let LIF = metrics.quartile1 - (1.5 * metrics.iqr);
+    let UIF = metrics.quartile3 + (1.5 * metrics.iqr);
+    for (let i = 0; i <= values.length; i++) {
+        if (values[i] < LIF) {
+            continue;
+        }
+        if (!metrics.lowerInnerFence && values[i] >= LIF) {
+            metrics.lowerInnerFence = values[i];
+            continue;
+        }
+        if (values[i] > UIF) {
+            metrics.upperInnerFence = values[i - 1];
+            break;
+        }
+    }
+
+    metrics.lowerOuterFence = metrics.quartile1 - (3 * metrics.iqr);
+    metrics.upperOuterFence = metrics.quartile3 + (3 * metrics.iqr);
+    if (!metrics.lowerInnerFence) {
+        metrics.lowerInnerFence = metrics.min;
+    }
+    if (!metrics.upperInnerFence) {
+        metrics.upperInnerFence = metrics.max;
+    }
+    return metrics
 }
