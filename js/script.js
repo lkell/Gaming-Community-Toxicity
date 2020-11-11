@@ -1,3 +1,5 @@
+let globalData;
+
 loadData().then(data => {
     Object.keys(data).forEach(function(subreddit) {
             Object.keys(data[subreddit]).forEach(function(postId) {
@@ -11,6 +13,7 @@ loadData().then(data => {
         });
     console.log(data)
     addNavigation();
+    globalData = data;
     drawSummaryView(data);
 });
 
@@ -24,7 +27,7 @@ function drawSummaryView(data) {
     postsLineChart = new PostsLineChart(data);
     violinPlot = new ViolinPlot(data);
 
-    sentimentBreakout.draw();
+    sentimentBreakout.draw('gaming');
     postsLineChart.draw('gaming');
     violinPlot.draw();
 }
@@ -50,4 +53,33 @@ function switchView(newView){
     d3.select(newView).style("display","grid")
 
     d3.selectAll('.nav-item').classed("active", false);
+function objectToArray(data) {
+    let outputArray = [];
+    for ([key, value] of Object.entries(data)) {
+        outputArray.push(value);
+    }
+    return outputArray;
+}
+
+// FYI: Used this as a reference for KDE code:
+// https://github.com/asielen/D3_Reusable_Charts/blob/master/distro_chart/distrochart.js
+// PJW
+function kernelDensityEstimator(kernel, x) {
+    return function (sample) {
+        return x.map(function (x) {
+            return {x:x, y:d3.mean(sample, function (v) {return kernel(x - v);})};
+        });
+    };
+}
+function eKernel(scale) {
+    return function (u) {
+        return Math.abs(u /= scale) <= 1 ? .75 * (1 - u * u) / scale : 0;
+    };
+}
+// Used to find the roots for adjusting violin axis
+// Given an array, find the value for a single point, even if it is not in the domain
+function eKernelTest(kernel, array) {
+    return function (testX) {
+        return d3.mean(array, function (v) {return kernel(testX - v);})
+    }
 }
