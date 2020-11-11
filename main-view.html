@@ -13,16 +13,47 @@
 </head>
 
 <body>
-    <h1>Gaming Community Toxicity</h1>
+<nav class="navbar navbar-expand-lg navbar-light bg-white">
+    <a class="navbar-brand">Gaming Community Toxicity</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse bg-white" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active bg-white" id = "home-toggle">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item bg-white" id="ranked-toggle" >
+                <a class="nav-link" href="#">Ranked</a>
+            </li>
+            <li class="nav-item bg-white" id="about-toggle">
+                <a class="nav-link" href="#">About</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-    <div id=summary-view-container></div>
-    <div id="node-view-container"></div>
+<div class="home-view mainView">
+    <div class="card" id="node"></div>
+    <div class="card" id="node-summary"></div>
+    <div class="card" id="summary-view-container"></div>
+    <div class="card" id="summary-two"></div>
+    <div class="card" id="summary-three"></div>
+</div>
 
-    <script src="js/script.js"></script>
-    <script src="js/summary-view/sentiment-breakout-summary.js"></script>
-    <script src="js/summary-view/ts-posts-line-chart.js"></script>
-    <script src="js/summary-view/violin-plot.js"></script>
-    <script src="js/node-plot.js"></script>
+<div class="ranked-view mainView">
+    <div class="card">This is michaels view</div>
+    <div class="card"></div>
+    <div class="card"></div>
+    <div class="card"></div>
+    <div class="card"></div>
+    <div class="card"></div>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/summary-view/sentiment-breakout-summary.js"></script>
+<script src="js/summary-view/ts-posts-line-chart.js"></script>
+<script src="js/summary-view/violin-plot.js"></script>
 
 </body>
 
