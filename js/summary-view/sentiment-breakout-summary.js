@@ -10,7 +10,7 @@ class SentimentBreakout {
 		this.yMargin = 10;
 		this.width = 500;
 		this.height = 300;
-		this.svg = d3.select('#summary-view-container')
+		this.svg = d3.select('#summary-view-sentiment-card')
 	        .append('svg')
 	        .attr('width', this.width + 2 * this.xMargin)
 	        .attr('height', this.height + 2 * this.yMargin)

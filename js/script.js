@@ -52,8 +52,8 @@ function addNavigation() {
 function switchView(newView){
     d3.selectAll(".mainView").style("display","none")
     d3.select(newView).style("display","grid")
-
     d3.selectAll('.nav-item').classed("active", false);
+}
 function objectToArray(data) {
     let outputArray = [];
     for ([key, value] of Object.entries(data)) {

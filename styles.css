@@ -55,16 +55,16 @@ svg {
 	grid-row: 1/9;
 }
 
-#summary-view-container {
+#summary-view-violin-card {
 	grid-column: 2/7;
 	grid-row: 9/13;
 }
-#summary-two {
+#summary-view-post-card {
 	grid-column: 7/11;
 	grid-row: 9/13;
 }
 
-#summary-three {
+#summary-view-sentiment-card {
 	grid-column: 11/15;
 	grid-row: 9/13;
 }

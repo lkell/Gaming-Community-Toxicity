@@ -13,7 +13,7 @@ class ViolinPlot {
 		this.plotInfo = {};
         this.bandwidth = 0.05
 		this.resolution = 1000;
-		this.svg = d3.select('#summary-view-container')
+		this.svg = d3.select('#summary-view-violin-card')
 	        .append('svg')
 	        .attr('width', this.width + this.xMargin)
 	        .attr('height', this.height + this.yMargin)
