@@ -14,6 +14,11 @@ loadData().then(data => {
     console.log(data)
     addNavigation();
     globalData = data;
+
+    let nodePlotAll = new NodePlot(data, "#node", null, 1000, 350);
+    let nodePlotSingle = new NodePlot(data, "#node-summary", "nintendo", 600, 350);
+    nodePlotAll.drawPlot();
+    nodePlotSingle.drawPlot();
     drawSummaryView(data);
 });
 
@@ -53,6 +58,8 @@ function switchView(newView){
     d3.select(newView).style("display","grid")
 
     d3.selectAll('.nav-item').classed("active", false);
+}
+
 function objectToArray(data) {
     let outputArray = [];
     for ([key, value] of Object.entries(data)) {
