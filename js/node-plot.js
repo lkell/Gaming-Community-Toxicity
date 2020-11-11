@@ -1,30 +1,31 @@
 class NodePlot {
-  constructor(data, activeSubreddit, mode) {
-    this.width = 1200;
-    this.height = 1200;
+  constructor(data, root, activeSubreddit, width, height) {
+    this.width = width;
+    this.height = height;
     this.root = d3
-      .select("#node-view-container")
+      .select(root)
       .append("svg")
       .attr("width", this.width)
       .attr("height", this.height);
 
+    this.activeSubreddit = activeSubreddit;
     this.subreddits = Object.keys(data);
     this.data = this.unnestData(data).filter((d) =>
       this.subreddits.includes(d.TARGET_SUBREDDIT)
     );
+    this.minLinks = 20;
     this.nodes = this.createNodeData();
     this.links = this.createLinkData();
-
-    this.drawPlot("nintendo");
+    this.shiftX = 0;
   }
 
   /**  Note: The following tutorial is heavily used:
   https://observablehq.com/@d3/mobile-patent-suits?collection=@d3/d3-force
   */
-  drawPlot(selected) {
+  drawPlot() {
     let links = [...this.links];
-    if (selected !== null) {
-      links = this.filterLinks(links, selected);
+    if (this.activeSubreddit !== null) {
+      links = this.filterLinks(links, this.activeSubreddit);
     }
     let nodes = this.removeUnconnectedNodes(this.nodes, links);
 
@@ -35,8 +36,8 @@ class NodePlot {
         d3.forceLink(this.links).id((d) => d.id)
       )
       .force("charge", d3.forceManyBody().strength(-400))
-      .force("x", d3.forceX())
-      .force("y", d3.forceY());
+      .force("x", d3.forceX().strength(0.06))
+      .force("y", d3.forceY().strength(0.1));
 
     this.root
       .attr("viewBox", [
@@ -71,7 +72,8 @@ class NodePlot {
       .data(links)
       .join("path")
       .attr("stroke", this.getColor)
-      .attr("stroke-width", (d) => widthScale(d.mentions))
+      // .attr("stroke-width", (d) => widthScale(d.mentions))
+      .attr("stroke-width", 1.5)
       .attr("marker-end", "url(#arrow)");
 
     let circles = this.root
@@ -91,8 +93,8 @@ class NodePlot {
 
     circles
       .append("text")
-      .attr("x", 8)
-      .attr("y", -15)
+      .attr("x", 5)
+      .attr("y", -12)
       .text((d) => d.id)
       .clone(true)
       .lower()
@@ -101,8 +103,11 @@ class NodePlot {
       .attr("stroke-width", 3);
 
     simulation.on("tick", () => {
-      paths.attr("d", this.linkArc);
-      circles.attr("transform", (d) => `translate(${d.x},${d.y})`);
+      paths.attr("d", d => this.linkArc(d, this.shiftX));
+      circles.attr(
+        "transform",
+        (d) => `translate(${d.x + this.shiftX},${d.y})`
+      );
     });
   }
 
@@ -121,14 +126,14 @@ class NodePlot {
     );
   }
 
-  linkArc(link) {
+  linkArc(link, shiftX) {
     const r = Math.hypot(
       link.target.x - link.source.x,
       link.target.y - link.source.y
     );
     return `
-    M${link.source.x},${link.source.y}
-    A${r},${r} 0 0,1 ${link.target.x},${link.target.y}
+    M${link.source.x + shiftX},${link.source.y}
+    A${r},${r} 0 0,1 ${link.target.x + shiftX},${link.target.y}
   `;
   }
 
@@ -174,7 +179,7 @@ class NodePlot {
       }
     }
 
-    return links.filter((link) => link.mentions > 20);
+    return links.filter((link) => link.mentions >= this.minLinks);
   }
 
   unnestData = function (data) {
