@@ -96,3 +96,13 @@ svg {
 	fill: #FF8b60;
 	opacity: 0.5;
 }
+
+.summary-view-ts-posts-point {
+	fill: #FF8b60;
+}
+
+.summary-view-ts-path {
+	fill: none;
+	stroke: #9494FF;;
+	stroke-width: 1.5;
+}

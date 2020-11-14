@@ -1,6 +1,7 @@
 class PostsLineChart {
 
 	constructor(data) {
+        this.subreddit = 'SELECT SUBREDDIT';
 		this.data = data;
 		this.xMargin = 20;
 		this.yMargin = 10;
@@ -13,8 +14,13 @@ class PostsLineChart {
 	        .attr('id', 'summary-post-svg');
     	this.timeScale = this.createTimeScale();
     	this.postScale = this.createPostScale();
+        this.tooltip = d3.select('body')
+            .append('div')
+            .attr('id', 'summary-view-ts-posts-tooltip')
+            .classed('tooltip', true);
 	}
 
+	// TODO: Figure out why dateMin is is off by ~1 month PJW
 	createTimeScale() {
 		let tsArray = flattenValues(this.data, 'TIMESTAMP');
 		let dateMin = d3.min(tsArray);
@@ -39,6 +45,8 @@ class PostsLineChart {
 	}
 
 	draw(sourceSubreddit) {
+		this.subreddit = sourceSubreddit;
+		let that = this;
 		let summaryData = objectToArray(this.data[sourceSubreddit]);
 
 		summaryData = this.groupByYearAndMonth(summaryData);
@@ -48,7 +56,6 @@ class PostsLineChart {
 
 		let postLineGenerator = d3.line()
 			.x(d => this.timeScale(d.key))
-			// TODO: Change once cum sum is figured out PJW
 			.y(d => this.postScale(d.value));
 
 		let lineChart = d3.select('#summary-post-svg');
@@ -56,13 +63,26 @@ class PostsLineChart {
 		lineChart.append('svg:path')
 			.attr('id', 'postLineChart')
 			.datum(summaryData)
-			.transition()
-			.duration(1000)
 			.attr("d", postLineGenerator)
-			.attr('fill', 'none')
-			.attr('stroke', 'black')
-			.attr('stroke-width', 1.5)
-			.attr('transform', 'translate(' + (this.xMargin * 1.75) + ',0)');
+			.classed('summary-view-ts-path', true)
+			.attr('transform', 'translate(' + (this.xMargin) + ',0)');
+
+		lineChart.selectAll('circle')
+			.data(summaryData)
+			.join('circle')
+            .on('mouseover', function(d) { 
+                that.tooltip.html(that.postsTooltipRender(d, that.subreddit))
+                    .style('opacity', .9)
+                    .style('left', (d3.event.pageX) + 10 + 'px')
+                    .style('top', (d3.event.pageY) + 10 + 'px');
+                }
+            )
+            .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
+			.attr('r', 5)
+			.attr('cx', d => this.timeScale(d.key))
+			.attr('cy', d=> this.postScale(d.value))
+			.classed('summary-view-ts-posts-point', true)
+			.attr('transform', 'translate(' + (this.xMargin) + ',0)');
 	}
 
 	drawTimeAxis() {
@@ -90,5 +110,14 @@ class PostsLineChart {
 			})
 			.entries(data);
 	}
+
+    postsTooltipRender(d, subreddit) {
+    	let thisDate = new Date(+d.key);
+        let outputString = ''
+        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<p>Date:\t' + thisDate.toLocaleString('default', { month: 'long' }) + ' ' + thisDate.getFullYear() + '</p>';
+        outputString += '<p>Posts:\t' + d.value + '</p>';
+        return outputString;
+    }
 
 }

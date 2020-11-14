@@ -5,6 +5,7 @@
 class ViolinPlot {
 
 	constructor(data) {
+        this.subreddit = 'SELECT SUBREDDIT';
 		this.data = data;
 		this.width = 475;
 		this.height = 300;
@@ -19,6 +20,10 @@ class ViolinPlot {
 	        .attr('height', this.height + this.yMargin)
 	        .attr('id', 'summary-violin-plot-svg');
         this.sentimentScale = this.createSentimentScale();
+        this.tooltip = d3.select('body')
+            .append('div')
+            .attr('id', 'summary-view-violin-plot-tooltip')
+            .classed('tooltip', true);
 	}
 
 	createSentimentScale() {
@@ -35,8 +40,8 @@ class ViolinPlot {
             .clamp(true);
 	}
 
-	// TODO: Using distrochart.js code, pull metrics from boxplot and get violin running PJW
 	draw(subreddit) {
+        this.subreddit = subreddit;
 		this.prepareData(subreddit);
 		this.createKdeData();
         this.yScale = this.createYScale();
@@ -89,10 +94,7 @@ class ViolinPlot {
     	this.plotInfo.kde = kernelDensityEstimator(eKernel(this.bandwidth), this.sentimentScale.ticks(this.resolution));
         this.plotInfo.kdedata = this.plotInfo.kde(this.plotInfo.values);
     }
-
-    // /**
-    //  * Create the svg elements for the violin plot
-    //  */
+    
     prepareViolin() {
     	this.plotInfo.objs = {};
         this.plotInfo.objs.g = this.svg.append("g").attr("class", "violin-plot");
@@ -143,20 +145,58 @@ class ViolinPlot {
     }
 
     drawMedian() {
+        let that = this;
         this.svg.append('circle')
             .attr('cx', this.sentimentScale(this.plotInfo.metrics.median))
             .attr('cy', this.height / 2)
             .attr('r', 5)
-            .attr('id', 'summary-violin-median');
+            .attr('id', 'summary-violin-median')
+            .on('mouseover', function(d) { 
+                that.tooltip.html(that.medianTooltipRender(that.plotInfo.metrics, that.subreddit))
+                    .style('opacity', .9)
+                    .style('left', (d3.event.pageX) + 10 + 'px')
+                    .style('top', (d3.event.pageY) + 10 + 'px');
+                }
+            )
+            .on('mouseout', function(d) {that.tooltip.style('opacity', 0)});
+    }
+
+    medianTooltipRender(d, subreddit) {
+        let outputString = ''
+        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<p>Median:\t' + d.median + '</p>';
+        return outputString;
     }
 
     drawQuartileBox() {
+        let that = this;
         this.svg.append('rect')
             .attr('id', 'summary-violin-quartile-box')
             .attr('height', 20)
             .attr('x', this.sentimentScale(this.plotInfo.metrics.quartile1))
             .attr('y', this.height / 2 - this.yMargin / 2)
-            .attr('width', this.sentimentScale(this.plotInfo.metrics.quartile3) - this.sentimentScale(this.plotInfo.metrics.quartile1));
+            .attr('width', this.sentimentScale(this.plotInfo.metrics.quartile3) - this.sentimentScale(this.plotInfo.metrics.quartile1))
+            .on('mouseover', function(d) { 
+                that.tooltip.html(that.metricsTooltipRender(that.plotInfo.metrics, that.subreddit))
+                    .style('opacity', .9)
+                    .style('left', (d3.event.pageX) + 10 + 'px')
+                    .style('top', (d3.event.pageY) + 10 + 'px');
+                }
+            )
+            .on('mouseout', function(d) {that.tooltip.style('opacity', 0)});
+    }
+
+    metricsTooltipRender(d, subreddit) {
+        let outputString = ''
+        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<p>Median:\t' + d.median + '</p>';
+        outputString += '<p>Mean:\t' + d.mean + '</p>';
+        outputString += '<p>Max:\t' + d.max + '</p>';
+        outputString += '<p>Min:\t' + d.min + '</p>';
+        outputString += '<p>Interquartile Range:\t' + d.iqr + '</p>';
+        outputString += '<p>1st Quartile:\t' + d.quartile1 + '</p>';
+        outputString += '<p>3rd Quartile:\t' + d.quartile3 + '</p>';
+        return outputString;
     }
 	
 }
