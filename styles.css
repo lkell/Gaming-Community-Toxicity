@@ -26,11 +26,6 @@ svg {
 /*	background: white;*/
 /*}*/
 
-/* Ranked View Stylings */
-#ranked-view-container {
-	display: none;
-}
-
 .home-view {
 	display: grid;
 	padding:10px;
@@ -105,4 +100,28 @@ svg {
 	fill: none;
 	stroke: #9494FF;;
 	stroke-width: 1.5;
+}
+
+.ranked-view {
+	display: none;
+	padding:10px;
+	background-color: #DAE0E6;
+	grid-template-columns: repeat(15, 1fr);
+	grid-gap: 10px;
+	grid-auto-rows: minmax(36px, auto);
+}
+
+#ranked-density {
+	grid-column: 2/15;
+	grid-row: 1/10;
+
+}
+
+#ranked-timeseries {
+	grid-column: 2/15;
+	grid-row: 10/15;
+}
+
+tr,td,th {
+	background-color: white;
 }
