@@ -8,7 +8,7 @@ class SentimentBreakout {
 		this.data = data;
 		this.xMargin = 20;
 		this.yMargin = 10;
-		this.width = 500;
+		this.width = 450;
 		this.height = 300;
 		this.svg = d3.select('#summary-view-sentiment-card')
 	        .append('svg')
@@ -21,6 +21,8 @@ class SentimentBreakout {
     		'Anx',
     		'Anger',
     		'Sad',
+    		'Assent',
+    		'Dissent',
     	];
     	this.emotionArray = [];
     	emotionLabels.forEach(label => this.emotionArray.push('LIWC_' + label));
@@ -45,7 +47,6 @@ class SentimentBreakout {
 		let summaryData = objectToArray(this.data[sourceSubreddit]);
 		summaryData = this.groupSummaryDataBySentimentScores(summaryData);
 		summaryData = this.prepareData(summaryData);
-		console.log(summaryData);
 
 		this.drawBandAxis();
 		this.drawSentimentAxis();

@@ -4,7 +4,7 @@ class PostsLineChart {
 		this.data = data;
 		this.xMargin = 20;
 		this.yMargin = 10;
-		this.width = 500;
+		this.width = 575;
 		this.height = 300;
 		this.svg = d3.select('#summary-view-post-card')
 	        .append('svg')

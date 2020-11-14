@@ -44,7 +44,6 @@ svg {
 	display: none;
 }
 
-
 #node {
 	grid-column: 2/10;
 	grid-row: 1/9;
@@ -56,15 +55,44 @@ svg {
 }
 
 #summary-view-violin-card {
-	grid-column: 2/7;
+	grid-column: 2/6;
 	grid-row: 9/13;
 }
+
 #summary-view-post-card {
-	grid-column: 7/11;
+	grid-column: 6/11;
 	grid-row: 9/13;
 }
 
 #summary-view-sentiment-card {
 	grid-column: 11/15;
 	grid-row: 9/13;
+}
+
+.summary-violin {
+	fill: #9494FF;
+	stroke: #FF8b60;
+}
+
+.summary-violin-area {
+	opacity: 0.5;
+}
+
+.summary-violin-line {
+	opacity: 1;
+	stroke-width: 1.5;
+	fill: none;
+}
+
+.summary-violin-x-axis {
+	stroke-width: 2;
+}
+
+#summary-violin-median {
+	fill: red;
+}
+
+#summary-violin-quartile-box {
+	fill: #FF8b60;
+	opacity: 0.5;
 }

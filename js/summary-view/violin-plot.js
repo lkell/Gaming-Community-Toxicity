@@ -6,7 +6,7 @@ class ViolinPlot {
 
 	constructor(data) {
 		this.data = data;
-		this.width = 400;
+		this.width = 475;
 		this.height = 300;
 		this.xMargin = 20;
 		this.yMargin = 20;
@@ -60,23 +60,22 @@ class ViolinPlot {
             .attr("d", area);
         this.plotInfo.objs.left.line
             .datum(this.plotInfo.kdedata)
-            .attr("d", line)
-			.attr('fill', 'none')
-			.attr('stroke', 'red')
-			.attr('stroke-width', 1.5);
+            .attr("d", line);
 
         this.plotInfo.objs.right.area
             .datum(this.plotInfo.kdedata)
             .attr("d", area);
         this.plotInfo.objs.right.line
             .datum(this.plotInfo.kdedata)
-            .attr("d", line)
-			.attr('fill', 'none')
-			.attr('stroke', 'blue')
-			.attr('stroke-width', 1.5);
+            .attr("d", line);
 
         this.plotInfo.objs.left.g.attr("transform", "translate(0," + 150 + ")  scale(1,-1)");
         this.plotInfo.objs.right.g.attr("transform", "translate(0," + 150 + ")");
+
+        this.drawSentimentAxis();
+        this.drawQuartileBox();
+        this.drawMedian();
+        
 	}
 
 	prepareData(subreddit) {
@@ -90,8 +89,6 @@ class ViolinPlot {
     	this.plotInfo.kde = kernelDensityEstimator(eKernel(this.bandwidth), this.sentimentScale.ticks(this.resolution));
         this.plotInfo.kdedata = this.plotInfo.kde(this.plotInfo.values);
     }
-
-            
 
     // /**
     //  * Create the svg elements for the violin plot
@@ -107,24 +104,59 @@ class ViolinPlot {
 
         //Area
         this.plotInfo.objs.left.area = this.plotInfo.objs.left.g.append("path")
-            .attr("class", "area")
-            // .style("fill", chart.violinPlots.color(cName));
-            .style('fill', 'red')
+            .classed('summary-violin', true)
+            .classed('summry-violin-area', true);
+
         this.plotInfo.objs.right.area = this.plotInfo.objs.right.g.append("path")
-            .attr("class", "area")
-            // .style("fill", chart.violinPlots.color(cName));
-            .style('fill', 'blue')
+            .classed('summary-violin', true)
+            .classed('summry-violin-area', true);
 
         //Lines
         this.plotInfo.objs.left.line = this.plotInfo.objs.left.g.append("path")
-            .attr("class", "line")
-            .attr("fill", 'none')
-            // .style("stroke", chart.violinPlots.color(cName));
-        this.plotInfo.objs.right.line = this.plotInfo.objs.right.g.append("path")
-            .attr("class", "line")
-            .attr("fill", 'none')
-            // .style("stroke", chart.violinPlots.color(cName));
+            .classed('summary-violin', true)
+            .classed('summary-violin-line', true);
 
+        this.plotInfo.objs.right.line = this.plotInfo.objs.right.g.append("path")
+            .classed('summary-violin', true)
+            .classed('summary-violin-line', true);
+    }
+
+    drawSentimentAxis() {
+        this.svg.append('g')
+            .attr('transform', 'translate(0' + ',' + (this.height / 2) + ')')
+            .call(
+                d3.axisBottom()
+                    .scale(this.sentimentScale)
+                    .ticks(3)
+            )
+            .classed('summary-violin-x-axis', true);
+
+        this.svg.append('g')
+            .attr('transform', 'translate(0' + ',' + (this.height / 2) + ')')
+            .call(
+                d3.axisTop()
+                    .scale(this.sentimentScale)
+                    .ticks(3)
+                    .tickFormat('')
+            )
+            .classed('summary-violin-x-axis', true);
+    }
+
+    drawMedian() {
+        this.svg.append('circle')
+            .attr('cx', this.sentimentScale(this.plotInfo.metrics.median))
+            .attr('cy', this.height / 2)
+            .attr('r', 5)
+            .attr('id', 'summary-violin-median');
+    }
+
+    drawQuartileBox() {
+        this.svg.append('rect')
+            .attr('id', 'summary-violin-quartile-box')
+            .attr('height', 20)
+            .attr('x', this.sentimentScale(this.plotInfo.metrics.quartile1))
+            .attr('y', this.height / 2 - this.yMargin / 2)
+            .attr('width', this.sentimentScale(this.plotInfo.metrics.quartile3) - this.sentimentScale(this.plotInfo.metrics.quartile1));
     }
 	
 }
