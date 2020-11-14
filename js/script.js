@@ -16,7 +16,7 @@ loadData().then(data => {
     globalData = data;
 
     let nodePlotAll = new NodePlot(data, "#node", null, 1000, 500);
-    let nodePlotSingle = new NodePlot(data, "#node-summary", "nintendo", 600, 500)
+    let nodePlotSingle = new NodePlot(data, "#node-summary", "smashbros", 600, 500)
     nodePlotAll.drawPlot();
     nodePlotSingle.drawPlot();
     drawSummaryView(data);
