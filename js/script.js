@@ -15,8 +15,8 @@ loadData().then(data => {
     addNavigation();
     globalData = data;
 
-    let nodePlotAll = new NodePlot(data, "#node", null, 1000, 350);
-    let nodePlotSingle = new NodePlot(data, "#node-summary", "nintendo", 600, 350);
+    let nodePlotAll = new NodePlot(data, "#node", null, 1000, 500);
+    let nodePlotSingle = new NodePlot(data, "#node-summary", "nintendo", 600, 500)
     nodePlotAll.drawPlot();
     nodePlotSingle.drawPlot();
     drawSummaryView(data);

@@ -8,15 +8,21 @@ class NodePlot {
       .attr("width", this.width)
       .attr("height", this.height);
 
+    
+    // this.root.on("mouseover", this.clearHighlights());
+    // this.root.on("mouseclick", alert("hi"));
+
     this.activeSubreddit = activeSubreddit;
     this.subreddits = Object.keys(data);
     this.data = this.unnestData(data).filter((d) =>
       this.subreddits.includes(d.TARGET_SUBREDDIT)
     );
-    this.minLinks = 20;
+    this.minLinks = 10;
     this.nodes = this.createNodeData();
     this.links = this.createLinkData();
     this.shiftX = 0;
+    this.circles;
+    this.paths;
   }
 
   /**  Note: The following tutorial is heavily used:
@@ -35,9 +41,9 @@ class NodePlot {
         "link",
         d3.forceLink(this.links).id((d) => d.id)
       )
-      .force("charge", d3.forceManyBody().strength(-400))
+      .force("charge", d3.forceManyBody().strength(-600))
       .force("x", d3.forceX().strength(0.06))
-      .force("y", d3.forceY().strength(0.1));
+      .force("y", d3.forceY().strength(0.2));
 
     this.root
       .attr("viewBox", [
@@ -46,7 +52,7 @@ class NodePlot {
         this.width,
         this.height,
       ])
-      .style("font", "12px sans-serif");
+      .style("font", "8px sans-serif");
 
     // add arrow marker
     this.root
@@ -65,36 +71,42 @@ class NodePlot {
 
     let widthScale = this.makeStrokeWidthScale(links);
 
-    let paths = this.root
+    this.paths = this.root
       .append("g")
       .attr("fill", "none")
       .selectAll("path")
       .data(links)
       .join("path")
       .attr("stroke", this.getColor)
-      // .attr("stroke-width", (d) => widthScale(d.mentions))
-      .attr("stroke-width", 1.5)
-      .attr("marker-end", "url(#arrow)");
+      .attr("stroke-width", (d) => widthScale(d.mentions))
+      .style("opacity", 0.1)
+    // .attr("stroke-width", 1.5)
+    .attr("marker-end", "url(#arrow)");
 
-    let circles = this.root
+    this.circles = this.root
       .append("g")
       .attr("fill", "currentColor")
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .selectAll("g")
       .data(nodes)
-      .join("g");
+      .join("g")
+      .style("opacity", 0.75);
 
-    circles
+    this.circles.on("mouseenter", (event) => this.highlightRegion(event, this));
+
+    this.circles
       .append("circle")
       .attr("stroke", "white")
       .attr("stroke-width", 1.5)
-      .attr("r", 3);
+      .attr("r", 8);
 
-    circles
+    this.circles
       .append("text")
       .attr("x", 5)
       .attr("y", -12)
+      .style("font-size", "9")
+      .raise()
       .text((d) => d.id)
       .clone(true)
       .lower()
@@ -103,12 +115,14 @@ class NodePlot {
       .attr("stroke-width", 3);
 
     simulation.on("tick", () => {
-      paths.attr("d", d => this.linkArc(d, this.shiftX));
-      circles.attr(
+      this.paths.attr("d", (d) => this.linkArc(d, this.shiftX));
+      this.circles.attr(
         "transform",
         (d) => `translate(${d.x + this.shiftX},${d.y})`
       );
     });
+
+    this.root.on("mouseenter", this.clearHighlights());
   }
 
   filterLinks(links, selected) {
@@ -153,7 +167,7 @@ class NodePlot {
   makeStrokeWidthScale(links) {
     let maximum = d3.max(links, (link) => link.mentions);
     let minimum = d3.min(links, (link) => link.mentions);
-    return d3.scaleLinear().domain([minimum, maximum]).range([1.5, 3.5]);
+    return d3.scaleLinear().domain([minimum, maximum]).range([1.5, 5]);
   }
 
   /** Create a list of link objects */
@@ -193,4 +207,25 @@ class NodePlot {
     }
     return unnestedData;
   };
+
+  highlightRegion(event, view) {
+    // let outLinks = links.filter((link) => link.source == selected);
+    // let inLinks = links.filter((link) => link.target == selected);
+    // return outLinks.concat(inLinks);
+    // console.log(this.paths);
+    // console.log(this.links);
+    // this.paths.filter(l =)
+    // console.log(this.paths);
+    this.clearHighlights();
+    let selectedNode = event.id;
+    this.paths
+      .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode) .style("opacity", 100);
+    
+    this.circles.filter(d => d.id == selectedNode).style("opacity", 1);
+  }
+  
+  clearHighlights() {
+    this.paths.style("opacity", 0.1);
+    this.circles.style("opacity", 0.8);
+  }
 }
