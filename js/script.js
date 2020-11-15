@@ -15,23 +15,28 @@ loadData().then(data => {
     addNavigation();
     globalData = data;
 
-    // let nodePlotAll = new NodePlot(data, "#node", null, 1000, 500);
-    // let nodePlotSingle = new NodePlot(data, "#node-summary", "smashbros", 600, 500)
-    // nodePlotAll.drawPlot();
-    // nodePlotSingle.drawPlot();
-    // drawSummaryView(data);
-
-    sentimentBreakout = new SentimentBreakout(data);
-    postsLineChart = new PostsLineChart(data);
-    violinPlot = new ViolinPlot(data);
-
+//   Summary View
+    let sentimentBreakout = new SentimentBreakout(data);
+    let postsLineChart = new PostsLineChart(data);
+    let violinPlot = new ViolinPlot(data);  
     let defaultSubreddit = 'leagueoflegends';
+  
     violinPlot.draw(defaultSubreddit);
     postsLineChart.draw(defaultSubreddit);
     sentimentBreakout.draw(defaultSubreddit);
-
+  
+//   Node View
     let nodeView = new NodeView(data, updateSelectedSubreddit);
     nodeView.drawPlots();
+  
+//   Ranked View
+    let rankedTable = new RankedTable(data);
+    let rankedTimeSeries = new RankedTimeSeries(data);
+  
+    rankedTable.drawTable();
+    rankedTimeSeries.drawTimeSeries();
+
+    switchView('.home-view')
 });
 
 async function loadData() {
@@ -74,7 +79,20 @@ function addNavigation() {
 
 function switchView(newView){
     d3.selectAll(".mainView").style("display","none")
-    d3.select(newView).style("display","grid")
+    var startTranslateState = 'translate(2000px,0px)';
+    if (newView === '.home-view'){
+        startTranslateState = 'translate(-2000px,0px)';
+    }
+    var endTranslateState = 'translate(0px,0px)';
+    var translateInterpolator = d3.interpolateString(startTranslateState, endTranslateState);
+
+    d3.selectAll(newView).style("display","grid")
+        .transition()
+        .duration(1000)
+        .styleTween('transform', function (d) {
+            return translateInterpolator;
+        });
+
     d3.selectAll('.nav-item').classed("active", false);
 }
 function objectToArray(data) {

@@ -4,6 +4,13 @@
 	background-color: #DAE0E6;
 }
 
+.background-container {
+	display: grid;
+	background-color: #DAE0E6;
+	grid-auto-rows: minmax(36px, auto);
+}
+
+
 .card {
 	background-color: white;
 	border-radius: 4px;
@@ -29,33 +36,13 @@ div.tooltip {
 
 
 /*Styling toggle between views */
-
-
-
-/* Summary View Stylings */
-/*#summary-view-container {*/
-/*	padding: 0px 30px 30px 30px;*/
-/*	position: absolute;*/
-/*	bottom: 0px;*/
-/*	background: white;*/
-/*}*/
-
-/* Ranked View Stylings */
-#ranked-view-container {
-	display: none;
-}
-
 .home-view {
-	display: grid;
+	display: none;
 	padding:10px;
 	background-color: #DAE0E6;
 	grid-template-columns: repeat(15, 1fr);
 	grid-gap: 10px;
 	grid-auto-rows: minmax(36px, auto);
-}
-
-.ranked-view{
-	display: none;
 }
 
 #node {
@@ -120,3 +107,64 @@ div.tooltip {
 	stroke: #9494FF;;
 	stroke-width: 1.5;
 }
+
+
+/*Ranked view styles*/
+.ranked-view {
+	display: none;
+	padding:10px;
+	background-color: #DAE0E6;
+	grid-template-columns: repeat(15, 1fr);
+	grid-gap: 10px;
+	grid-auto-rows: minmax(36px, auto);
+	transform: translate(1000px,0)
+}
+
+#ranked-timeseries {
+	grid-column: 2/15;
+	grid-row: 1/7;
+}
+
+#ranked-density {
+	grid-column: 2/15;
+	grid-row: 7/20;
+}
+
+tr,td,th {
+	background-color: white;
+	text-align: center;
+}
+
+.subreddit{
+	height: 50px;
+	width: 100px;
+}
+
+.density{
+	height: 50px;
+	width: 500px;
+}
+
+.positive{
+	height: 50px;
+	width: 100px;
+}
+
+.negative{
+	height: 50px;
+	width: 100px;
+}
+
+.compound{
+	height: 50px;
+	width: 100px;
+}
+
+.table-axis{
+	height:20px;
+}
+
+body {
+	overflow-x: hidden;
+}
+
