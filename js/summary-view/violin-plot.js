@@ -19,6 +19,7 @@ class ViolinPlot {
 	        .attr('width', this.width + this.xMargin)
 	        .attr('height', this.height + this.yMargin)
 	        .attr('id', 'summary-violin-plot-svg');
+        this.prepareViolin();
         this.sentimentScale = this.createSentimentScale();
         this.tooltip = d3.select('body')
             .append('div')
@@ -29,13 +30,13 @@ class ViolinPlot {
 	createSentimentScale() {
 		return d3.scaleLinear()
 			.domain([-1, 1])
-			.range([this.xMargin/2, this.width])
+			.range([this.xMargin / 2, this.width])
 			.clamp(true);
 	}
 
 	createYScale(data) {
 		return d3.scaleLinear()
-            .range([this.yMargin/2, this.height/2])
+            .range([this.yMargin / 2, this.height / 2])
             .domain([d3.min(this.plotInfo.kdedata, function (d) {return d.y;}), d3.max(this.plotInfo.kdedata, function (d) {return d.y;})])
             .clamp(true);
 	}
@@ -47,9 +48,7 @@ class ViolinPlot {
         this.yScale = this.createYScale();
 		let that = this;
 
-		this.prepareViolin();
-
-        let area = d3.area()
+		let area = d3.area()
             .curve(d3.curveCardinal)
             .x(function (d) {return that.sentimentScale(d.x)})
             .y0(0)
@@ -61,16 +60,20 @@ class ViolinPlot {
             .y(function (d) {return that.yScale(d.y)});
 
         this.plotInfo.objs.left.area
+            .join('path')
             .datum(this.plotInfo.kdedata)
             .attr("d", area);
         this.plotInfo.objs.left.line
+            .join('path')
             .datum(this.plotInfo.kdedata)
             .attr("d", line);
 
         this.plotInfo.objs.right.area
+            .join('path')
             .datum(this.plotInfo.kdedata)
             .attr("d", area);
         this.plotInfo.objs.right.line
+            .join('path')
             .datum(this.plotInfo.kdedata)
             .attr("d", line);
 
@@ -124,6 +127,7 @@ class ViolinPlot {
     }
 
     drawSentimentAxis() {
+        this.svg.selectAll('.summary-violin-x-axis').remove();
         this.svg.append('g')
             .attr('transform', 'translate(0' + ',' + (this.height / 2) + ')')
             .call(
