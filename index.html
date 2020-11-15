@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Visualization - Homework 6 - The State of the State of the State </title>
+    <title>Gaming Community Toxicity</title>
+    <link rel="icon" href="assets/favicon.png">
     <script src="https://d3js.org/d3.v5.js"></script>
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script src="https://d3js.org/d3-force.v2.min.js"></script>
@@ -33,40 +34,64 @@
     </div>
 </nav>
 
-<div class="home-view mainView">
-<div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Select a subreddit
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-items">
-    <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
-  </div>
-</div>
-    <div class="card" id="node"></div>
-    <div class="card" id="node-summary"></div>
-    <div class="card" id="summary-view-violin-card"></div>
-    <div class="card" id="summary-view-post-card"></div>
-    <div class="card" id="summary-view-sentiment-card"></div>
-</div>
+<div class="background-container">
+    <div class="home-view mainView">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Select a subreddit
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-items">
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+      </div>
+    </div>
+        <div class="card" id="node"></div>
+        <div class="card" id="node-summary"></div>
+        <div class="card" id="summary-view-violin-card"></div>
+        <div class="card" id="summary-view-post-card"></div>
+        <div class="card" id="summary-view-sentiment-card"></div>
+    </div>
+    <div class="ranked-view mainView">
+        <div class="card" id="ranked-timeseries"></div>
 
-<div class="ranked-view mainView">
-    <div class="card">This is michaels view</div>
-    <div class="card"></div>
-    <div class="card"></div>
-    <div class="card"></div>
-    <div class="card"></div>
-    <div class="card"></div>
+        <div class="card" id="ranked-density">
+            <table id="density-table">
+                <thead>
+                <tr id="columnHeaders">
+                    <th class="sortable subreddit">Subreddit <i class="fas no-display"></i></th>
+                    <th class="sortable density">Density<i class="fas no-display"></i></th>
+                    <th class="sortable positive">Positive<i class="fas no-display"></i></th>
+                    <th class="sortable negative">Negative<i class="fas no-display"></i></th>
+                    <th class="sortable compound">Compound<i class="fas no-display"></i></th>
+                </tr>
+                <tr>
+                    <td class="subreddit table-axis"></td>
+                    <td class="density table-axis"><svg id="densityAxis"></svg></td>
+                    <td class="positive table-axis"></td>
+                    <td class="negative table-axis"></td>
+                    <td class="compound table-axis"></td>
+                </tr>
+                </thead>
+                <tbody id="rankedTableBody">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script src="js/script.js"></script>
 <script src="js/summary-view/sentiment-breakout-summary.js"></script>
 <script src="js/summary-view/ts-posts-line-chart.js"></script>
 <script src="js/summary-view/violin-plot.js"></script>
+
 <script src="js/node-view/node-view.js"></script>
 <script src="js/node-view/network-plot.js"></script>
 <script src="js/node-view/node-plot.js"></script>
+  
+<script src="js/ranked-view/ranked-table.js"></script>
+<script src="js/ranked-view/ranked-time-series.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
