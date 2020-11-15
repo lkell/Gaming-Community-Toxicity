@@ -17,7 +17,7 @@ class NodeView {
       600,
       500,
       this.nodes,
-      this.links,
+      this.links
     );
 
     this.networkPlot = new NetworkPlot(
@@ -28,14 +28,28 @@ class NodeView {
       this.links,
       this.extendUpdateFun(updateFun)
     );
+    this.populateDropdown();
+  }
+
+  populateDropdown() {
+    let dropDown = document.getElementById("dropdown-items");
+
+    console.log(dropDown);
+    for (let subreddit of this.subreddits) {
+      let option = document.createElement("a")
+      option.text = subreddit;
+      option.setAttribute("class", "dropdown-item");
+      option.setAttribute("href", "#");
+      dropDown.appendChild(option);
+    }
   }
 
   extendUpdateFun(updateFun) {
     let nodePlot = this.nodePlot;
-    return function(selection) {
+    return function (selection) {
       updateFun(selection);
       nodePlot.draw(selection);
-    }
+    };
   }
 
   drawPlots() {
