@@ -21,6 +21,20 @@ svg {
 	background-color: white;
 }
 
+div.tooltip {
+	position: absolute;
+    text-align: center;
+    padding: 4px;
+	border-radius: 8px;
+    pointer-events: none;
+}
+
+.tooltip h2 {
+    margin: auto;
+    font-size: 18px;
+}
+
+
 /*Styling toggle between views */
 .home-view {
 	display: none;

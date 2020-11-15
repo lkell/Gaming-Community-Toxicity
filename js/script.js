@@ -15,15 +15,27 @@ loadData().then(data => {
     addNavigation();
     globalData = data;
 
-    let nodePlotAll = new NodePlot(data, "#node", null, 1000, 500);
-    let nodePlotSingle = new NodePlot(data, "#node-summary", "smashbros", 600, 500)
-    nodePlotAll.drawPlot();
-    nodePlotSingle.drawPlot();
-    drawSummaryView(data);
+//   Summary View
+    let sentimentBreakout = new SentimentBreakout(data);
+    let postsLineChart = new PostsLineChart(data);
+    let violinPlot = new ViolinPlot(data);  
+    let defaultSubreddit = 'leagueoflegends';
+  
+    violinPlot.draw(defaultSubreddit);
+    postsLineChart.draw(defaultSubreddit);
+    sentimentBreakout.draw(defaultSubreddit);
+  
+//   Node View
+    let nodeView = new NodeView(data, updateSelectedSubreddit);
+    nodeView.drawPlots();
+  
+//   Ranked View
     let rankedTable = new RankedTable(data);
-    // let rankedTimeSeries = new RankedTimeSeries(data);
+    let rankedTimeSeries = new RankedTimeSeries(data);
+  
     rankedTable.drawTable();
-    // rankedTimeSeries.drawTimeSeries();
+    rankedTimeSeries.drawTimeSeries();
+
     switchView('.home-view')
 });
 
@@ -41,6 +53,12 @@ function drawSummaryView(data) {
     violinPlot.draw(defaultSubreddit);
     postsLineChart.draw(defaultSubreddit);
     sentimentBreakout.draw(defaultSubreddit);
+}
+
+function updateSelectedSubreddit(selection) {
+    violinPlot.draw(selection);
+    postsLineChart.draw(selection);
+    sentimentBreakout.draw(selection);
 }
 
 function flattenValues(data, column) {
