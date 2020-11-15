@@ -109,14 +109,6 @@ class NodePlot {
       "transform",
       (d) => `translate(${d.x + this.shiftX},${d.y})`
     );
-
-    // simulation.on("tick", () => {
-    //   this.paths.attr("d", (d) => this.linkArc(d, this.shiftX));
-    //   this.circles.attr(
-    //     "transform",
-    //     (d) => `translate(${d.x + this.shiftX},${d.y})`
-    //   );
-    // });
     
     // center everything
     let selectedX = nodes.filter(node => node.id == activeSubreddit)[0].x;

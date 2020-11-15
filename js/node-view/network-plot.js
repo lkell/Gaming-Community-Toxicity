@@ -80,27 +80,30 @@ class NetworkPlot {
       .style("opacity", 0.1)
       .attr("marker-end", "url(#arrow)");
 
+    let radiusScale = this.makeRadiusSale();
+
     this.circles = this.root
       .append("g")
-      .attr("fill", "currentColor")
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .selectAll("g")
       .data(this.nodes)
       .join("g")
-      .style("opacity", 0.75);
+      .style("opacity", 0.75)
 
     this.circles.on("mouseenter", (event) => this.highlightRegion(event, this));
     this.circles.on("click", (event) => this.updateFun(event.id));
 
     this.circles
       .append("circle")
-      .attr("stroke", "white")
-      .attr("stroke-width", 1.5)
-      .attr("r", 8);
+      .attr("fill", this.getNodeColor)
+      .attr("stroke", "black")
+      .attr("stroke-width", 1)
+      .attr("r", (d) => radiusScale(d.interactions));
 
     this.circles
       .append("text")
+      .attr("fill", "black")
       .attr("x", 5)
       .attr("y", -12)
       .style("font-size", "9")
@@ -143,9 +146,19 @@ class NetworkPlot {
   `;
   }
 
+  makeRadiusSale() {
+    let min = d3.min(this.nodes, (node) => node.interactions);
+    let max = d3.max(this.nodes, (node) => node.interactions);
+    return d3.scaleLinear().domain([min, max]).range([6, 12]);
+  }
+
   /** Apply diverging color scale to link sentiment values */
   getColor = function (link) {
     return d3.interpolateRdBu(link.sentiment);
+  };
+
+  getNodeColor = function (node) {
+    return d3.interpolateRdBu(node.positivity);
   };
 
   makeStrokeWidthScale(links) {
@@ -161,11 +174,11 @@ class NetworkPlot {
       .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode)
       .style("opacity", 100);
 
-    this.circles.filter((d) => d.id == selectedNode).style("opacity", 1);
+    this.circles.filter((d) => d.id == selectedNode).style("opacity", 1).selectAll("circle").attr("stroke", "yellow")
   }
 
   clearHighlights() {
     this.paths.style("opacity", 0.1);
-    this.circles.style("opacity", 0.8);
+    this.circles.style("opacity", 0.8).selectAll("circle").attr("stroke", "black")
   }
 }

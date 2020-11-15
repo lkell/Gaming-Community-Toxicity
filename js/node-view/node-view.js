@@ -6,8 +6,10 @@ class NodeView {
       this.subreddits.includes(d.TARGET_SUBREDDIT)
     );
     this.minLinks = 10;
-    this.nodes = this.createNodeData();
     this.links = this.createLinkData();
+    this.nodes = this.createNodeData(this.links);
+    console.log("here:");
+    console.log(this.nodes);
     this.shiftX = 0;
     this.circles;
     this.paths;
@@ -36,7 +38,7 @@ class NodeView {
 
     console.log(dropDown);
     for (let subreddit of this.subreddits) {
-      let option = document.createElement("a")
+      let option = document.createElement("a");
       option.text = subreddit;
       option.setAttribute("class", "dropdown-item");
       option.setAttribute("href", "#");
@@ -60,11 +62,24 @@ class NodeView {
     this.nodePlot.draw(selection);
   }
 
-  createNodeData() {
-    return this.subreddits.map((subreddit) => ({
-      id: subreddit,
-      label: subreddit,
-    }));
+  createNodeData(links) {
+    let getRelatedLinks = function (subreddit) {
+      let outbound = links.filter((link) => link.source == subreddit);
+      let inbound = links.filter((link) => link.target == subreddit);
+      return outbound.concat(inbound);
+    };
+
+    return this.subreddits.map(function (subreddit) {
+      let relatedLinks = getRelatedLinks(subreddit);
+      let interactions = d3.count(relatedLinks, (link) => link.mentions);
+      let positivity = d3.mean(relatedLinks, (link) => link.sentiment);
+      return {
+        id: subreddit,
+        label: subreddit,
+        interactions: interactions,
+        positivity: positivity,
+      };
+    });
   }
 
   makeStrokeWidthScale(links) {
