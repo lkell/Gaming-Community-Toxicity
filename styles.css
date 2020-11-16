@@ -168,3 +168,13 @@ body {
 	overflow-x: hidden;
 }
 
+/* Node/network styles */
+.selectedNode {
+	stroke: #FF8b60;
+	fill: white
+}
+
+.otherNode {
+	stroke: #9494FF;
+	fill: white
+}
