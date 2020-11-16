@@ -11,10 +11,12 @@ class NetworkPlot {
     this.minLinks = 10;
     // this.nodes = this.removeUnconnectedNodes(nodes, links);
     this.nodes = nodes;
+    this.nodes = this.removeUnconnectedNodes(nodes, links);
     this.links = links;
     this.shiftX = 0;
     this.circles;
     this.paths;
+    this.activeSubreddit;
 
     this.updateFun = updateFun;
   }
@@ -39,7 +41,7 @@ class NetworkPlot {
         "link",
         d3.forceLink(this.links).id((d) => d.id)
       )
-      .force("charge", d3.forceManyBody().strength(-600))
+      .force("charge", d3.forceManyBody().strength(-700))
       .force("x", d3.forceX().strength(0.06))
       .force("y", d3.forceY().strength(0.2));
 
@@ -89,23 +91,27 @@ class NetworkPlot {
       .selectAll("g")
       .data(this.nodes)
       .join("g")
-      .style("opacity", 0.75)
+      // .style("opacity", 0.8);
 
     this.circles.on("mouseenter", (event) => this.highlightRegion(event, this));
-    this.circles.on("click", (event) => this.updateFun(event.id));
+    this.circles.on("click", (event) => {
+      this.activeSubreddit = event.id;
+      this.clearCircleHighlights();
+      this.updateFun(event.id);
+    });
 
     this.circles
       .append("circle")
       .attr("fill", this.getNodeColor)
       .attr("stroke", "black")
-      .attr("stroke-width", 1)
+      .attr("stroke-width", 2)
       .attr("r", (d) => radiusScale(d.interactions));
 
     this.circles
       .append("text")
       .attr("fill", "black")
       .attr("x", 5)
-      .attr("y", -12)
+      .attr("y", -14)
       .style("font-size", "9")
       .raise()
       .text((d) => d.id)
@@ -115,15 +121,16 @@ class NetworkPlot {
       .attr("stroke", "white")
       .attr("stroke-width", 3);
 
-    simulation.on("tick", () => {
-      this.paths.attr("d", (d) => this.linkArc(d, this.shiftX));
-      this.circles.attr(
-        "transform",
-        (d) => `translate(${d.x + this.shiftX},${d.y})`
-      );
-    });
+    // simulation.on("tick", () => {
+    //   this.paths.attr("d", this.linkArc);
+    //   this.circles.attr("transform", (d) => `translate(${d.x},${d.y})`);
+    // });
+    simulation.tick(300);
+    this.paths.attr("d", this.linkArc);
+    this.circles.attr("transform", (d) => `translate(${d.x},${d.y})`);
 
-    this.root.on("mouseenter", this.clearHighlights());
+    // this.root.on("mouseover", this.clearHighlights());
+    this.root.on("mouseover", (e) => this.clearHighlights());
   }
 
   removeUnconnectedNodes(nodes, links) {
@@ -135,14 +142,14 @@ class NetworkPlot {
     );
   }
 
-  linkArc(link, shiftX) {
+  linkArc(link) {
     const r = Math.hypot(
       link.target.x - link.source.x,
       link.target.y - link.source.y
     );
     return `
-    M${link.source.x + shiftX},${link.source.y}
-    A${r},${r} 0 0,1 ${link.target.x + shiftX},${link.target.y}
+    M${link.source.x},${link.source.y}
+    A${r},${r} 0 0,1 ${link.target.x},${link.target.y}
   `;
   }
 
@@ -154,11 +161,11 @@ class NetworkPlot {
 
   /** Apply diverging color scale to link sentiment values */
   getColor = function (link) {
-    return d3.interpolateRdBu(link.sentiment);
+    return d3.interpolateRdBu(1 - link.sentiment);
   };
 
   getNodeColor = function (node) {
-    return d3.interpolateRdBu(node.positivity);
+    return d3.interpolateRdBu(1 - node.positivity);
   };
 
   makeStrokeWidthScale(links) {
@@ -169,16 +176,34 @@ class NetworkPlot {
 
   highlightRegion(event, view) {
     this.clearHighlights();
+    this.circles
+      .selectAll("circle")
+      .filter((circle) => circle.id !== this.activeSubreddit)
+      .style("opacity", 0.6)
+
     let selectedNode = event.id;
     this.paths
       .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode)
-      .style("opacity", 100);
+      .style("opacity", 1);
 
-    this.circles.filter((d) => d.id == selectedNode).style("opacity", 1).selectAll("circle").attr("stroke", "yellow")
+    this.circles
+      .filter((d) => d.id == selectedNode)
+      .selectAll("circle")
+      .style("opacity", 100)
+      .attr("stroke", "#FFBE33");
   }
 
   clearHighlights() {
     this.paths.style("opacity", 0.1);
-    this.circles.style("opacity", 0.8).selectAll("circle").attr("stroke", "black")
+    this.clearCircleHighlights();
+  }
+
+  clearCircleHighlights() {
+    this.circles
+      .selectAll("circle")
+      .filter((circle) => circle.id !== this.activeSubreddit)
+      .attr("stroke", "black")
+      .style("opacity", 1)
+
   }
 }
