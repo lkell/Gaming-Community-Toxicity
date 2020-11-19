@@ -14,11 +14,16 @@ class ViolinPlot {
 		this.plotInfo = {};
         this.bandwidth = 0.05
 		this.resolution = 1000;
+        this.transitionDuration = 500;
 		this.svg = d3.select('#summary-view-violin-card')
 	        .append('svg')
 	        .attr('width', this.width + this.xMargin)
 	        .attr('height', this.height + this.yMargin)
 	        .attr('id', 'summary-violin-plot-svg');
+        this.svg.append('circle')
+            .attr('id', 'summary-violin-median');
+        this.svg.append('rect')
+            .attr('id', 'summary-violin-quartile-box');
         this.prepareViolin();
         this.sentimentScale = this.createSentimentScale();
         this.tooltip = d3.select('body')
@@ -62,19 +67,27 @@ class ViolinPlot {
         this.plotInfo.objs.left.area
             .join('path')
             .datum(this.plotInfo.kdedata)
+            .transition()
+            .duration(this.transitionDuration)
             .attr("d", area);
         this.plotInfo.objs.left.line
             .join('path')
             .datum(this.plotInfo.kdedata)
+            .transition()
+            .duration(this.transitionDuration)
             .attr("d", line);
 
         this.plotInfo.objs.right.area
             .join('path')
             .datum(this.plotInfo.kdedata)
+            .transition()
+            .duration(this.transitionDuration)
             .attr("d", area);
         this.plotInfo.objs.right.line
             .join('path')
             .datum(this.plotInfo.kdedata)
+            .transition()
+            .duration(this.transitionDuration)
             .attr("d", line);
 
         this.plotInfo.objs.left.g.attr("transform", "translate(0," + 150 + ")  scale(1,-1)");
@@ -150,11 +163,8 @@ class ViolinPlot {
 
     drawMedian() {
         let that = this;
-        this.svg.append('circle')
-            .attr('cx', this.sentimentScale(this.plotInfo.metrics.median))
-            .attr('cy', this.height / 2)
-            .attr('r', 5)
-            .attr('id', 'summary-violin-median')
+        this.svg.select('#summary-violin-median')
+            .raise()
             .on('mouseover', function(d) { 
                 that.tooltip.html(that.medianTooltipRender(that.plotInfo.metrics, that.subreddit))
                     .style('opacity', .9)
@@ -162,7 +172,12 @@ class ViolinPlot {
                     .style('top', (d3.event.pageY) + 10 + 'px');
                 }
             )
-            .on('mouseout', function(d) {that.tooltip.style('opacity', 0)});
+            .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
+            .transition()
+            .duration(this.transitionDuration)
+            .attr('cx', this.sentimentScale(this.plotInfo.metrics.median))
+            .attr('cy', this.height / 2)
+            .attr('r', 5);
     }
 
     medianTooltipRender(d, subreddit) {
@@ -174,12 +189,8 @@ class ViolinPlot {
 
     drawQuartileBox() {
         let that = this;
-        this.svg.append('rect')
-            .attr('id', 'summary-violin-quartile-box')
-            .attr('height', 20)
-            .attr('x', this.sentimentScale(this.plotInfo.metrics.quartile1))
-            .attr('y', this.height / 2 - this.yMargin / 2)
-            .attr('width', this.sentimentScale(this.plotInfo.metrics.quartile3) - this.sentimentScale(this.plotInfo.metrics.quartile1))
+        this.svg.select('#summary-violin-quartile-box')
+            .raise()
             .on('mouseover', function(d) { 
                 that.tooltip.html(that.metricsTooltipRender(that.plotInfo.metrics, that.subreddit))
                     .style('opacity', .9)
@@ -187,7 +198,13 @@ class ViolinPlot {
                     .style('top', (d3.event.pageY) + 10 + 'px');
                 }
             )
-            .on('mouseout', function(d) {that.tooltip.style('opacity', 0)});
+            .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
+            .transition()
+            .duration(this.transitionDuration)
+            .attr('height', 20)
+            .attr('x', this.sentimentScale(this.plotInfo.metrics.quartile1))
+            .attr('y', this.height / 2 - this.yMargin / 2)
+            .attr('width', this.sentimentScale(this.plotInfo.metrics.quartile3) - this.sentimentScale(this.plotInfo.metrics.quartile1));
     }
 
     metricsTooltipRender(d, subreddit) {

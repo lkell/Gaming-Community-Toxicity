@@ -7,6 +7,7 @@ class PostsLineChart {
 		this.yMargin = 10;
 		this.width = 575;
 		this.height = 300;
+		this.transitionDuration = 500;
 		this.svg = d3.select('#summary-view-post-card')
 	        .append('svg')
 	        .attr('width', this.width + 2 * this.xMargin)
@@ -79,17 +80,21 @@ class PostsLineChart {
                 }
             )
             .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
+			.classed('summary-view-ts-posts-point', true)
+			.transition()
+			.duration(this.transitionDuration)
 			.attr('r', 5)
 			.attr('cx', d => this.timeScale(d.key))
 			.attr('cy', d=> this.postScale(d.value))
-			.classed('summary-view-ts-posts-point', true)
 			.attr('transform', 'translate(' + (this.xMargin) + ',0)');
 
 		lineChart.select('#postLineChart')
 			.join('svg:path')
 			.datum(summaryData)
-			.attr("d", postLineGenerator)
 			.classed('summary-view-ts-path', true)
+			.transition()
+			.duration(this.transitionDuration)
+			.attr("d", postLineGenerator)
 			.attr('transform', 'translate(' + (this.xMargin) + ',0)');
 
 		
@@ -126,7 +131,7 @@ class PostsLineChart {
         let outputString = ''
         outputString += '<h2>r/' + subreddit + '</h2>';
         outputString += '<p>Date:\t' + thisDate.toLocaleString('default', { month: 'long' }) + ' ' + thisDate.getFullYear() + '</p>';
-        outputString += '<p>Posts:\t' + d.value + '</p>';
+        outputString += '<p>Links:\t' + d.value + '</p>';
         return outputString;
     }
 
