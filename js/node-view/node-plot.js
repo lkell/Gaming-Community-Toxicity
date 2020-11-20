@@ -34,6 +34,20 @@ class NodePlot {
     if (this.isDrawn) {
       this.clearPlot();
     }
+    this.root
+      .append("defs")
+      .append("marker")
+      .attr("id", "nodeArrow")
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("markerHeight", 100)
+      .attr("markerWidth", 100)
+      .attr("refX", 60)
+      .attr("refY", 5)
+      .attr("orient", "auto")
+      .append("polygon")
+      .attr("points", "0 0, 15 5.25, 0 10.5")
+      .style("fill", "#336EFF")
+      .attr("stroke", "black");
 
     let links = this.filterLinks(activeSubreddit, "mentions", "descending");
     let nodes = this.removeUnconnectedNodes(links);
@@ -52,7 +66,7 @@ class NodePlot {
       .attr("y2", (d) => d.y)
       .attr("stroke-width", (d) => d.width)
       .attr("stroke", this.getColor)
-      .attr("marker-end", "url(#arrow)");
+      .attr("marker-end", "url(#nodeArrow)");
 
     this.circles = this.root
       .append("g")
