@@ -26,15 +26,16 @@ class NodeView {
     this.nodePlot = new NodePlot(
       "#node-summary",
       610,
-      500,
+      600,
       this.nodes,
       this.links
     );
 
     this.networkPlot = new NetworkPlot(
       "#node",
-      950,
-      500,
+      // 950,
+      1050,
+      600,
       this.gamingOnlyNodes,
       this.gamingOnlyLinks,
       this.extendUpdateFun(updateFun)
