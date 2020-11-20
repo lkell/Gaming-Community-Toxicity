@@ -187,3 +187,8 @@ body {
 	stroke: #9494FF;
 	fill: white
 }
+
+.hidden {
+	opacity: 0
+	
+}

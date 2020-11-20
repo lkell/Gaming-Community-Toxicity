@@ -1,6 +1,8 @@
 let globalData;
 
 loadData().then(data => {
+    d3.selectAll(".load-notifier").classed("hidden", true)
+
     Object.keys(data).forEach(function(subreddit) {
             Object.keys(data[subreddit]).forEach(function(postId) {
                 Object.keys(data[subreddit][postId]).forEach(function(column) {
@@ -11,6 +13,7 @@ loadData().then(data => {
                 data[subreddit][postId]['TIMESTAMP'] = new Date(data[subreddit][postId]['TIMESTAMP'])
             })
         });
+
     console.log(data)
     addNavigation();
     globalData = data;
