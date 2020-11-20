@@ -90,7 +90,7 @@ class NodePlot {
       .style("font-size", (d) => d.font)
       .raise()
       .attr("text-anchor", "middle")
-      .text((d) => d.id)
+      .text((d) => d.displayName)
       .clone(true)
       .lower()
       .attr("fill", "none")
@@ -105,7 +105,9 @@ class NodePlot {
     let link = links.find((link) => link.target == target);
     let header = `<h2><strong>${data.id}</strong></h2>`;
     let summaryFirstLine = `<p>Mentioned <strong>${link.mentions}</strong> times by ${link.source}`;
-    let summarySecondLine = `<br>with AVG sentiment of <strong>${link.sentiment.toFixed(2)}</strong></p>`;
+    let summarySecondLine = `<br>with AVG sentiment of <strong>${link.sentiment.toFixed(
+      2
+    )}</strong></p>`;
     return header + summaryFirstLine + summarySecondLine;
   }
 
@@ -162,6 +164,7 @@ class NodePlot {
         nodes[i].radius = 55;
         nodes[i].class = "selectedNode";
         nodes[i].font = 14;
+        nodes[i].displayName = nodes[i].id;
       } else {
         nodes[i].x = this.width / 2 + this.radius * Math.cos(angle);
         nodes[i].y = this.height / 2 + this.radius * Math.sin(angle);
@@ -169,11 +172,20 @@ class NodePlot {
         nodes[i].radius = 40;
         nodes[i].class = "otherNode";
         nodes[i].angle = angle;
-        nodes[i].font = 9;
+        nodes[i].font = 12;
         angle += adjust;
+        nodes[i].displayName = this.truncateName(nodes[i].id);
       }
     }
     return nodes;
+  }
+
+  truncateName(name) {
+    let maxLength = 9;
+    if (name.length > maxLength) {
+      return name.slice(0, maxLength) + "...";
+    }
+    return name;
   }
 
   addLinkAttributes(links, nodes) {
