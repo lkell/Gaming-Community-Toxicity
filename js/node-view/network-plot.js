@@ -13,12 +13,38 @@ class NetworkPlot {
     this.nodes = nodes;
     this.nodes = this.removeUnconnectedNodes(nodes, links);
     this.links = links;
-    this.shiftX = 0;
+    this.shiftX = 225;
+    this.shiftY = -30;
     this.circles;
     this.paths;
     this.activeSubreddit;
 
     this.updateFun = updateFun;
+
+    this.setupPlot();
+  }
+  
+  setupPlot() {
+    this.root
+      .attr("viewBox", [
+        -this.width / 2,
+        -this.height / 2,
+        this.width,
+        this.height,
+      ])
+
+    this.addTitle();
+  }
+
+  addTitle() {
+    this.root
+      .append("text")
+      .classed("title", true)
+      .attr("x", 0)
+      .attr("y", -this.height / 2 + 30)
+      .style("font-size", 22)
+      .attr("text-decoration", "underline")
+      .text("The Gaming Landscape");
   }
 
   setUpdateFun(updateFun) {
@@ -41,33 +67,45 @@ class NetworkPlot {
         "link",
         d3.forceLink(this.links).id((d) => d.id)
       )
-      .force("charge", d3.forceManyBody().strength(-700))
-      .force("x", d3.forceX().strength(0.06))
-      .force("y", d3.forceY().strength(0.2));
+      .force("charge", d3.forceManyBody().strength(-1000))
+      .force("x", d3.forceX().strength(0.01))
+      .force("y", d3.forceY().strength(0.1));
 
-    this.root
-      .attr("viewBox", [
-        -this.width / 2,
-        -this.height / 2,
-        this.width,
-        this.height,
-      ])
-      .style("font", "8px sans-serif");
-
-    // add arrow marker
+    // http://thenewcode.com/1068/Making-Arrows-in-SVG
     this.root
       .append("defs")
       .append("marker")
       .attr("id", "arrow")
-      .attr("viewBox", "0 -5 10 10")
-      .attr("refX", 15)
-      .attr("refY", -0.5)
-      .attr("markerWidth", 6)
-      .attr("markerHeight", 6)
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("markerHeight", 100)
+      .attr("markerWidth", 100)
+      .attr("refX", 22)
+      .attr("refY", 3.25)
       .attr("orient", "auto")
-      .append("path")
-      .attr("fill", "black")
-      .attr("d", "M0,-5L10,0L0,5");
+      .append("polygon")
+      .attr("points", "0 0, 15 5.25, 0 10.5")
+      .style("fill", "#336EFF")
+      .attr("stroke", "black");
+
+
+    // add arrow marker
+    // this.root
+    //   .append("defs")
+    //   .append("marker")
+    //   .attr("id", "arrow")
+    //   .attr("viewBox", "0 -5 10 10")
+    //   .attr("refX", 15)
+    //   .attr("refY", -0.5)
+    //   .attr("markerWidth", 6)
+    //   .attr("markerHeight", 6)
+    //   .attr("orient", "auto")
+    //   .attr("markerUnits", "userSpaceOnUse")
+    //   .append("path")
+    //   .attr("fill", "black")
+    //   .attr("d", "M0,-5L10,0L0,5");
+
+    // http://thenewcode.com/1068/Making-Arrows-in-SVG
+    let radiusScale = this.makeRadiusSale();
 
     let widthScale = this.makeStrokeWidthScale(this.links);
 
@@ -82,16 +120,14 @@ class NetworkPlot {
       .style("opacity", 0.1)
       .attr("marker-end", "url(#arrow)");
 
-    let radiusScale = this.makeRadiusSale();
-
     this.circles = this.root
       .append("g")
       .attr("stroke-linecap", "round")
       .attr("stroke-linejoin", "round")
       .selectAll("g")
       .data(this.nodes)
-      .join("g")
-      // .style("opacity", 0.8);
+      .join("g");
+    // .style("opacity", 0.8);
 
     this.circles.on("mouseenter", (event) => this.highlightRegion(event, this));
     this.circles.on("click", (event) => {
@@ -112,7 +148,7 @@ class NetworkPlot {
       .attr("fill", "black")
       .attr("x", 5)
       .attr("y", -14)
-      .style("font-size", "9")
+      .style("font-size", "10")
       .raise()
       .text((d) => d.id)
       .clone(true)
@@ -126,8 +162,11 @@ class NetworkPlot {
     //   this.circles.attr("transform", (d) => `translate(${d.x},${d.y})`);
     // });
     simulation.tick(300);
-    this.paths.attr("d", this.linkArc);
-    this.circles.attr("transform", (d) => `translate(${d.x},${d.y})`);
+    this.paths.attr("d", (d) => this.linkArc(d, this.shiftX, this.shiftY));
+    this.circles.attr(
+      "transform",
+      (d) => `translate(${d.x + this.shiftX},${d.y + this.shiftY})`
+    );
 
     // this.root.on("mouseover", this.clearHighlights());
     this.root.on("mouseover", (e) => this.clearHighlights());
@@ -142,14 +181,16 @@ class NetworkPlot {
     );
   }
 
-  linkArc(link) {
+  linkArc(link, shiftX) {
     const r = Math.hypot(
       link.target.x - link.source.x,
       link.target.y - link.source.y
     );
     return `
-    M${link.source.x},${link.source.y}
-    A${r},${r} 0 0,1 ${link.target.x},${link.target.y}
+    M${link.source.x + this.shiftX},${link.source.y + this.shiftY}
+    A${r},${r} 0 0,1 ${link.target.x + this.shiftX},${
+      link.target.y + this.shiftY
+    }
   `;
   }
 
@@ -171,7 +212,7 @@ class NetworkPlot {
   makeStrokeWidthScale(links) {
     let maximum = d3.max(links, (link) => link.mentions);
     let minimum = d3.min(links, (link) => link.mentions);
-    return d3.scaleLinear().domain([minimum, maximum]).range([1.5, 5]);
+    return d3.scaleLinear().domain([minimum, maximum]).range([2, 8]);
   }
 
   highlightRegion(event, view) {
@@ -179,7 +220,7 @@ class NetworkPlot {
     this.circles
       .selectAll("circle")
       .filter((circle) => circle.id !== this.activeSubreddit)
-      .style("opacity", 0.6)
+      .style("opacity", 0.6);
 
     let selectedNode = event.id;
     this.paths
@@ -190,7 +231,8 @@ class NetworkPlot {
       .filter((d) => d.id == selectedNode)
       .selectAll("circle")
       .style("opacity", 100)
-      .attr("stroke", "#FFBE33");
+      .attr("stroke", "#FFBE33")
+      .attr("stroke-width", 3);
   }
 
   clearHighlights() {
@@ -203,7 +245,7 @@ class NetworkPlot {
       .selectAll("circle")
       .filter((circle) => circle.id !== this.activeSubreddit)
       .attr("stroke", "black")
-      .style("opacity", 1)
-
+      .attr("stroke-width", 2)
+      .style("opacity", 1);
   }
 }
