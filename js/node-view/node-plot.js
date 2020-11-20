@@ -8,6 +8,12 @@ class NodePlot {
       .attr("width", this.width)
       .attr("height", this.height);
 
+    this.tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("id", "node-view-tooltip")
+      .classed("tooltip", true);
+
     this.radius = 180;
 
     this.minLinks = 10;
@@ -45,8 +51,8 @@ class NodePlot {
       .attr("x2", (d) => d.x)
       .attr("y2", (d) => d.y)
       .attr("stroke-width", (d) => d.width)
-      .attr("stroke", this.getColor);
-    // .attr("marker-end", "url(#arrow)");
+      .attr("stroke", this.getColor)
+      .attr("marker-end", "url(#arrow)");
 
     this.circles = this.root
       .append("g")
@@ -55,7 +61,18 @@ class NodePlot {
       .attr("stroke-linejoin", "round")
       .selectAll("g")
       .data(nodes)
-      .join("g");
+      .join("g")
+      .on("mouseenter", (d) =>
+        d3
+          .select("#node-view-tooltip")
+          .style("opacity", 1)
+          .style("left", d3.event.pageX + 20 + "px")
+          .style("top", d3.event.pageY - 40 + "px")
+          .html(this.toolTipRender(d, links))
+      )
+      .on("mouseleave", () =>
+        d3.select("#node-view-tooltip").style("opacity", 0)
+      );
 
     this.circles
       .append("circle")
@@ -83,6 +100,15 @@ class NodePlot {
     this.isDrawn = true;
   }
 
+  toolTipRender(data, links) {
+    let target = data.id;
+    let link = links.find((link) => link.target == target);
+    let header = `<h2><strong>${data.id}</strong></h2>`;
+    let summaryFirstLine = `<p>Mentioned <strong>${link.mentions}</strong> times by ${link.source}`;
+    let summarySecondLine = `<br>with AVG sentiment of <strong>${link.sentiment.toFixed(2)}</strong></p>`;
+    return header + summaryFirstLine + summarySecondLine;
+  }
+
   removeUnconnectedNodes(links) {
     let nodes = JSON.parse(JSON.stringify(this.nodes));
     let outNodes = links.map((d) => d.target);
@@ -96,7 +122,7 @@ class NodePlot {
 
   /** Apply diverging color scale to link sentiment values */
   getColor = function (link) {
-    return d3.interpolateRdBu(1 -link.sentiment);
+    return d3.interpolateRdBu(1 - link.sentiment);
   };
 
   makeStrokeWidthScale(links) {
@@ -126,7 +152,6 @@ class NodePlot {
   }
 
   addNodeAttributes(nodes, selected, that) {
-    console.log(that)
     let angle = 0;
     let adjust = Math.PI / 5;
     for (let i in nodes) {
@@ -152,8 +177,6 @@ class NodePlot {
   }
 
   addLinkAttributes(links, nodes) {
-    console.log(links);
-    console.log(nodes);
     for (let link of links) {
       let node = nodes.find((node) => node.id == link.target);
       let width = this.widthScale(link.mentions);
@@ -162,7 +185,6 @@ class NodePlot {
       link.y = node.y;
       link.angle = node.angle;
     }
-    console.log(links);
     return links;
   }
 }
