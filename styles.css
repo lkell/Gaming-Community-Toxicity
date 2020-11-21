@@ -207,10 +207,9 @@ body {
 }
 
 .network-plot {
-	background-color: white
-	/* background-color: darkgrey; */
+	background-color: darkgrey
 }
 
 .node-plot {
-	background-color: white;
+	background-color: darkgrey
 }

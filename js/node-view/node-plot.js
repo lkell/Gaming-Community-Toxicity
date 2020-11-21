@@ -31,7 +31,7 @@ class NodePlot {
   }
 
   makeColorScale() {
-    return d3.scaleSequential(d3.interpolatePlasma).domain([-1, 1]);
+    return d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
 
   }
 

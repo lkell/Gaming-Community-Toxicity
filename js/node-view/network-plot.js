@@ -23,7 +23,7 @@ class NetworkPlot {
 
     this.updateFun = updateFun;
 
-    this.unselectedPathOpacity = 0.032;
+    this.unselectedPathOpacity = 0.04;
 
     this.setupPlot();
   }
@@ -35,7 +35,7 @@ class NetworkPlot {
 
   makeColorScale() {
     // return d3.scaleSequential(d3.interpolateViridis).domain([1, -1]);
-    return d3.scaleSequential(d3.interpolatePlasma).domain([-1, 1]);
+    return d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
   }
 
   addLegend() {
