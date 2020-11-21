@@ -5,44 +5,67 @@ class NetworkPlot {
     this.root = d3
       .select(root)
       .append("svg")
-      .attr("width", this.width)
-      .attr("height", this.height);
+      .classed("network-plot", true)
+      .attr("width", this.width + "px")
+      .attr("height", this.height + "px")
+      .attr("overflow", "scroll");
 
-    this.minLinks = 10;
-    // this.nodes = this.removeUnconnectedNodes(nodes, links);
     this.nodes = nodes;
     this.nodes = this.removeUnconnectedNodes(nodes, links);
     this.links = links;
-    this.shiftX = 225;
-    this.shiftY = -30;
+    this.shiftX = 255;
+    this.shiftY = 310;
     this.circles;
     this.paths;
     this.activeSubreddit;
 
+    this.colorScale = this.makeColorScale();
+
     this.updateFun = updateFun;
+
+    this.unselectedPathOpacity = 0.07;
 
     this.setupPlot();
   }
-  
-  setupPlot() {
-    this.root
-      .attr("viewBox", [
-        -this.width / 2,
-        -this.height / 2,
-        this.width,
-        this.height,
-      ])
 
+  setupPlot() {
     this.addTitle();
+    this.addLegend();
+  }
+
+  makeColorScale() {
+    return d3.scaleSequential(d3.interpolateRdYlBu).domain([1, -1]);
+  }
+
+  addLegend() {
+    var linear = d3
+      .scaleLinear()
+      .domain([0, 10])
+      .range(["rgb(46, 73, 123)", "rgb(71, 187, 94)"]);
+
+    var svg = d3.select("svg");
+
+    svg
+      .append("g")
+      .attr("class", "legendLinear")
+      .attr("transform", "translate(20,20)");
+
+    var legendLinear = d3
+      .legendColor()
+      .shapeWidth(30)
+      .orient("horizontal")
+      .scale(linear);
+
+    svg.select(".legendLinear").call(legendLinear);
   }
 
   addTitle() {
     this.root
       .append("text")
       .classed("title", true)
-      .attr("x", 0)
-      .attr("y", -this.height / 2 + 30)
-      .style("font-size", 22)
+      .attr("x", 15)
+      .attr("y", 25)
+      .style("font-size", 20)
       .attr("text-decoration", "underline")
       .text("The Gaming Landscape");
   }
@@ -58,8 +81,6 @@ class NetworkPlot {
     if (this.updateFun === undefined) {
       throw "`updateFun` must be set before drawing NetworkPlot";
     }
-    // let links = this.links;
-    // let nodes = this.removeUnconnectedNodes(this.nodes, links);
 
     let simulation = d3
       .forceSimulation(this.nodes)
@@ -87,24 +108,6 @@ class NetworkPlot {
       .style("fill", "#336EFF")
       .attr("stroke", "black");
 
-
-    // add arrow marker
-    // this.root
-    //   .append("defs")
-    //   .append("marker")
-    //   .attr("id", "arrow")
-    //   .attr("viewBox", "0 -5 10 10")
-    //   .attr("refX", 15)
-    //   .attr("refY", -0.5)
-    //   .attr("markerWidth", 6)
-    //   .attr("markerHeight", 6)
-    //   .attr("orient", "auto")
-    //   .attr("markerUnits", "userSpaceOnUse")
-    //   .append("path")
-    //   .attr("fill", "black")
-    //   .attr("d", "M0,-5L10,0L0,5");
-
-    // http://thenewcode.com/1068/Making-Arrows-in-SVG
     let radiusScale = this.makeRadiusSale();
 
     let widthScale = this.makeStrokeWidthScale(this.links);
@@ -115,9 +118,9 @@ class NetworkPlot {
       .selectAll("path")
       .data(this.links)
       .join("path")
-      .attr("stroke", this.getColor)
+      .attr("stroke", (d) => this.colorScale(d.sentiment))
       .attr("stroke-width", (d) => widthScale(d.mentions))
-      .style("opacity", 0.1)
+      .style("opacity", this.unselectedPathOpacity)
       .attr("marker-end", "url(#arrow)");
 
     this.circles = this.root
@@ -127,21 +130,23 @@ class NetworkPlot {
       .selectAll("g")
       .data(this.nodes)
       .join("g");
-    // .style("opacity", 0.8);
 
-    this.circles.on("mouseenter", (event) => this.highlightRegion(event, this));
-    this.circles.on("click", (event) => {
+    this.circles
+      .append("circle")
+      .attr("fill", (d) => this.colorScale(d.positivity))
+      .attr("stroke", "black")
+      .attr("stroke-width", 2)
+      .attr("r", (d) => radiusScale(d.interactions));
+
+    this.circles
+      .selectAll("circle")
+      .on("mouseenter", (event) => this.highlightRegion(event, this));
+
+    this.circles.selectAll("circle").on("click", (event) => {
       this.activeSubreddit = event.id;
       this.clearCircleHighlights();
       this.updateFun(event.id);
     });
-
-    this.circles
-      .append("circle")
-      .attr("fill", this.getNodeColor)
-      .attr("stroke", "black")
-      .attr("stroke-width", 2)
-      .attr("r", (d) => radiusScale(d.interactions));
 
     this.circles
       .append("text")
@@ -157,10 +162,6 @@ class NetworkPlot {
       .attr("stroke", "white")
       .attr("stroke-width", 3);
 
-    // simulation.on("tick", () => {
-    //   this.paths.attr("d", this.linkArc);
-    //   this.circles.attr("transform", (d) => `translate(${d.x},${d.y})`);
-    // });
     simulation.tick(300);
     this.paths.attr("d", (d) => this.linkArc(d, this.shiftX, this.shiftY));
     this.circles.attr(
@@ -168,7 +169,11 @@ class NetworkPlot {
       (d) => `translate(${d.x + this.shiftX},${d.y + this.shiftY})`
     );
 
-    // this.root.on("mouseover", this.clearHighlights());
+    // this.root.on("click", e => {
+    //   this.clearHighlights()
+    //   this.activeSubreddit = null;
+    // });
+    // this.root.on("mouseover", e => this.reHighlightRegion(this));
     this.root.on("mouseover", (e) => this.clearHighlights());
   }
 
@@ -231,12 +236,37 @@ class NetworkPlot {
       .filter((d) => d.id == selectedNode)
       .selectAll("circle")
       .style("opacity", 100)
+      .attr("stroke", "brown")
+      .attr("stroke-width", 3);
+  }
+
+  reHighlightRegion(view) {
+    if (view.activeSubreddit === null) {
+      return;
+    }
+    this.clearHighlights();
+    this.circles
+      .selectAll("circle")
+      .filter((circle) => circle.id !== this.activeSubreddit)
+      .style("opacity", 0.6);
+
+    let selectedNode = this.activeSubreddit;
+    this.paths
+      .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode)
+      .style("opacity", 1);
+
+    this.circles
+      .filter((d) => d.id == selectedNode)
+      .selectAll("circle")
+      .style("opacity", 100)
+      // .attr("stroke", "#FFBE33")
       .attr("stroke", "#FFBE33")
       .attr("stroke-width", 3);
   }
 
   clearHighlights() {
-    this.paths.style("opacity", 0.1);
+    this.paths
+      .style("opacity", this.unselectedPathOpacity)
     this.clearCircleHighlights();
   }
 
