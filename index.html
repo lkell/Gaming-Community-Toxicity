@@ -8,6 +8,7 @@
     <script src="https://d3js.org/d3.v5.js"></script>
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script src="https://d3js.org/d3-force.v2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js" integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="styles.css" />
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -47,7 +48,20 @@
         Select a subreddit
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-items">
-      </div>
+    </div>
+    <p><strong>or</strong></p>
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="storytellingButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Show me...
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">The most loving subreddit</a>
+            <a class="dropdown-item" href="#">The most loving pair</a>
+            <a class="dropdown-item" href="#">The most negative subreddit</a>
+            <a class="dropdown-item" href="#">The most negative pair</a>
+            <a class="dropdown-item" href="#">The largest clique</a>
+        </div>
+      </button>
+    </div>
     </div>
         <div class="card" id="node"></div>
         <div class="card" id="node-summary"></div>
