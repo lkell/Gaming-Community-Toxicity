@@ -31,7 +31,7 @@ class NodePlot {
   }
 
   makeColorScale() {
-    return d3.scaleSequential(d3.interpolateRdYlBu).domain([1, -1]);
+    return d3.scaleSequential(d3.interpolatePlasma).domain([-1, 1]);
 
   }
 
@@ -188,7 +188,7 @@ class NodePlot {
   makeStrokeWidthScale(links) {
     let maximum = d3.max(links, (link) => link.mentions);
     let minimum = d3.min(links, (link) => link.mentions);
-    return d3.scaleLinear().domain([minimum, maximum]).range([10, 50]);
+    return d3.scaleLinear().domain([minimum, maximum]).range([3, 50]);
   }
 
   filterLinks(selected, sortField, sortDirection) {

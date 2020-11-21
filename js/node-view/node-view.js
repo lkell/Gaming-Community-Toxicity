@@ -33,7 +33,6 @@ class NodeView {
 
     this.networkPlot = new NetworkPlot(
       "#node",
-      // 950,
       950,
       600,
       this.gamingOnlyNodes,

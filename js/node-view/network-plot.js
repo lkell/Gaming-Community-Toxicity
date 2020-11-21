@@ -23,7 +23,7 @@ class NetworkPlot {
 
     this.updateFun = updateFun;
 
-    this.unselectedPathOpacity = 0.07;
+    this.unselectedPathOpacity = 0.032;
 
     this.setupPlot();
   }
@@ -34,29 +34,24 @@ class NetworkPlot {
   }
 
   makeColorScale() {
-    return d3.scaleSequential(d3.interpolateRdYlBu).domain([1, -1]);
+    // return d3.scaleSequential(d3.interpolateViridis).domain([1, -1]);
+    return d3.scaleSequential(d3.interpolatePlasma).domain([-1, 1]);
   }
 
   addLegend() {
-    var linear = d3
-      .scaleLinear()
-      .domain([0, 10])
-      .range(["rgb(46, 73, 123)", "rgb(71, 187, 94)"]);
-
-    var svg = d3.select("svg");
-
-    svg
+    this.root
       .append("g")
-      .attr("class", "legendLinear")
-      .attr("transform", "translate(20,20)");
+      .attr("class", "legendSequential")
+      .attr("transform", "translate(600,500)");
 
-    var legendLinear = d3
+    let legendSequential = d3
       .legendColor()
-      .shapeWidth(30)
+      .shapeWidth(100)
+      .cells(10)
       .orient("horizontal")
-      .scale(linear);
+      .scale(this.colorScale);
 
-    svg.select(".legendLinear").call(legendLinear);
+    this.root.select(".legendSequential").call(legendSequential);
   }
 
   addTitle() {
@@ -186,7 +181,7 @@ class NetworkPlot {
     );
   }
 
-  linkArc(link, shiftX) {
+  linkArc(link) {
     const r = Math.hypot(
       link.target.x - link.source.x,
       link.target.y - link.source.y
@@ -217,7 +212,7 @@ class NetworkPlot {
   makeStrokeWidthScale(links) {
     let maximum = d3.max(links, (link) => link.mentions);
     let minimum = d3.min(links, (link) => link.mentions);
-    return d3.scaleLinear().domain([minimum, maximum]).range([2, 8]);
+    return d3.scaleLinear().domain([minimum, maximum]).range([3, 8]);
   }
 
   highlightRegion(event, view) {
@@ -236,7 +231,7 @@ class NetworkPlot {
       .filter((d) => d.id == selectedNode)
       .selectAll("circle")
       .style("opacity", 100)
-      .attr("stroke", "brown")
+      .attr("stroke", "#FFBE33")
       .attr("stroke-width", 3);
   }
 
@@ -265,8 +260,7 @@ class NetworkPlot {
   }
 
   clearHighlights() {
-    this.paths
-      .style("opacity", this.unselectedPathOpacity)
+    this.paths.style("opacity", this.unselectedPathOpacity);
     this.clearCircleHighlights();
   }
 
