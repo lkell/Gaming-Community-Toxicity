@@ -10,7 +10,7 @@ class NodeView {
 
     this.subreddits = this.makeSubredditList(this.data);
 
-    this.minLinks = 10;
+    this.minLinks = 0;
     this.links = this.createLinkData(this.data, 0);
     this.nodes = this.createNodeData(this.links, this.subreddits);
 
@@ -34,7 +34,7 @@ class NodeView {
     this.networkPlot = new NetworkPlot(
       "#node",
       // 950,
-      1050,
+      950,
       600,
       this.gamingOnlyNodes,
       this.gamingOnlyLinks,
@@ -51,6 +51,7 @@ class NodeView {
 
   populateDropdown() {
     let dropDown = document.getElementById("dropdown-items");
+    console.log(dropDown)
 
     for (let subreddit of this.gamingSubreddits) {
       let option = document.createElement("a");
