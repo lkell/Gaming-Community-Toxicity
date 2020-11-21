@@ -2,7 +2,7 @@
 // https://github.com/asielen/D3_Reusable_Charts/blob/master/distro_chart/distrochart.js
 // PJW
 
-class ViolinPlot {
+class ReadabilityViolinPlot {
 
 	constructor(data) {
         this.subreddit = 'SELECT SUBREDDIT';
@@ -12,29 +12,29 @@ class ViolinPlot {
 		this.xMargin = 20;
 		this.yMargin = 20;
 		this.plotInfo = {};
-        this.bandwidth = 0.05
+        this.bandwidth = 5;
 		this.resolution = 1000;
         this.transitionDuration = 500;
-		this.svg = d3.select('#summary-view-violin-card')
+		this.svg = d3.select('#summary-view-readability-violin-card')
 	        .append('svg')
 	        .attr('width', this.width + this.xMargin)
 	        .attr('height', this.height + this.yMargin)
-	        .attr('id', 'summary-violin-plot-svg');
+	        .attr('id', 'summary-readability-violin-plot-svg');
         this.svg.append('circle')
-            .attr('id', 'summary-violin-median');
+            .attr('id', 'summary-readability-violin-median');
         this.svg.append('rect')
-            .attr('id', 'summary-violin-quartile-box');
+            .attr('id', 'summary-readability-violin-quartile-box');
         this.prepareViolin();
-        this.sentimentScale = this.createSentimentScale();
+        this.readabilityScale = this.createReadabilityScale();
         this.tooltip = d3.select('body')
             .append('div')
-            .attr('id', 'summary-view-violin-plot-tooltip')
+            .attr('id', 'summary-view-readability-violin-plot-tooltip')
             .classed('tooltip', true);
 	}
 
-	createSentimentScale() {
+	createReadabilityScale() {
 		return d3.scaleLinear()
-			.domain([-1, 1])
+			.domain([0, 100])
 			.range([this.xMargin / 2, this.width])
 			.clamp(true);
 	}
@@ -55,13 +55,13 @@ class ViolinPlot {
 
 		let area = d3.area()
             .curve(d3.curveCardinal)
-            .x(function (d) {return that.sentimentScale(d.x)})
+            .x(function (d) {return that.readabilityScale(d.x)})
             .y0(0)
             .y1(function (d) {return that.yScale(d.y)});
 
         let line = d3.line()
             .curve(d3.curveCardinal)
-            .x(function (d) {return that.sentimentScale(d.x)})
+            .x(function (d) {return that.readabilityScale(d.x)})
             .y(function (d) {return that.yScale(d.y)});
 
         this.plotInfo.objs.left.area
@@ -100,14 +100,14 @@ class ViolinPlot {
 	}
 
 	prepareData(subreddit) {
-        this.plotInfo.values = objectToArray(this.data[subreddit]).map(d => d.CompoundSentiment);
+        this.plotInfo.values = objectToArray(this.data[subreddit]).map(d => d.AutoReadabilityIndex);
         this.plotInfo.values.sort(d3.ascending);
         this.plotInfo.metrics = {};
         this.plotInfo.metrics = calcMetrics(this.plotInfo.values);
     }
 
     createKdeData(data)  {
-    	this.plotInfo.kde = kernelDensityEstimator(eKernel(this.bandwidth), this.sentimentScale.ticks(this.resolution));
+    	this.plotInfo.kde = kernelDensityEstimator(eKernel(this.bandwidth), this.readabilityScale.ticks(this.resolution));
         this.plotInfo.kdedata = this.plotInfo.kde(this.plotInfo.values);
     }
     
@@ -145,7 +145,7 @@ class ViolinPlot {
             .attr('transform', 'translate(0' + ',' + (this.height / 2) + ')')
             .call(
                 d3.axisBottom()
-                    .scale(this.sentimentScale)
+                    .scale(this.readabilityScale)
                     .ticks(3)
             )
             .classed('summary-violin-x-axis', true);
@@ -154,7 +154,7 @@ class ViolinPlot {
             .attr('transform', 'translate(0' + ',' + (this.height / 2) + ')')
             .call(
                 d3.axisTop()
-                    .scale(this.sentimentScale)
+                    .scale(this.readabilityScale)
                     .ticks(3)
                     .tickFormat('')
             )
@@ -163,7 +163,7 @@ class ViolinPlot {
 
     drawMedian() {
         let that = this;
-        this.svg.select('#summary-violin-median')
+        this.svg.select('#summary-readability-violin-median')
             .raise()
             .on('mouseover', function(d) { 
                 that.tooltip.html(that.medianTooltipRender(that.plotInfo.metrics, that.subreddit))
@@ -175,7 +175,7 @@ class ViolinPlot {
             .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
             .transition()
             .duration(this.transitionDuration)
-            .attr('cx', this.sentimentScale(this.plotInfo.metrics.median))
+            .attr('cx', this.readabilityScale(this.plotInfo.metrics.median))
             .attr('cy', this.height / 2)
             .attr('r', 5);
     }
@@ -189,7 +189,7 @@ class ViolinPlot {
 
     drawQuartileBox() {
         let that = this;
-        this.svg.select('#summary-violin-quartile-box')
+        this.svg.select('#summary-readability-violin-quartile-box')
             .raise()
             .on('mouseover', function(d) { 
                 that.tooltip.html(that.metricsTooltipRender(that.plotInfo.metrics, that.subreddit))
@@ -202,9 +202,9 @@ class ViolinPlot {
             .transition()
             .duration(this.transitionDuration)
             .attr('height', 20)
-            .attr('x', this.sentimentScale(this.plotInfo.metrics.quartile1))
+            .attr('x', this.readabilityScale(this.plotInfo.metrics.quartile1))
             .attr('y', this.height / 2 - this.yMargin / 2)
-            .attr('width', this.sentimentScale(this.plotInfo.metrics.quartile3) - this.sentimentScale(this.plotInfo.metrics.quartile1));
+            .attr('width', this.readabilityScale(this.plotInfo.metrics.quartile3) - this.readabilityScale(this.plotInfo.metrics.quartile1));
     }
 
     metricsTooltipRender(d, subreddit) {

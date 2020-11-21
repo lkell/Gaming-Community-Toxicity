@@ -65,7 +65,7 @@ div.tooltip {
 	grid-row: 9/13;
 }
 
-#summary-view-sentiment-card {
+#summary-view-readability-violin-card {
 	grid-column: 11/15;
 	grid-row: 9/13;
 }
@@ -94,6 +94,15 @@ div.tooltip {
 }
 
 #summary-violin-quartile-box {
+	fill: #FF8b60;
+	opacity: 0.5;
+}
+
+#summary-readability-violin-median {
+	fill: red;
+}
+
+#summary-readability-violin-quartile-box {
 	fill: #FF8b60;
 	opacity: 0.5;
 }

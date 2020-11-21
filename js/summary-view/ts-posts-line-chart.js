@@ -7,6 +7,7 @@ class PostsLineChart {
 		this.yMargin = 10;
 		this.width = 575;
 		this.height = 300;
+		this.transitionDuration = 500;
 		this.svg = d3.select('#summary-view-post-card')
 	        .append('svg')
 	        .attr('width', this.width + 2 * this.xMargin)
@@ -18,6 +19,7 @@ class PostsLineChart {
             .append('div')
             .attr('id', 'summary-view-ts-posts-tooltip')
             .classed('tooltip', true);
+        this.initializeLineCharts();
 	}
 
 	// TODO: Figure out why dateMin is is off by ~1 month PJW
@@ -44,6 +46,14 @@ class PostsLineChart {
 			.range([this.height - this.yMargin, this.yMargin]);
 	}
 
+	initializeLineCharts() {
+		d3.select('#summary-post-svg')
+			.append('svg:path')
+			.attr('id', 'postLineChart');
+
+		d3.select('#summary-post-svg')
+	}
+
 	draw(sourceSubreddit) {
 		this.subreddit = sourceSubreddit;
 		let that = this;
@@ -59,16 +69,8 @@ class PostsLineChart {
 			.y(d => this.postScale(d.value));
 
 		let lineChart = d3.select('#summary-post-svg');
-	  
-		lineChart.append('svg:path')
-			.attr('id', 'postLineChart')
-			.datum(summaryData)
-			.attr("d", postLineGenerator)
-			.classed('summary-view-ts-path', true)
-			.attr('transform', 'translate(' + (this.xMargin) + ',0)');
-
-		lineChart.selectAll('circle')
-			.data(summaryData)
+	  	lineChart.selectAll('circle')
+	  		.data(summaryData)
 			.join('circle')
             .on('mouseover', function(d) { 
                 that.tooltip.html(that.postsTooltipRender(d, that.subreddit))
@@ -78,11 +80,24 @@ class PostsLineChart {
                 }
             )
             .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
+			.classed('summary-view-ts-posts-point', true)
+			.transition()
+			.duration(this.transitionDuration)
 			.attr('r', 5)
 			.attr('cx', d => this.timeScale(d.key))
 			.attr('cy', d=> this.postScale(d.value))
-			.classed('summary-view-ts-posts-point', true)
 			.attr('transform', 'translate(' + (this.xMargin) + ',0)');
+
+		lineChart.select('#postLineChart')
+			.join('svg:path')
+			.datum(summaryData)
+			.classed('summary-view-ts-path', true)
+			.transition()
+			.duration(this.transitionDuration)
+			.attr("d", postLineGenerator)
+			.attr('transform', 'translate(' + (this.xMargin) + ',0)');
+
+		
 	}
 
 	drawTimeAxis() {
@@ -116,7 +131,7 @@ class PostsLineChart {
         let outputString = ''
         outputString += '<h2>r/' + subreddit + '</h2>';
         outputString += '<p>Date:\t' + thisDate.toLocaleString('default', { month: 'long' }) + ' ' + thisDate.getFullYear() + '</p>';
-        outputString += '<p>Posts:\t' + d.value + '</p>';
+        outputString += '<p>Links:\t' + d.value + '</p>';
         return outputString;
     }
 
