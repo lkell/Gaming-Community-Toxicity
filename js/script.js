@@ -26,6 +26,9 @@ Promise.all([
                 otherData[subreddit][postId]['TIMESTAMP'] = new Date(otherData[subreddit][postId]['timestamp'])
             })
         });
+
+    d3.selectAll(".load-notifier").classed("hidden", true)
+
     console.log(data)
     console.log(otherData)
     addNavigation();
