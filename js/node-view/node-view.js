@@ -111,7 +111,8 @@ class NodeView {
       .key((d) => d.SOURCE_SUBREDDIT)
       .key((d) => d.TARGET_SUBREDDIT)
       .rollup((v) => ({
-        sentiment: d3.mean(v, (d) => d.LINK_SENTIMENT),
+        // sentiment: d3.mean(v, (d) => d.LINK_SENTIMENT),
+        sentiment: d3.mean(v, (d) => d.CompoundSentiment),
         mentions: v.length,
       }))
       .object(data);
