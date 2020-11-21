@@ -2,9 +2,11 @@ class NodePlot {
   constructor(root, width, height, nodes, links) {
     this.width = width;
     this.height = height;
+    this.parent = root;
     this.root = d3
       .select(root)
       .append("svg")
+      .classed("node-plot", true)
       .attr("width", this.width)
       .attr("height", this.height);
 
@@ -23,17 +25,58 @@ class NodePlot {
     this.circles;
     this.paths;
     this.widthScale = this.makeStrokeWidthScale(this.links);
+    this.colorScale = this.makeColorScale();
 
     this.isDrawn = false;
   }
 
-  /**  Note: The following tutorial is heavily used:
-  https://observablehq.com/@d3/mobile-patent-suits?collection=@d3/d3-force
-  */
+  makeColorScale() {
+    return d3.scaleSequential(d3.interpolateRdYlBu).domain([1, -1]);
+
+  }
+
+  addDropDown() {
+    // https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg
+    let dropdown = d3
+      .select(this.parent)
+      .append("select")
+      .classed("nodeSelection", true);
+    dropdown
+      .append("option")
+      .attr("value", "activity")
+      .text("Number of mentions");
+    dropdown
+      .append("option")
+      .attr("value", "sentiment")
+      .text("Positive sentiment");
+    dropdown
+      .append("option")
+      .attr("value", "sentiment")
+      .text("Negative sentiment");
+
+  }
+
+  addTitle(activeSubreddit) {
+    this.root.select(".title").remove();
+
+    this.root
+      .append("text")
+      .classed("title", true)
+      .attr("x", 15)
+      .attr("y", 25)
+      .style("font-size", 16)
+      .attr("text-decoration", "underline")
+      .text(`${activeSubreddit}'s Top Outgoing Subreddits by`);
+  }
+
   draw(activeSubreddit) {
     if (this.isDrawn) {
       this.clearPlot();
+    } else {
+      this.addDropDown();
     }
+    this.addTitle(activeSubreddit);
+
     this.root
       .append("defs")
       .append("marker")
@@ -65,7 +108,8 @@ class NodePlot {
       .attr("x2", (d) => d.x)
       .attr("y2", (d) => d.y)
       .attr("stroke-width", (d) => d.width)
-      .attr("stroke", this.getColor)
+      // .attr("stroke", this.getColor)
+      .attr("stroke", d => this.colorScale(d.sentiment))
       .attr("marker-end", "url(#nodeArrow)");
 
     this.circles = this.root
