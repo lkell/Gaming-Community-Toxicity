@@ -1,6 +1,11 @@
 let globalData;
 
-loadData().then(data => {
+Promise.all([
+    d3.json('./data_processing/config/reddit-hyperlinks-body.json'),
+    d3.json('./data_processing/config/reddit-sentiment-analysis.json'),
+]).then(files => {
+    let data = files[0];
+    let otherData = files[1];
     Object.keys(data).forEach(function(subreddit) {
             Object.keys(data[subreddit]).forEach(function(postId) {
                 Object.keys(data[subreddit][postId]).forEach(function(column) {
@@ -11,14 +16,25 @@ loadData().then(data => {
                 data[subreddit][postId]['TIMESTAMP'] = new Date(data[subreddit][postId]['TIMESTAMP'])
             })
         });
+    Object.keys(otherData).forEach(function(subreddit) {
+            Object.keys(otherData[subreddit]).forEach(function(postId) {
+                Object.keys(otherData[subreddit][postId]).forEach(function(column) {
+                    if ((column != 'timestamp') && (column != 'TARGET_SUBREDDIT')) {
+                        otherData[subreddit][postId][column] = +otherData[subreddit][postId][column]
+                    }
+                })
+                otherData[subreddit][postId]['TIMESTAMP'] = new Date(otherData[subreddit][postId]['timestamp'])
+            })
+        });
     console.log(data)
+    console.log(otherData)
     addNavigation();
     globalData = data;
 
 //   Summary View
-    readabilityViolinPlot = new ReadabilityViolinPlot(data);
+    readabilityViolinPlot = new ReadabilityViolinPlot(otherData);
     postsLineChart = new PostsLineChart(data);
-    violinPlot = new ViolinPlot(data);  
+    violinPlot = new ViolinPlot(otherData);  
     let defaultSubreddit = 'leagueoflegends';
   
     violinPlot.draw(defaultSubreddit);
@@ -39,10 +55,14 @@ loadData().then(data => {
     switchView('.home-view')
 });
 
-async function loadData() {
-    let jsonFile = './data_processing/config/reddit-hyperlinks-body.json';
-    return await d3.json(jsonFile);
-};
+// async function loadData() {
+//     let jsonFile = './data_processing/config/reddit-hyperlinks-body.json';
+//     return await d3.json(jsonFile);
+// };
+
+// async function loadOtherData() {
+//     let jsonFile = './data_processing/config/reddit-sentiment-analysis.json';
+//     return await d3.json(jsonFile);
 
 function drawSummaryView(data) {
     readabilityViolinPlot = new ReadabilityViolinPlot(data);
