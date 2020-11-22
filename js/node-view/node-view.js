@@ -28,7 +28,7 @@ class NodeView {
       this.gamingSubreddits
     );
 
-    this.updateFun = this.extendUpdateFun(updateFun);
+    // this.updateFun = this.extendUpdateFun(updateFun);
     this.networkPlot = new NetworkPlot(
       "#node",
       1000,
@@ -36,7 +36,7 @@ class NodeView {
       this.gamingOnlyNodes,
       this.gamingOnlyLinks,
       this.colorScale,
-      this.updateFun
+      updateFun
     );
   }
 
@@ -59,7 +59,8 @@ class NodeView {
   }
 
   updatePlots(selection) {
-    this.nodePlot.draw(selection);
+    this.networkPlot.updateSelectedSubreddit(selection);
+    this.nodePlot.updatePlot(selection);
   }
   /** Flatten data so each entry in list corresponds to one post */
   unnestData(data) {

@@ -62,20 +62,16 @@ class NetworkPlot {
         d3.select("#value").text(val);
         this.trimLinks(val);
       });
-    
-    let added = 
-    this.root
+
+    let added = this.root
       .append("g")
       .call(slider)
       // .attr("stroke", "black")
-      .attr("transform", "translate(30,55)")
+      .attr("transform", "translate(30,55)");
 
-    added.selectAll("text").attr("fill", "black")
+    added.selectAll("text").attr("fill", "black");
 
-    added
-      .append("text")
-      .attr("y", -10)
-      .text("Minimum #hyperlinks");
+    added.append("text").attr("y", -10).text("Minimum #hyperlinks");
 
     // d3.select("#slider")
     //   .style("position", "absolute")
@@ -231,13 +227,17 @@ class NetworkPlot {
 
     this.circles
       .selectAll("circle")
-      .on("mouseenter", (event, d) => this.highlightRegion(d, this));
+      .on("mouseenter", (event, d) => this.highlightRegion(d.id, this));
 
-    this.circles.selectAll("circle").on("click", (event, d) => {
-      this.activeSubreddit = d.id;
-      this.clearCircleHighlights();
-      this.updateFun(d.id);
-    });
+    this.circles
+      .selectAll("circle")
+      .on("click", (event, d) => this.updateFun(d.id));
+
+    // this.circles.selectAll("circle").on("click", (event, d) => {
+    //   this.activeSubreddit = d.id;
+    //   this.clearCircleHighlights();
+    //   this.updateFun(d.id);
+    // });
 
     this.circles
       .append("text")
@@ -266,6 +266,12 @@ class NetworkPlot {
     // });
     // this.root.on("mouseover", e => this.reHighlightRegion(this));
     // this.root.on("mouseover", (e) => this.clearHighlights());
+  }
+
+  updateSelectedSubreddit(selection) {
+    this.activeSubreddit = selection;
+    this.highlightRegion(selection, this);
+    this.clearCircleHighlights();
   }
 
   removeUnconnectedNodes(nodes, links) {
@@ -311,7 +317,7 @@ class NetworkPlot {
     return d3.scaleLinear().domain([minimum, maximum]).range([3, 8]);
   }
 
-  highlightRegion(event, view) {
+  highlightRegion(selection, view) {
     this.clearHighlights();
     this.circles
       .filter((d) =>
@@ -321,7 +327,7 @@ class NetworkPlot {
       .filter((circle) => circle.id !== this.activeSubreddit)
       .style("opacity", 0.6);
 
-    let selectedNode = event.id;
+    let selectedNode = selection;
     this.paths
       .filter((d) => d.mentions >= this.minMentions)
       .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode)

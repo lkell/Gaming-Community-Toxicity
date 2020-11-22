@@ -51,7 +51,7 @@ Promise.all([
     readabilityViolinPlot.draw(defaultSubreddit);
   
 //   Node View
-    let nodeView = new NodeView(data, updateSelectedSubreddit);
+    nodeView = new NodeView(data, updateSelectedSubreddit);
     nodeView.drawPlots();
   
 //   Ranked View
@@ -60,6 +60,8 @@ Promise.all([
   
     rankedTable.drawTable();
     rankedTimeSeries.drawTimeSeries();
+    
+    updateSelectedSubreddit("leagueoflegends");
 
     switchView('.home-view')
 });
@@ -88,6 +90,8 @@ function updateSelectedSubreddit(selection) {
     violinPlot.draw(selection);
     postsLineChart.draw(selection);
     readabilityViolinPlot.draw(selection);
+    nodeView.updatePlots(selection);
+    $('#subreddit-dropdown-container').find("button").text(selection);
 }
 
 function flattenValues(data, column) {
@@ -223,7 +227,6 @@ function setupDropDown(data, eventFun) {
     // https://stackoverflow.com/questions/45854862/selected-value-in-drop-down-returning-undefined-in-javascript
     $('#subreddit-dropdown-container').find('a').click(event => {
       let selection = event.target.innerText;
-      $('#subreddit-dropdown-container').find("button").text(selection);
       eventFun(selection);
      })
 }

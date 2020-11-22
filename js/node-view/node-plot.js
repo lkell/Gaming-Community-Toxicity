@@ -112,6 +112,7 @@ class NodePlot {
     nodes = this.addNodeAttributes(nodes, this.activeSubreddit, this);
     links = this.addLinkAttributes(links, nodes);
 
+
     this.paths = this.root
       .append("g")
       .attr("fill", "none")
