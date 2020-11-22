@@ -11,7 +11,7 @@ class NetworkPlot {
       .attr("overflow", "scroll");
 
     this.nodes = nodes;
-    this.nodes = this.removeUnconnectedNodes(nodes, links);
+    // this.nodes = this.removeUnconnectedNodes(nodes, links);
     this.links = links;
     this.shiftX = 255;
     this.shiftY = 310;
@@ -25,12 +25,109 @@ class NetworkPlot {
 
     this.unselectedPathOpacity = 0.07;
 
+    this.minMentions = 0;
+    this.connectedNodes = this.nodes.map((node) => node.id);
+
     this.setupPlot();
   }
 
   setupPlot() {
     this.addTitle();
     this.addLegend();
+    this.setupSlider();
+  }
+
+  setupSlider() {
+    // https://github.com/johnwalley/d3-simple-slider
+    d3.select("#node")
+      .append("div")
+      .attr("id", "slider")
+      // .style("background-color", "darkgrey")
+      // .style("background-color", "lightblue")
+      // .classed("col-sm", true);
+      .style("opacity", 0.5);
+    d3.select("body").append("div").attr("id", "value");
+
+    var slider = d3
+      .sliderHorizontal()
+      .min(1)
+      .max(24)
+      .step(1)
+      .width(200)
+      .height(60)
+      .fill("lightblue")
+      .displayValue(false)
+      // .tickPadding("2px")
+      .on("onchange", (val) => {
+        d3.select("#value").text(val);
+        this.trimLinks(val);
+      });
+    
+    let added = 
+    this.root
+      .append("g")
+      .call(slider)
+      // .attr("stroke", "black")
+      .attr("transform", "translate(30,55)")
+
+    added.selectAll("text").attr("fill", "black")
+
+    added
+      .append("text")
+      .attr("y", -10)
+      .text("Minimum #hyperlinks");
+
+    // d3.select("#slider")
+    //   .style("position", "absolute")
+    //   .style("left", "0px")
+    //   .style("top", "500px")
+    //   .append("svg")
+    //   .attr("width", 260)
+    //   .attr("height", 90)
+    //   .append("g")
+    //   .attr("transform", "translate(30,50)")
+    //   .call(slider)
+    //   .append("text")
+    //   .attr("y", -20)
+    //   .text("Minimum #hyperlinks")
+  }
+
+  trimLinks(minMentions) {
+    this.minMentions = minMentions;
+    this.paths.filter((d) => d.mentions < this.minMentions).style("opacity", 0);
+    this.paths
+      .filter((d) => d.mentions >= minMentions)
+      .style("opacity", this.unselectedPathOpacity);
+    let allowedLinks = this.links.filter(
+      (link) => link.mentions >= this.minMentions
+    );
+    let outNodes = allowedLinks.map((d) => d.target.id);
+    let inNodes = allowedLinks.map((d) => d.source.id);
+    this.connectedNodes = outNodes.concat(inNodes);
+    console.log(this.connectedNodes[0]);
+    this.circles
+      .filter(
+        (d) =>
+          !this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
+      .style("opacity", 0);
+    this.circles
+      .filter((d) =>
+        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
+      .style("opacity", 1);
+    // let removeCircles = this.circles.filter(
+    //   (d) => !this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+    // );
+    // removeCircles.style("opacity", 0)
+    // removeCircles.selectAll("circle").style("opacity", 0);
+    // removeCircles.selectAll("text").style("opacity", 0);
+
+    // let keepCircles = this.circles.filter((d) =>
+    //   this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+    // );
+    // keepCircles.selectAll("circle").style("opacity", 0.6);
+    // keepCircles.selectAll("text").style("opacity", 1);
   }
 
   makeColorScale() {
@@ -134,12 +231,12 @@ class NetworkPlot {
 
     this.circles
       .selectAll("circle")
-      .on("mouseenter", (event) => this.highlightRegion(event, this));
+      .on("mouseenter", (event, d) => this.highlightRegion(d, this));
 
-    this.circles.selectAll("circle").on("click", (event) => {
-      this.activeSubreddit = event.id;
+    this.circles.selectAll("circle").on("click", (event, d) => {
+      this.activeSubreddit = d.id;
       this.clearCircleHighlights();
-      this.updateFun(event.id);
+      this.updateFun(d.id);
     });
 
     this.circles
@@ -217,16 +314,23 @@ class NetworkPlot {
   highlightRegion(event, view) {
     this.clearHighlights();
     this.circles
+      .filter((d) =>
+        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
       .selectAll("circle")
       .filter((circle) => circle.id !== this.activeSubreddit)
       .style("opacity", 0.6);
 
     let selectedNode = event.id;
     this.paths
+      .filter((d) => d.mentions >= this.minMentions)
       .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode)
       .style("opacity", 1);
 
     this.circles
+      .filter((d) =>
+        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
       .filter((d) => d.id == selectedNode)
       .selectAll("circle")
       .style("opacity", 100)
@@ -240,16 +344,23 @@ class NetworkPlot {
     }
     this.clearHighlights();
     this.circles
+      .filter((d) =>
+        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
       .selectAll("circle")
       .filter((circle) => circle.id !== this.activeSubreddit)
       .style("opacity", 0.6);
 
     let selectedNode = this.activeSubreddit;
     this.paths
+      .filter((d) => d.mentions >= this.minMentions)
       .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode)
       .style("opacity", 1);
 
     this.circles
+      .filter((d) =>
+        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
       .filter((d) => d.id == selectedNode)
       .selectAll("circle")
       .style("opacity", 100)
@@ -259,12 +370,17 @@ class NetworkPlot {
   }
 
   clearHighlights() {
-    this.paths.style("opacity", this.unselectedPathOpacity);
+    this.paths
+      .filter((d) => d.mentions >= this.minMentions)
+      .style("opacity", this.unselectedPathOpacity);
     this.clearCircleHighlights();
   }
 
   clearCircleHighlights() {
     this.circles
+      .filter((d) =>
+        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
       .selectAll("circle")
       .filter((circle) => circle.id !== this.activeSubreddit)
       .attr("stroke", "black")

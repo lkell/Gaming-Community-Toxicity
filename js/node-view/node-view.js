@@ -31,7 +31,7 @@ class NodeView {
     this.updateFun = this.extendUpdateFun(updateFun);
     this.networkPlot = new NetworkPlot(
       "#node",
-      950,
+      1000,
       600,
       this.gamingOnlyNodes,
       this.gamingOnlyLinks,
@@ -44,27 +44,6 @@ class NodeView {
     let targets = data.map((d) => d.TARGET_SUBREDDIT);
     let sources = data.map((d) => d.SOURCE_SUBREDDIT);
     return [...new Set(targets.concat(sources))];
-  }
-
-  /** Populate dropdown list and add event listener */
-  setupDropDown() {
-    let dropDown = document.getElementById("dropdown-items");
-    console.log(dropDown);
-
-    for (let subreddit of this.gamingSubreddits) {
-      let option = document.createElement("a");
-      option.text = subreddit;
-      option.setAttribute("class", "dropdown-item");
-      option.setAttribute("href", "#");
-      dropDown.appendChild(option);
-    }
-
-    // https://stackoverflow.com/questions/45854862/selected-value-in-drop-down-returning-undefined-in-javascript
-    $('#subreddit-dropdown-container').find('a').click(event => {
-      let selection = event.target.innerText;
-      $('#subreddit-dropdown-container').find("button").text(selection);
-      this.updateFun(selection);
-    })
   }
 
   extendUpdateFun(updateFun) {
@@ -97,8 +76,9 @@ class NodeView {
   createNodeData(links, subreddits) {
     let getRelatedLinks = function (subreddit) {
       let outbound = links.filter((link) => link.source == subreddit);
-      let inbound = links.filter((link) => link.target == subreddit);
-      return outbound.concat(inbound);
+      return outbound;
+      // let inbound = links.filter((link) => link.target == subreddit);
+      // return outbound.concat(inbound);
     };
 
     return subreddits.map(function (subreddit) {

@@ -37,7 +37,7 @@ class NodePlot {
     // https://stackoverflow.com/questions/26709969/call-javascript-function-onchange-event-of-dropdown-list
     this.addDropDown();
     let dropdown = d3.select(".nodeSelection");
-    console.log(dropdown);
+    dropdown.style("opacity", 0);
     let plot = this;
     $(".nodeSelection").change(function () {
       let selection = $(this).val();
@@ -87,6 +87,8 @@ class NodePlot {
   draw() {
     if (this.isDrawn) {
       this.clearPlot();
+    } else {
+      d3.select(".nodeSelection").style("opacity", 1);
     }
     this.addTitle(this.activeSubreddit);
 
@@ -133,12 +135,12 @@ class NodePlot {
       .selectAll("g")
       .data(nodes)
       .join("g")
-      .on("mouseenter", (d) =>
+      .on("mouseenter", (event, d) =>
         d3
           .select("#node-view-tooltip")
           .style("opacity", 1)
-          .style("left", d3.event.pageX + 20 + "px")
-          .style("top", d3.event.pageY - 40 + "px")
+          .style("left", event.pageX + 20 + "px")
+          .style("top", event.pageY - 40 + "px")
           .html(this.toolTipRender(d, links))
       )
       .on("mouseleave", () =>
@@ -207,7 +209,6 @@ class NodePlot {
   filterLinks(selected) {
     let links = JSON.parse(JSON.stringify(this.links));
     let outgoing = links.filter((link) => link.source == selected);
-    console.log(links);
 
     if (this.sortTargetsBy === "mentions") {
       outgoing = outgoing.sort((a, b) => b.mentions - a.mentions);
