@@ -16,7 +16,7 @@ class NodeView {
       this.gamingSubreddits
     );
 
-    this.updateFun = this.extendUpdateFun(updateFun);
+    this.colorScale =  d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
 
     this.nodePlot = new NodePlot(
       "#node-summary",
@@ -24,19 +24,20 @@ class NodeView {
       600,
       this.nodes,
       this.links,
+      this.colorScale,
       this.gamingSubreddits
     );
 
+    this.updateFun = this.extendUpdateFun(updateFun);
     this.networkPlot = new NetworkPlot(
       "#node",
       950,
       600,
       this.gamingOnlyNodes,
       this.gamingOnlyLinks,
-      updateFun
+      this.colorScale,
+      this.updateFun
     );
-
-    // this.setupDropDown();
   }
 
   makeSubredditList(data) {
@@ -70,7 +71,7 @@ class NodeView {
     let nodePlot = this.nodePlot;
     return function (selection) {
       updateFun(selection);
-      nodePlot.draw(selection);
+      nodePlot.updatePlot(selection);
     };
   }
 

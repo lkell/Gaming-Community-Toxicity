@@ -1,7 +1,8 @@
 class NodePlot {
-  constructor(root, width, height, nodes, links) {
+  constructor(root, width, height, nodes, links, colorScale, gamingSubreddits) {
     this.width = width;
     this.height = height;
+    this.center = [this.width / 2, this.height / 2];
     this.parent = root;
     this.root = d3
       .select(root)
@@ -18,21 +19,31 @@ class NodePlot {
 
     this.radius = 180;
 
-    this.minLinks = 10;
     this.nodes = JSON.parse(JSON.stringify(nodes));
     this.links = JSON.parse(JSON.stringify(links));
-    this.shiftX = 0;
+    this.widthScale = this.makeStrokeWidthScale(this.links);
+    this.colorScale = colorScale;
+
     this.circles;
     this.paths;
-    this.widthScale = this.makeStrokeWidthScale(this.links);
-    this.colorScale = this.makeColorScale();
 
     this.isDrawn = false;
+    this.sortTargetsBy = "mentions";
+
+    this.setupDropDown();
   }
 
-  makeColorScale() {
-    return d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
-
+  setupDropDown() {
+    // https://stackoverflow.com/questions/26709969/call-javascript-function-onchange-event-of-dropdown-list
+    this.addDropDown();
+    let dropdown = d3.select(".nodeSelection");
+    console.log(dropdown);
+    let plot = this;
+    $(".nodeSelection").change(function () {
+      let selection = $(this).val();
+      plot.sortTargetsBy = selection;
+      plot.draw();
+    });
   }
 
   addDropDown() {
@@ -43,17 +54,16 @@ class NodePlot {
       .classed("nodeSelection", true);
     dropdown
       .append("option")
-      .attr("value", "activity")
+      .attr("value", "mentions")
       .text("Number of mentions");
     dropdown
       .append("option")
-      .attr("value", "sentiment")
+      .attr("value", "positivity")
       .text("Positive sentiment");
     dropdown
       .append("option")
-      .attr("value", "sentiment")
+      .attr("value", "negativity")
       .text("Negative sentiment");
-
   }
 
   addTitle(activeSubreddit) {
@@ -69,13 +79,16 @@ class NodePlot {
       .text(`${activeSubreddit}'s Top Outgoing Subreddits by`);
   }
 
-  draw(activeSubreddit) {
+  updatePlot(activeSubreddit) {
+    this.activeSubreddit = activeSubreddit;
+    this.draw();
+  }
+
+  draw() {
     if (this.isDrawn) {
       this.clearPlot();
-    } else {
-      this.addDropDown();
     }
-    this.addTitle(activeSubreddit);
+    this.addTitle(this.activeSubreddit);
 
     this.root
       .append("defs")
@@ -92,9 +105,9 @@ class NodePlot {
       .style("fill", "#336EFF")
       .attr("stroke", "black");
 
-    let links = this.filterLinks(activeSubreddit, "mentions", "descending");
+    let links = this.filterLinks(this.activeSubreddit);
     let nodes = this.removeUnconnectedNodes(links);
-    nodes = this.addNodeAttributes(nodes, activeSubreddit, this);
+    nodes = this.addNodeAttributes(nodes, this.activeSubreddit, this);
     links = this.addLinkAttributes(links, nodes);
 
     this.paths = this.root
@@ -103,13 +116,13 @@ class NodePlot {
       .selectAll("path")
       .data(links)
       .join("line")
-      .attr("x1", this.width / 2)
-      .attr("y1", this.height / 2)
+      .attr("x1", this.center[0])
+      .attr("y1", this.center[1])
       .attr("x2", (d) => d.x)
       .attr("y2", (d) => d.y)
       .attr("stroke-width", (d) => d.width)
       // .attr("stroke", this.getColor)
-      .attr("stroke", d => this.colorScale(d.sentiment))
+      .attr("stroke", (d) => this.colorScale(d.sentiment))
       .attr("marker-end", "url(#nodeArrow)");
 
     this.circles = this.root
@@ -191,16 +204,19 @@ class NodePlot {
     return d3.scaleLinear().domain([minimum, maximum]).range([3, 50]);
   }
 
-  filterLinks(selected, sortField, sortDirection) {
+  filterLinks(selected) {
     let links = JSON.parse(JSON.stringify(this.links));
     let outgoing = links.filter((link) => link.source == selected);
+    console.log(links);
 
-    if (sortDirection == "descending") {
-      outgoing = outgoing.sort((a, b) => b[sortField] - a[sortField]);
-    } else if (sortDirection == "ascending") {
-      outgoing = outgoing.sort((a, b) => a[sortField] - b[sortField]);
+    if (this.sortTargetsBy === "mentions") {
+      outgoing = outgoing.sort((a, b) => b.mentions - a.mentions);
+    } else if (this.sortTargetsBy === "positivity") {
+      outgoing = outgoing.sort((a, b) => b.sentiment - a.sentiment);
+    } else if (this.sortTargetsBy === "negativity") {
+      outgoing = outgoing.sort((a, b) => a.sentiment - b.sentiment);
     } else {
-      throw "`sortDirection` must be 'ascending' or 'descending'";
+      throw "`sortTargetsBy` must be one of 'mentions', 'positivity', 'negativity'";
     }
     return outgoing.slice(0, 10);
   }
@@ -216,16 +232,16 @@ class NodePlot {
     let adjust = Math.PI / 5;
     for (let i in nodes) {
       if (nodes[i].id == selected) {
-        nodes[i].x = this.width / 2;
-        nodes[i].y = this.height / 2;
+        nodes[i].x = this.center[0];
+        nodes[i].y = this.center[1];
         nodes[i].selected = true;
         nodes[i].radius = 55;
         nodes[i].class = "selectedNode";
         nodes[i].font = 14;
         nodes[i].displayName = nodes[i].id;
       } else {
-        nodes[i].x = this.width / 2 + this.radius * Math.cos(angle);
-        nodes[i].y = this.height / 2 + this.radius * Math.sin(angle);
+        nodes[i].x = this.center[0] + this.radius * Math.cos(angle);
+        nodes[i].y = this.center[1] + this.radius * Math.sin(angle);
         nodes[i].selected = false;
         nodes[i].radius = 40;
         nodes[i].class = "otherNode";

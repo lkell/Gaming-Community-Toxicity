@@ -1,5 +1,5 @@
 class NetworkPlot {
-  constructor(root, width, height, nodes, links, updateFun) {
+  constructor(root, width, height, nodes, links, colorscale, updateFun) {
     this.width = width;
     this.height = height;
     this.root = d3
@@ -19,7 +19,7 @@ class NetworkPlot {
     this.paths;
     this.activeSubreddit;
 
-    this.colorScale = this.makeColorScale();
+    this.colorScale = colorscale;
 
     this.updateFun = updateFun;
 
@@ -34,7 +34,6 @@ class NetworkPlot {
   }
 
   makeColorScale() {
-    // return d3.scaleSequential(d3.interpolateViridis).domain([1, -1]);
     return d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
   }
 
