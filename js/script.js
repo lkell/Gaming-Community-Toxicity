@@ -2,10 +2,12 @@ let globalData;
 
 Promise.all([
     d3.json('./data_processing/config/reddit-hyperlinks-body.json'),
-    d3.json('./data_processing/config/reddit-sentiment-analysis.json'),
+    d3.json('./data_processing/config/reddit-hot-comment-sentiment-analysis.json'),
+    d3.json('./data_processing/config/reddit-controversial-comment-sentiment-analysis.json'),
 ]).then(files => {
     let data = files[0];
-    let otherData = files[1];
+    let hotCommentData = files[1];
+    let controversialCommentData = files[2];
     Object.keys(data).forEach(function(subreddit) {
             Object.keys(data[subreddit]).forEach(function(postId) {
                 Object.keys(data[subreddit][postId]).forEach(function(column) {
@@ -16,28 +18,30 @@ Promise.all([
                 data[subreddit][postId]['TIMESTAMP'] = new Date(data[subreddit][postId]['TIMESTAMP'])
             })
         });
-    Object.keys(otherData).forEach(function(subreddit) {
-            Object.keys(otherData[subreddit]).forEach(function(postId) {
-                Object.keys(otherData[subreddit][postId]).forEach(function(column) {
+    Object.keys(hotCommentData).forEach(function(subreddit) {
+            Object.keys(hotCommentData[subreddit]).forEach(function(postId) {
+                Object.keys(hotCommentData[subreddit][postId]).forEach(function(column) {
                     if ((column != 'timestamp') && (column != 'TARGET_SUBREDDIT')) {
-                        otherData[subreddit][postId][column] = +otherData[subreddit][postId][column]
+                        hotCommentData[subreddit][postId][column] = +hotCommentData[subreddit][postId][column]
                     }
                 })
-                otherData[subreddit][postId]['TIMESTAMP'] = new Date(otherData[subreddit][postId]['timestamp'])
+                hotCommentData[subreddit][postId]['TIMESTAMP'] = new Date(hotCommentData[subreddit][postId]['timestamp'])
             })
         });
 
     d3.selectAll(".load-notifier").classed("hidden", true)
 
     console.log(data)
-    console.log(otherData)
+    console.log(hotCommentData)
+    console.log(controversialCommentData)
+
     addNavigation();
     globalData = data;
 
 //   Summary View
-    readabilityViolinPlot = new ReadabilityViolinPlot(otherData);
+    readabilityViolinPlot = new ReadabilityViolinPlot(controversialCommentData);
     postsLineChart = new PostsLineChart(data);
-    violinPlot = new ViolinPlot(otherData);  
+    violinPlot = new ViolinPlot(controversialCommentData);  
     let defaultSubreddit = 'leagueoflegends';
   
     violinPlot.draw(defaultSubreddit);
