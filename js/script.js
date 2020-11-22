@@ -39,6 +39,7 @@ Promise.all([
     globalData = data;
 
 //   Summary View
+
     readabilityViolinPlot = new ReadabilityViolinPlot(controversialCommentData);
     postsLineChart = new PostsLineChart(data);
     violinPlot = new ViolinPlot(controversialCommentData);  
