@@ -16,9 +16,9 @@ loadData().then(data => {
     globalData = data;
 
 //   Summary View
-    let sentimentBreakout = new SentimentBreakout(data);
-    let postsLineChart = new PostsLineChart(data);
-    let violinPlot = new ViolinPlot(data);  
+    sentimentBreakout = new SentimentBreakout(data);
+    postsLineChart = new PostsLineChart(data);
+    violinPlot = new ViolinPlot(data);
     let defaultSubreddit = 'leagueoflegends';
   
     violinPlot.draw(defaultSubreddit);
