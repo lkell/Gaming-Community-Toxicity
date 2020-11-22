@@ -27,6 +27,7 @@ class PostsLineChart {
 		let tsArray = flattenValues(this.data, 'TIMESTAMP');
 		let dateMin = d3.min(tsArray);
 		let dateMax = d3.max(tsArray);
+		console.log(dateMin, dateMax)
 		return d3.scaleTime()
 			.domain([dateMin, dateMax])
 			.range([this.xMargin, this.width - this.xMargin]);

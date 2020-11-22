@@ -40,6 +40,7 @@ class ReadabilityViolinPlot {
 	}
 
 	createYScale(data) {
+        console.log('readability', d3.max(this.plotInfo.kdedata, function (d) {return d.y;}))
 		return d3.scaleLinear()
             .range([this.yMargin / 2, this.height / 2])
             .domain([d3.min(this.plotInfo.kdedata, function (d) {return d.y;}), d3.max(this.plotInfo.kdedata, function (d) {return d.y;})])

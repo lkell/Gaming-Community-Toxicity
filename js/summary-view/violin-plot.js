@@ -40,9 +40,12 @@ class ViolinPlot {
 	}
 
 	createYScale(data) {
+        console.log('sentiment', d3.max(this.plotInfo.kdedata, function (d) {return d.y;}))
+        console.log('sentiment', d3.min(this.plotInfo.kdedata, function (d) {return d.y;}))
 		return d3.scaleLinear()
             .range([this.yMargin / 2, this.height / 2])
-            .domain([d3.min(this.plotInfo.kdedata, function (d) {return d.y;}), d3.max(this.plotInfo.kdedata, function (d) {return d.y;})])
+            // .domain([d3.min(this.plotInfo.kdedata, function (d) {return d.y;}), d3.max(this.plotInfo.kdedata, function (d) {return d.y;})])
+            .domain([0, 8])
             .clamp(true);
 	}
 
