@@ -65,7 +65,7 @@ div.tooltip {
 	grid-row: 9/13;
 }
 
-#summary-view-sentiment-card {
+#summary-view-readability-violin-card {
 	grid-column: 11/15;
 	grid-row: 9/13;
 }
@@ -94,6 +94,15 @@ div.tooltip {
 }
 
 #summary-violin-quartile-box {
+	fill: #FF8b60;
+	opacity: 0.5;
+}
+
+#summary-readability-violin-median {
+	fill: red;
+}
+
+#summary-readability-violin-quartile-box {
 	fill: #FF8b60;
 	opacity: 0.5;
 }
@@ -168,3 +177,39 @@ body {
 	overflow-x: hidden;
 }
 
+/* Node/network styles */
+.selectedNode {
+	stroke: #FF8b60;
+	fill: white
+}
+
+.otherNode {
+	stroke: #9494FF;
+	fill: white
+}
+
+.hidden {
+	opacity: 0
+}
+
+#node {
+  height: 600;
+  width: 950px;
+  overflow: scroll;
+}
+
+/* https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg */
+.nodeSelection {
+    position: absolute;
+    width: 190px;
+    top:40px;
+    left:25px;
+}
+
+.network-plot {
+	background-color: darkgrey
+}
+
+.node-plot {
+	background-color: darkgrey
+}

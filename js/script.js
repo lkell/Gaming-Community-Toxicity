@@ -1,6 +1,13 @@
 let globalData;
 
-loadData().then(data => {
+Promise.all([
+    d3.json('./data_processing/config/reddit-hyperlinks-body.json'),
+    d3.json('./data_processing/config/reddit-hot-comment-sentiment-analysis.json'),
+    d3.json('./data_processing/config/reddit-controversial-comment-sentiment-analysis.json'),
+]).then(files => {
+    let data = files[0];
+    let hotCommentData = files[1];
+    let controversialCommentData = files[2];
     Object.keys(data).forEach(function(subreddit) {
             Object.keys(data[subreddit]).forEach(function(postId) {
                 Object.keys(data[subreddit][postId]).forEach(function(column) {
@@ -11,19 +18,36 @@ loadData().then(data => {
                 data[subreddit][postId]['TIMESTAMP'] = new Date(data[subreddit][postId]['TIMESTAMP'])
             })
         });
+    Object.keys(hotCommentData).forEach(function(subreddit) {
+            Object.keys(hotCommentData[subreddit]).forEach(function(postId) {
+                Object.keys(hotCommentData[subreddit][postId]).forEach(function(column) {
+                    if ((column != 'timestamp') && (column != 'TARGET_SUBREDDIT')) {
+                        hotCommentData[subreddit][postId][column] = +hotCommentData[subreddit][postId][column]
+                    }
+                })
+                hotCommentData[subreddit][postId]['TIMESTAMP'] = new Date(hotCommentData[subreddit][postId]['timestamp'])
+            })
+        });
+
+    d3.selectAll(".load-notifier").classed("hidden", true)
+
     console.log(data)
+    console.log(hotCommentData)
+    console.log(controversialCommentData)
+
     addNavigation();
     globalData = data;
 
 //   Summary View
-    sentimentBreakout = new SentimentBreakout(data);
+
+    readabilityViolinPlot = new ReadabilityViolinPlot(controversialCommentData);
     postsLineChart = new PostsLineChart(data);
-    violinPlot = new ViolinPlot(data);
+    violinPlot = new ViolinPlot(controversialCommentData);  
     let defaultSubreddit = 'leagueoflegends';
   
     violinPlot.draw(defaultSubreddit);
     postsLineChart.draw(defaultSubreddit);
-    sentimentBreakout.draw(defaultSubreddit);
+    readabilityViolinPlot.draw(defaultSubreddit);
   
 //   Node View
     let nodeView = new NodeView(data, updateSelectedSubreddit);
@@ -39,26 +63,30 @@ loadData().then(data => {
     switchView('.home-view')
 });
 
-async function loadData() {
-    let jsonFile = './data_processing/config/reddit-hyperlinks-body.json';
-    return await d3.json(jsonFile);
-};
+// async function loadData() {
+//     let jsonFile = './data_processing/config/reddit-hyperlinks-body.json';
+//     return await d3.json(jsonFile);
+// };
+
+// async function loadOtherData() {
+//     let jsonFile = './data_processing/config/reddit-sentiment-analysis.json';
+//     return await d3.json(jsonFile);
 
 function drawSummaryView(data) {
-    sentimentBreakout = new SentimentBreakout(data);
+    readabilityViolinPlot = new ReadabilityViolinPlot(data);
     postsLineChart = new PostsLineChart(data);
     violinPlot = new ViolinPlot(data);
 
     let defaultSubreddit = 'leagueoflegends';
     violinPlot.draw(defaultSubreddit);
     postsLineChart.draw(defaultSubreddit);
-    sentimentBreakout.draw(defaultSubreddit);
+    readabilityViolinPlot.draw(defaultSubreddit);
 }
 
 function updateSelectedSubreddit(selection) {
     violinPlot.draw(selection);
     postsLineChart.draw(selection);
-    sentimentBreakout.draw(selection);
+    readabilityViolinPlot.draw(selection);
 }
 
 function flattenValues(data, column) {

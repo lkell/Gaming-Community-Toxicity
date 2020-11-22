@@ -8,12 +8,15 @@
     <script src="https://d3js.org/d3.v5.js"></script>
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script src="https://d3js.org/d3-force.v2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js" integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="styles.css" />
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
+</div>
+</div>
 <nav class="navbar navbar-expand-lg navbar-light bg-white">
     <a class="navbar-brand">Gaming Community Toxicity</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +35,10 @@
             </li>
         </ul>
     </div>
+    <div class="spinner-border text-primary load-notifier" role="status" style="background-color:white">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="load-notifier" style="background-color:white;">   Loading data...</div>
 </nav>
 
 <div class="background-container">
@@ -41,16 +48,26 @@
         Select a subreddit
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-items">
-        <a class="dropdown-item" href="#">Action</a>
-        <a class="dropdown-item" href="#">Another action</a>
-        <a class="dropdown-item" href="#">Something else here</a>
-      </div>
+    </div>
+    <p><strong>or</strong></p>
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="storytellingButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Show me...
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">The most loving subreddit</a>
+            <a class="dropdown-item" href="#">The most loving pair</a>
+            <a class="dropdown-item" href="#">The most negative subreddit</a>
+            <a class="dropdown-item" href="#">The most negative pair</a>
+            <a class="dropdown-item" href="#">The largest clique</a>
+        </div>
+      </button>
+    </div>
     </div>
         <div class="card" id="node"></div>
         <div class="card" id="node-summary"></div>
         <div class="card" id="summary-view-violin-card"></div>
         <div class="card" id="summary-view-post-card"></div>
-        <div class="card" id="summary-view-sentiment-card"></div>
+        <div class="card" id="summary-view-readability-violin-card"></div>
     </div>
     <div class="ranked-view mainView">
         <div class="card" id="ranked-timeseries"></div>
@@ -87,6 +104,7 @@
 <script src="js/summary-view/sentiment-breakout-summary.js"></script>
 <script src="js/summary-view/ts-posts-line-chart.js"></script>
 <script src="js/summary-view/violin-plot.js"></script>
+<script src="js/summary-view/readability-violin-plot.js"></script>
 
 <script src="js/node-view/node-view.js"></script>
 <script src="js/node-view/network-plot.js"></script>

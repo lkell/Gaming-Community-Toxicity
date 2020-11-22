@@ -2,3 +2,4 @@
 **/soc-redditHyperlinks-title.tsv
 *.xml
 *.iml
+*local_user.yaml
