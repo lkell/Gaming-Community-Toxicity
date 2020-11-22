@@ -23,7 +23,7 @@ class NetworkPlot {
 
     this.updateFun = updateFun;
 
-    this.unselectedPathOpacity = 0.04;
+    this.unselectedPathOpacity = 0.07;
 
     this.setupPlot();
   }
@@ -169,7 +169,7 @@ class NetworkPlot {
     //   this.activeSubreddit = null;
     // });
     // this.root.on("mouseover", e => this.reHighlightRegion(this));
-    this.root.on("mouseover", (e) => this.clearHighlights());
+    // this.root.on("mouseover", (e) => this.clearHighlights());
   }
 
   removeUnconnectedNodes(nodes, links) {

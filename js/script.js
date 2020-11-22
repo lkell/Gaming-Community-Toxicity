@@ -27,6 +27,7 @@ Promise.all([
             })
         });
 
+    setupDropDown(data, updateSelectedSubreddit);
     d3.selectAll(".load-notifier").classed("hidden", true)
 
     console.log(data)
@@ -199,4 +200,25 @@ function calcMetrics(values) {
         metrics.upperInnerFence = metrics.max;
     }
     return metrics
+}
+
+function setupDropDown(data, eventFun) {
+    let gamingSubreddits = Object.keys(data)
+    let dropDown = document.getElementById("dropdown-items");
+    console.log(dropDown);
+
+    for (let subreddit of gamingSubreddits) {
+      let option = document.createElement("a");
+      option.text = subreddit;
+      option.setAttribute("class", "dropdown-item");
+      option.setAttribute("href", "#");
+      dropDown.appendChild(option);
+    }
+
+    // https://stackoverflow.com/questions/45854862/selected-value-in-drop-down-returning-undefined-in-javascript
+    $('#subreddit-dropdown-container').find('a').click(event => {
+      let selection = event.target.innerText;
+      $('#subreddit-dropdown-container').find("button").text(selection);
+      eventFun(selection);
+     })
 }

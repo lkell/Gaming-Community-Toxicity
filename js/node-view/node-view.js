@@ -8,11 +8,15 @@ class NodeView {
     this.links = this.createLinkData(this.data);
     this.nodes = this.createNodeData(this.links, this.subreddits);
 
-    this.gamingOnlyLinks = this.links.filter(link => this.gamingSubreddits.includes(link.target))
+    this.gamingOnlyLinks = this.links.filter((link) =>
+      this.gamingSubreddits.includes(link.target)
+    );
     this.gamingOnlyNodes = this.createNodeData(
       this.gamingOnlyLinks,
       this.gamingSubreddits
     );
+
+    this.updateFun = this.extendUpdateFun(updateFun);
 
     this.nodePlot = new NodePlot(
       "#node-summary",
@@ -29,10 +33,10 @@ class NodeView {
       600,
       this.gamingOnlyNodes,
       this.gamingOnlyLinks,
-      this.extendUpdateFun(updateFun)
+      updateFun
     );
 
-    this.populateDropdown();
+    // this.setupDropDown();
   }
 
   makeSubredditList(data) {
@@ -41,7 +45,8 @@ class NodeView {
     return [...new Set(targets.concat(sources))];
   }
 
-  populateDropdown() {
+  /** Populate dropdown list and add event listener */
+  setupDropDown() {
     let dropDown = document.getElementById("dropdown-items");
     console.log(dropDown);
 
@@ -52,6 +57,13 @@ class NodeView {
       option.setAttribute("href", "#");
       dropDown.appendChild(option);
     }
+
+    // https://stackoverflow.com/questions/45854862/selected-value-in-drop-down-returning-undefined-in-javascript
+    $('#subreddit-dropdown-container').find('a').click(event => {
+      let selection = event.target.innerText;
+      $('#subreddit-dropdown-container').find("button").text(selection);
+      this.updateFun(selection);
+    })
   }
 
   extendUpdateFun(updateFun) {
