@@ -10,7 +10,7 @@ class NodeView {
 
     this.subreddits = this.makeSubredditList(this.data);
 
-    this.minLinks = 10;
+    this.minLinks = 0;
     this.links = this.createLinkData(this.data, 0);
     this.nodes = this.createNodeData(this.links, this.subreddits);
 
@@ -26,7 +26,7 @@ class NodeView {
     this.nodePlot = new NodePlot(
       "#node-summary",
       610,
-      500,
+      600,
       this.nodes,
       this.links
     );
@@ -34,7 +34,7 @@ class NodeView {
     this.networkPlot = new NetworkPlot(
       "#node",
       950,
-      500,
+      600,
       this.gamingOnlyNodes,
       this.gamingOnlyLinks,
       this.extendUpdateFun(updateFun)
@@ -50,6 +50,7 @@ class NodeView {
 
   populateDropdown() {
     let dropDown = document.getElementById("dropdown-items");
+    console.log(dropDown)
 
     for (let subreddit of this.gamingSubreddits) {
       let option = document.createElement("a");
@@ -110,7 +111,8 @@ class NodeView {
       .key((d) => d.SOURCE_SUBREDDIT)
       .key((d) => d.TARGET_SUBREDDIT)
       .rollup((v) => ({
-        sentiment: d3.mean(v, (d) => d.LINK_SENTIMENT),
+        // sentiment: d3.mean(v, (d) => d.LINK_SENTIMENT),
+        sentiment: d3.mean(v, (d) => d.CompoundSentiment),
         mentions: v.length,
       }))
       .object(data);

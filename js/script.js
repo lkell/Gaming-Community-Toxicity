@@ -28,6 +28,9 @@ Promise.all([
                 hotCommentData[subreddit][postId]['TIMESTAMP'] = new Date(hotCommentData[subreddit][postId]['timestamp'])
             })
         });
+
+    d3.selectAll(".load-notifier").classed("hidden", true)
+
     console.log(data)
     console.log(hotCommentData)
     console.log(controversialCommentData)
@@ -36,6 +39,7 @@ Promise.all([
     globalData = data;
 
 //   Summary View
+
     readabilityViolinPlot = new ReadabilityViolinPlot(controversialCommentData);
     postsLineChart = new PostsLineChart(data);
     violinPlot = new ViolinPlot(controversialCommentData);  

@@ -187,3 +187,29 @@ body {
 	stroke: #9494FF;
 	fill: white
 }
+
+.hidden {
+	opacity: 0
+}
+
+#node {
+  height: 600;
+  width: 950px;
+  overflow: scroll;
+}
+
+/* https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg */
+.nodeSelection {
+    position: absolute;
+    width: 190px;
+    top:40px;
+    left:25px;
+}
+
+.network-plot {
+	background-color: darkgrey
+}
+
+.node-plot {
+	background-color: darkgrey
+}
