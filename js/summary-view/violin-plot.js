@@ -20,6 +20,7 @@ class ViolinPlot {
 	        .attr('width', this.width + this.xMargin)
 	        .attr('height', this.height + this.yMargin)
 	        .attr('id', 'summary-violin-plot-svg');
+        this.addTitle();
         this.svg.append('circle')
             .attr('id', 'summary-violin-median');
         this.svg.append('rect')
@@ -40,17 +41,15 @@ class ViolinPlot {
 	}
 
 	createYScale(data) {
-        console.log('sentiment', d3.max(this.plotInfo.kdedata, function (d) {return d.y;}))
-        console.log('sentiment', d3.min(this.plotInfo.kdedata, function (d) {return d.y;}))
 		return d3.scaleLinear()
             .range([this.yMargin / 2, this.height / 2])
-            // .domain([d3.min(this.plotInfo.kdedata, function (d) {return d.y;}), d3.max(this.plotInfo.kdedata, function (d) {return d.y;})])
             .domain([0, 8])
             .clamp(true);
 	}
 
 	draw(subreddit) {
         this.subreddit = subreddit;
+        this.changeTitle(subreddit);
 		this.prepareData(subreddit);
 		this.createKdeData();
         this.yScale = this.createYScale();
@@ -101,6 +100,22 @@ class ViolinPlot {
         this.drawMedian();
         
 	}
+
+    addTitle() {
+        d3.select('#summary-violin-plot-svg')
+            .append("text")
+            .classed("title", true)
+            .attr('id', 'summary-violin-title');
+    }
+
+    changeTitle(subreddit) {
+        d3.select('#summary-violin-title')
+            .attr("x", 15)
+            .attr("y", 25)
+            .style("font-size", 15)
+            .attr("text-decoration", "underline")
+            .text("Comment Compound Sentiment of " + subreddit);
+    }
 
 	prepareData(subreddit) {
         this.plotInfo.values = objectToArray(this.data[subreddit]).map(d => d.CompoundSentiment);

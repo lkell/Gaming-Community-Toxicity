@@ -13,6 +13,8 @@ class PostsLineChart {
 	        .attr('width', this.width + 2 * this.xMargin)
 	        .attr('height', this.height + 2 * this.yMargin)
 	        .attr('id', 'summary-post-svg');
+        this.addTitle();
+        this.addYLabel();
     	this.timeScale = this.createTimeScale();
     	this.postScale = this.createPostScale();
         this.tooltip = d3.select('body')
@@ -20,6 +22,8 @@ class PostsLineChart {
             .attr('id', 'summary-view-ts-posts-tooltip')
             .classed('tooltip', true);
         this.initializeLineCharts();
+		this.drawTimeAxis();
+		this.drawPostAxis();
 	}
 
 	// TODO: Figure out why dateMin is is off by ~1 month PJW
@@ -27,7 +31,6 @@ class PostsLineChart {
 		let tsArray = flattenValues(this.data, 'TIMESTAMP');
 		let dateMin = d3.min(tsArray);
 		let dateMax = d3.max(tsArray);
-		console.log(dateMin, dateMax)
 		return d3.scaleTime()
 			.domain([dateMin, dateMax])
 			.range([this.xMargin, this.width - this.xMargin]);
@@ -44,7 +47,7 @@ class PostsLineChart {
 		let postMax = 100
 		return d3.scaleLinear()
 			.domain([postMin, postMax])
-			.range([this.height - this.yMargin, this.yMargin]);
+			.range([this.height - this.yMargin, 3 * this.yMargin]);
 	}
 
 	initializeLineCharts() {
@@ -57,13 +60,11 @@ class PostsLineChart {
 
 	draw(sourceSubreddit) {
 		this.subreddit = sourceSubreddit;
+        this.changeTitle(sourceSubreddit);
 		let that = this;
 		let summaryData = objectToArray(this.data[sourceSubreddit]);
 
 		summaryData = this.groupByYearAndMonth(summaryData);
-
-		this.drawTimeAxis();
-		this.drawPostAxis();
 
 		let postLineGenerator = d3.line()
 			.x(d => this.timeScale(d.key))
@@ -100,6 +101,30 @@ class PostsLineChart {
 
 		
 	}
+
+    addTitle() {
+        d3.select('#summary-post-svg')
+			.append("text")
+			.classed("title", true)
+			.attr('id', 'summary-post-title');
+    }
+
+    changeTitle(subreddit) {
+        d3.select('#summary-post-title')
+            .attr("x", 55)
+            .attr("y", 25)
+            .style("font-size", 15)
+            .attr("text-decoration", "underline")
+            .text("Subreddits Linked by Month by " + subreddit);
+    }
+
+    addYLabel() {
+    	this.svg.append('text')
+		    .attr('class', 'y-label')
+		    .attr('transform', 'translate(15, 175) rotate(-90)')
+		    .style('font-size', 13)
+		    .text('Links');
+    }
 
 	drawTimeAxis() {
 		this.svg.append('g')
