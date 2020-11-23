@@ -20,6 +20,7 @@ class ReadabilityViolinPlot {
 	        .attr('width', this.width + this.xMargin)
 	        .attr('height', this.height + this.yMargin)
 	        .attr('id', 'summary-readability-violin-plot-svg');
+        this.addTitle();
         this.svg.append('circle')
             .attr('id', 'summary-readability-violin-median');
         this.svg.append('rect')
@@ -34,21 +35,21 @@ class ReadabilityViolinPlot {
 
 	createReadabilityScale() {
 		return d3.scaleLinear()
-			.domain([0, 100])
+			.domain([0, 50])
 			.range([this.xMargin / 2, this.width])
 			.clamp(true);
 	}
 
 	createYScale(data) {
-        console.log('readability', d3.max(this.plotInfo.kdedata, function (d) {return d.y;}))
 		return d3.scaleLinear()
             .range([this.yMargin / 2, this.height / 2])
-            .domain([d3.min(this.plotInfo.kdedata, function (d) {return d.y;}), d3.max(this.plotInfo.kdedata, function (d) {return d.y;})])
+            .domain([0, 0.095])
             .clamp(true);
 	}
 
 	draw(subreddit) {
         this.subreddit = subreddit;
+        this.changeTitle(subreddit);
 		this.prepareData(subreddit);
 		this.createKdeData();
         this.yScale = this.createYScale();
@@ -100,6 +101,22 @@ class ReadabilityViolinPlot {
         
 	}
 
+    addTitle() {
+        d3.select('#summary-readability-violin-plot-svg')
+            .append("text")
+            .classed("title", true)
+            .attr('id', 'summary-readability-violin-title');
+    }
+
+    changeTitle(subreddit) {
+        d3.select('#summary-readability-violin-title')
+            .attr("x", 15)
+            .attr("y", 25)
+            .style("font-size", 15)
+            .attr("text-decoration", "underline")
+            .text("Comment AutoReadabilityIndex of " + subreddit);
+    }
+
 	prepareData(subreddit) {
         this.plotInfo.values = objectToArray(this.data[subreddit]).map(d => d.AutoReadabilityIndex);
         this.plotInfo.values.sort(d3.ascending);
@@ -147,7 +164,7 @@ class ReadabilityViolinPlot {
             .call(
                 d3.axisBottom()
                     .scale(this.readabilityScale)
-                    .ticks(3)
+                    .ticks(5)
             )
             .classed('summary-violin-x-axis', true);
 

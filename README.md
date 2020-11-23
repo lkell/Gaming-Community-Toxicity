@@ -9,7 +9,7 @@ Find process book here: https://docs.google.com/document/d/1c6NqrIbZIaTO6lEIoFvR
 For the process book, use template on first page for entries to maintain stylistic consistency.
 
 ## Website Description
-LINK TO GITHUB PAGE HERE
+https://lkell.github.io/Gaming-Community-Toxicity/#
 
 LINK TO SCREENCAST YOUTUBE/VIMEO LINK HERE
 
@@ -40,6 +40,9 @@ Run create_hyperlinks_dataset.py with venv. You will need to download data from 
 
 ### Comment Data
 Run create_comment_dataset.py with venv. You will need to have registered for Reddit API credentials (see local_user.yaml section for instructions). This will output three data sets in the ./data_processing/config/ directory: THREE FILES HERE. This data gets the top 100 posts sorted by hot, top, and controversial, and their associated top-level comments. We then run a VADER analysis on this data using the nltk library (VADER description link: LINK HERE)as well as calculate an automated readability index (description: LINK HERE).
+
+## Data Explanation
+Don't have to run code! Data already provided, code and instructions for if you want to run processing code yourself :)
 
 ## Visualization Code
 Runs from index.html, referencing our ./js/ directory for javascript static files. Stylings can be found in styles.css. Within the ./js/ directory are the node-view, ranked-view, and summary-view directories, as well as our node-plot.js and script.js files.
