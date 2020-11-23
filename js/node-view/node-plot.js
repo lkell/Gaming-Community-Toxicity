@@ -99,7 +99,8 @@ class NodePlot {
       .attr("markerUnits", "userSpaceOnUse")
       .attr("markerHeight", 100)
       .attr("markerWidth", 100)
-      .attr("refX", 60)
+      // .attr("refX", 57)
+      .attr("refX", 80)
       .attr("refY", 5)
       .attr("orient", "auto")
       .append("polygon")
@@ -124,7 +125,6 @@ class NodePlot {
       .attr("x2", (d) => d.x)
       .attr("y2", (d) => d.y)
       .attr("stroke-width", (d) => d.width)
-      // .attr("stroke", this.getColor)
       .attr("stroke", (d) => this.colorScale(d.sentiment))
       .attr("marker-end", "url(#nodeArrow)");
 
