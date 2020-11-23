@@ -5,9 +5,14 @@
     <meta charset="UTF-8">
     <title>Gaming Community Toxicity</title>
     <link rel="icon" href="assets/favicon.png">
-    <script src="https://d3js.org/d3.v5.js"></script>
+    <!-- <script src="https://d3js.org/d3.v5.js"></script> -->
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://d3js.org/d3-collection.v1.min.js"></script>
+
+
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script src="https://d3js.org/d3-force.v2.min.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js" integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="styles.css" />
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,700&display=swap" rel="stylesheet">
@@ -39,19 +44,15 @@
         <span class="sr-only">Loading...</span>
     </div>
     <div class="load-notifier" style="background-color:white;">   Loading data...</div>
-</nav>
-
-<div class="background-container">
-    <div class="home-view mainView">
-    <div class="dropdown">
+    <div class="dropdown" id="subreddit-dropdown-container">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Select a subreddit
       </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-items">
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-items"></div>
     </div>
     <p><strong>or</strong></p>
     <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle" type="button" id="storytellingButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" type="button" id="storytellingButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Show me...
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="#">The most loving subreddit</a>
@@ -62,7 +63,10 @@
         </div>
       </button>
     </div>
-    </div>
+</nav>
+
+<div class="background-container">
+    <div class="home-view mainView">
         <div class="card" id="node"></div>
         <div class="card" id="node-summary"></div>
         <div class="card" id="summary-view-violin-card"></div>

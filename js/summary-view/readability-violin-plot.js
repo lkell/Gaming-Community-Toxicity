@@ -166,11 +166,11 @@ class ReadabilityViolinPlot {
         let that = this;
         this.svg.select('#summary-readability-violin-median')
             .raise()
-            .on('mouseover', function(d) { 
+            .on('mouseover', function(event, d) { 
                 that.tooltip.html(that.medianTooltipRender(that.plotInfo.metrics, that.subreddit))
                     .style('opacity', .9)
-                    .style('left', (d3.event.pageX) + 10 + 'px')
-                    .style('top', (d3.event.pageY) + 10 + 'px');
+                    .style('left', (event.pageX) + 10 + 'px')
+                    .style('top', (event.pageY) + 10 + 'px');
                 }
             )
             .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
@@ -192,11 +192,11 @@ class ReadabilityViolinPlot {
         let that = this;
         this.svg.select('#summary-readability-violin-quartile-box')
             .raise()
-            .on('mouseover', function(d) { 
+            .on('mouseover', function(event, d) { 
                 that.tooltip.html(that.metricsTooltipRender(that.plotInfo.metrics, that.subreddit))
                     .style('opacity', .9)
-                    .style('left', (d3.event.pageX) + 10 + 'px')
-                    .style('top', (d3.event.pageY) + 10 + 'px');
+                    .style('left', (event.pageX) + 10 + 'px')
+                    .style('top', (event.pageY) + 10 + 'px');
                 }
             )
             .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
