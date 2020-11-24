@@ -138,7 +138,6 @@ class NodePlot {
       .attr("markerUnits", "userSpaceOnUse")
       .attr("markerHeight", 100)
       .attr("markerWidth", 100)
-      // .attr("refX", 57)
       .attr("refX", 80)
       .attr("refY", 5)
       .attr("orient", "auto")
@@ -149,7 +148,7 @@ class NodePlot {
 
     let links = this.filterLinks(this.activeSubreddit, this.minLinks);
     let nodes = this.removeUnconnectedNodes(links);
-    nodes = this.addNodeAttributes(nodes, this.activeSubreddit, this);
+    nodes = this.addNodeAttributes(nodes, links, this.activeSubreddit);
     links = this.addLinkAttributes(links, nodes);
 
     this.paths = this.root
@@ -180,7 +179,7 @@ class NodePlot {
           .style("opacity", 1)
           .style("left", event.pageX + 20 + "px")
           .style("top", event.pageY - 40 + "px")
-          .html(this.toolTipRender(d, links))
+          .html(this.toolTipRender(d))
       )
       .on("mouseleave", () =>
         d3.select("#node-view-tooltip").style("opacity", 0)
@@ -212,12 +211,10 @@ class NodePlot {
     this.isDrawn = true;
   }
 
-  toolTipRender(data, links) {
-    let target = data.id;
-    let link = links.find((link) => link.target == target);
+  toolTipRender(data) {
     let header = `<h2><strong>${data.id}</strong></h2>`;
-    let summaryFirstLine = `<p>Mentioned <strong>${link.mentions}</strong> times by ${link.source}`;
-    let summarySecondLine = `<br>with AVG sentiment of <strong>${link.sentiment.toFixed(
+    let summaryFirstLine = `<p>Mentioned <strong>${data.mentions}</strong> times by ${this.activeSubreddit}`;
+    let summarySecondLine = `<br>with AVG sentiment of <strong>${data.sentiment.toFixed(
       2
     )}</strong></p>`;
     return header + summaryFirstLine + summarySecondLine;
@@ -271,31 +268,48 @@ class NodePlot {
     this.isDrawn = false;
   }
 
-  addNodeAttributes(nodes, selected, that) {
+  addNodeAttributes(nodes, links, selected) {
     let angle = 0;
     let adjust = Math.PI / 5;
-    for (let i in nodes) {
-      if (nodes[i].id == selected) {
-        nodes[i].x = this.center[0];
-        nodes[i].y = this.center[1];
-        nodes[i].selected = true;
-        nodes[i].radius = 55;
-        nodes[i].class = "selectedNode";
-        nodes[i].font = 14;
-        nodes[i].displayName = nodes[i].id;
-      } else {
-        nodes[i].x = this.center[0] + this.radius * Math.cos(angle);
-        nodes[i].y = this.center[1] + this.radius * Math.sin(angle);
-        nodes[i].selected = false;
-        nodes[i].radius = 40;
-        nodes[i].class = "otherNode";
-        nodes[i].angle = angle;
-        nodes[i].font = 12;
-        angle += adjust;
-        nodes[i].displayName = this.truncateName(nodes[i].id);
-      }
+
+    let sourceNode = nodes.find((node) => node.id == selected);
+    sourceNode.x = this.center[0];
+    sourceNode.y = this.center[1];
+    sourceNode.selected = true;
+    sourceNode.radius = 55;
+    sourceNode.class = "selectedNode";
+    sourceNode.font = 14;
+    sourceNode.displayName = sourceNode.id;
+
+    let targetNodes = nodes.filter((node) => node.id != selected);
+    for (let targetNode of targetNodes) {
+      let link = links.find((link) => link.target == targetNode.id);
+      targetNode.mentions = link.mentions;
+      targetNode.sentiment = link.sentiment;
     }
-    return nodes;
+    console.log(sourceNode);
+    console.log(targetNodes);
+
+    if (this.sortTargetsBy === "mentions") {
+      targetNodes.sort((a, b) => b.mentions - a.mentions);
+    } else if (this.sortTargetsBy === "positivity") {
+      targetNodes.sort((a, b) => b.sentiment - a.sentiment);
+    } else if (this.sortTargetsBy === "negativity") {
+      targetNodes.sort((a, b) => a.sentiment - b.sentiment);
+    }
+
+    for (let i in targetNodes) {
+      targetNodes[i].x = this.center[0] + this.radius * Math.cos(angle);
+      targetNodes[i].y = this.center[1] + this.radius * Math.sin(angle);
+      targetNodes[i].selected = false;
+      targetNodes[i].radius = 40;
+      targetNodes[i].class = "otherNode";
+      targetNodes[i].angle = angle;
+      targetNodes[i].font = 12;
+      angle += adjust;
+      targetNodes[i].displayName = this.truncateName(nodes[i].id);
+    }
+    return targetNodes.concat(sourceNode);
   }
 
   truncateName(name) {
