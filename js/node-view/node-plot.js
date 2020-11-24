@@ -2,7 +2,7 @@ class NodePlot {
   constructor(root, width, height, nodes, links, colorScale, gamingSubreddits) {
     this.width = width;
     this.height = height;
-    this.center = [this.width / 2, this.height / 2];
+    this.center = [this.width / 2, this.height / 2 + 30];
     this.parent = root;
     this.root = d3
       .select(root)
@@ -30,7 +30,46 @@ class NodePlot {
     this.isDrawn = false;
     this.sortTargetsBy = "mentions";
 
+    this.minLinks = 0;
+
     this.setupDropDown();
+    this.setupSlider();
+  }
+
+  setupSlider() {
+    // https://github.com/johnwalley/d3-simple-slider
+
+    var slider = d3
+      .sliderHorizontal()
+      .min(1)
+      .max(12)
+      .step(1)
+      .width(200)
+      .height(60)
+      .height(30)
+      .fill("lightpink")
+      .displayValue(false)
+      .on("onchange", (val) => {
+        this.minLinks = val;
+        this.draw();
+      });
+
+    let sliderElem = this.root
+      .append("g")
+      .call(slider)
+      .attr("transform", "translate(350,55)");
+
+    sliderElem.selectAll("text").attr("fill", "black");
+
+    sliderElem
+      .append("text")
+      .attr("y", -10)
+      .attr("x", 105)
+      .attr("font-size", 12)
+      .attr("text-anchor", "middle")
+      .text("Minimum #hyperlinks");
+
+    console.log(sliderElem);
   }
 
   setupDropDown() {
@@ -108,11 +147,10 @@ class NodePlot {
       .style("fill", "#336EFF")
       .attr("stroke", "black");
 
-    let links = this.filterLinks(this.activeSubreddit);
+    let links = this.filterLinks(this.activeSubreddit, this.minLinks);
     let nodes = this.removeUnconnectedNodes(links);
     nodes = this.addNodeAttributes(nodes, this.activeSubreddit, this);
     links = this.addLinkAttributes(links, nodes);
-
 
     this.paths = this.root
       .append("g")
@@ -191,8 +229,10 @@ class NodePlot {
     let inNodes = links.map((d) => d.source);
     let connectedNodes = outNodes.concat(inNodes);
 
-    return nodes.filter((node) =>
-      connectedNodes.some((connectedNode) => connectedNode == node.id)
+    return nodes.filter(
+      (node) =>
+        connectedNodes.some((connectedNode) => connectedNode == node.id) ||
+        node.id == this.activeSubreddit
     );
   }
 
@@ -209,7 +249,9 @@ class NodePlot {
 
   filterLinks(selected) {
     let links = JSON.parse(JSON.stringify(this.links));
-    let outgoing = links.filter((link) => link.source == selected);
+    let outgoing = links.filter(
+      (link) => link.source == selected && link.mentions >= this.minLinks
+    );
 
     if (this.sortTargetsBy === "mentions") {
       outgoing = outgoing.sort((a, b) => b.mentions - a.mentions);
