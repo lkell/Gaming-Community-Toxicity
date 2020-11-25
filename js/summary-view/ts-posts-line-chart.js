@@ -78,7 +78,7 @@ class PostsLineChart {
                 that.tooltip.html(that.postsTooltipRender(d, that.subreddit))
                     .style('opacity', .9)
                     .style('left', (event.pageX) + 10 + 'px')
-                    .style('top', (event.pageY) + 10 + 'px');
+                    .style('top', (event.pageY) - 50 + 'px');
                 }
             )
             .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
