@@ -1,24 +1,23 @@
 /*General fonts and styles based on Reddit*/
 * {
 	font-family: Verdana, Geneva, sans-serif;
-	background-color: #DAE0E6;
+	background-color: #272727;
 }
 
-.background-container {
+.background-container, .loading-container {
 	display: grid;
-	background-color: #DAE0E6;
+	background-color: #272727;
 	grid-auto-rows: minmax(36px, auto);
+	color: white;
 }
 
-
-.card {
-	background-color: white;
-	border-radius: 4px;
-	border: 1px solid #ccc;
+#dropdownMenuButton, #dropdown-items, #storytellingButton {
+	border-radius: 0 !important;
 }
 
 svg {
-	background-color: white;
+	background-color: #6c757d!important;
+	color: white;
 }
 
 div.tooltip {
@@ -39,14 +38,14 @@ div.tooltip {
 .home-view {
 	display: none;
 	padding:10px;
-	background-color: #DAE0E6;
+	background-color: #272727;
 	grid-template-columns: repeat(15, 1fr);
 	grid-gap: 10px;
 	grid-auto-rows: minmax(36px, auto);
 }
 
 #node {
-	grid-column: 2/10;
+	grid-column: 2/11;
 	grid-row: 1/9;
 }
 
@@ -122,7 +121,7 @@ div.tooltip {
 .ranked-view {
 	display: none;
 	padding:10px;
-	background-color: #DAE0E6;
+	background-color: #272727;
 	grid-template-columns: repeat(15, 1fr);
 	grid-gap: 10px;
 	grid-auto-rows: minmax(36px, auto);
@@ -132,16 +131,21 @@ div.tooltip {
 #ranked-timeseries {
 	grid-column: 2/15;
 	grid-row: 1/7;
+	background: none;
+	border: 0;
 }
 
 #ranked-density {
 	grid-column: 2/15;
 	grid-row: 7/20;
+	background: none;
+	border: 0;
 }
 
 tr,td,th {
-	background-color: white;
+	background-color: #6c757d;
 	text-align: center;
+	color: white;
 }
 
 .subreddit{
@@ -193,9 +197,9 @@ body {
 }
 
 #node {
-  height: 600;
+  height: 600px;
   width: 950px;
-  overflow: scroll;
+  /* overflow: scroll; */
 }
 
 /* https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg */
@@ -206,10 +210,26 @@ body {
     left:25px;
 }
 
-.network-plot {
-	background-color: darkgrey
+/*.network-plot {*/
+/*	background-color: darkgrey*/
+/*}*/
+
+/*.node-plot {*/
+/*	background-color: darkgrey*/
+/*}*/
+
+/* Styling for buttons and dropdowns */
+#storytellingButton {
+	min-width: 300px;
 }
 
-.node-plot {
-	background-color: darkgrey
+/* https://stackoverflow.com/questions/47645634/bootstrap-4-making-dropdown-scrollable/47646286 */
+.dropdown-menu {         
+  max-height: 818px;
+  overflow-y: auto;
 }
+
+/* .axis text,
+.slider text {
+  font-size: 10px;
+} */

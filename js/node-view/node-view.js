@@ -1,71 +1,56 @@
 class NodeView {
   constructor(data, updateFun) {
-    // this.activeSubreddit = activeSubreddit;
     this.data = this.unnestData(data);
 
     this.gamingSubreddits = Object.keys(data);
-    this.gamingOnlyData = this.data.filter((d) =>
-      this.gamingSubreddits.includes(d.TARGET_SUBREDDIT)
-    );
-
     this.subreddits = this.makeSubredditList(this.data);
 
-    this.minLinks = 0;
-    this.links = this.createLinkData(this.data, 0);
+    this.links = this.createLinkData(this.data);
     this.nodes = this.createNodeData(this.links, this.subreddits);
 
-    this.gamingOnlyLinks = this.createLinkData(
-      this.gamingOnlyData,
-      this.minLinks
+    this.gamingOnlyLinks = this.links.filter((link) =>
+      this.gamingSubreddits.includes(link.target)
     );
-    this.gamingOnlyNodes = this.createNodeData(this.gamingOnlyLinks, this.gamingSubreddits);
-    this.shiftX = 0;
-    this.circles;
-    this.paths;
+    this.gamingOnlyNodes = this.createNodeData(
+      this.gamingOnlyLinks,
+      this.gamingSubreddits
+    );
+
+    this.colorScale =  d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
 
     this.nodePlot = new NodePlot(
       "#node-summary",
       610,
       600,
       this.nodes,
-      this.links
+      this.links,
+      this.colorScale,
+      this.gamingSubreddits
     );
 
+    // this.updateFun = this.extendUpdateFun(updateFun);
     this.networkPlot = new NetworkPlot(
       "#node",
-      950,
+      1000,
       600,
       this.gamingOnlyNodes,
       this.gamingOnlyLinks,
-      this.extendUpdateFun(updateFun)
+      this.colorScale,
+      updateFun
     );
-    this.populateDropdown();
   }
 
   makeSubredditList(data) {
-    let targets = data.map(d => d.TARGET_SUBREDDIT);
-    let sources = data.map(d => d.SOURCE_SUBREDDIT);
-    return [... new Set(targets.concat(sources))];
-  }
-
-  populateDropdown() {
-    let dropDown = document.getElementById("dropdown-items");
-    console.log(dropDown)
-
-    for (let subreddit of this.gamingSubreddits) {
-      let option = document.createElement("a");
-      option.text = subreddit;
-      option.setAttribute("class", "dropdown-item");
-      option.setAttribute("href", "#");
-      dropDown.appendChild(option);
-    }
+    let targets = data.map((d) => d.TARGET_SUBREDDIT);
+    let sources = data.map((d) => d.SOURCE_SUBREDDIT);
+    return [...new Set(targets.concat(sources))];
   }
 
   extendUpdateFun(updateFun) {
     let nodePlot = this.nodePlot;
     return function (selection) {
       updateFun(selection);
-      nodePlot.draw(selection);
+      nodePlot.updatePlot(selection);
     };
   }
 
@@ -74,14 +59,26 @@ class NodeView {
   }
 
   updatePlots(selection) {
-    this.nodePlot.draw(selection);
+    this.networkPlot.updateSelectedSubreddit(selection);
+    this.nodePlot.updatePlot(selection);
   }
-
+  /** Flatten data so each entry in list corresponds to one post */
+  unnestData(data) {
+    let unnestedData = [];
+    for (let [target, sourcePosts] of Object.entries(data)) {
+      for (let key in sourcePosts) {
+        let post = Object.assign({}, sourcePosts[key]);
+        post.SOURCE_SUBREDDIT = target;
+        unnestedData.push(post);
+      }
+    }
+    return unnestedData;
+  }
   createNodeData(links, subreddits) {
     let getRelatedLinks = function (subreddit) {
       let outbound = links.filter((link) => link.source == subreddit);
-      let inbound = links.filter((link) => link.target == subreddit);
       return outbound;
+      // let inbound = links.filter((link) => link.target == subreddit);
       // return outbound.concat(inbound);
     };
 
@@ -98,20 +95,13 @@ class NodeView {
     });
   }
 
-  makeStrokeWidthScale(links) {
-    let maximum = d3.max(links, (link) => link.mentions);
-    let minimum = d3.min(links, (link) => link.mentions);
-    return d3.scaleLinear().domain([minimum, maximum]).range([1.5, 5]);
-  }
-
   /** Create a list of link objects */
-  createLinkData(data, minLinks) {
+  createLinkData(data) {
     let rolledSummaries = d3
       .nest()
       .key((d) => d.SOURCE_SUBREDDIT)
       .key((d) => d.TARGET_SUBREDDIT)
       .rollup((v) => ({
-        // sentiment: d3.mean(v, (d) => d.LINK_SENTIMENT),
         sentiment: d3.mean(v, (d) => d.CompoundSentiment),
         mentions: v.length,
       }))
@@ -128,19 +118,6 @@ class NodeView {
       }
     }
 
-    return links.filter((link) => link.mentions >= minLinks);
+    return links;
   }
-
-  /** Flatten data so each entry in list corresponds to one post */
-  unnestData = function (data) {
-    let unnestedData = [];
-    for (let [target, sourcePosts] of Object.entries(data)) {
-      for (let key in sourcePosts) {
-        let post = Object.assign({}, sourcePosts[key]);
-        post.SOURCE_SUBREDDIT = target;
-        unnestedData.push(post);
-      }
-    }
-    return unnestedData;
-  };
 }

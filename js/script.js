@@ -29,7 +29,9 @@ Promise.all([
             })
         });
 
-    d3.selectAll(".load-notifier").classed("hidden", true)
+    setupDropDown(data, updateSelectedSubreddit);
+    d3.selectAll(".load-notifier").style("display", "none")
+    d3.selectAll(".loading-container").style("height",0)
 
     console.log(data)
     console.log(hotCommentData)
@@ -50,7 +52,7 @@ Promise.all([
     readabilityViolinPlot.draw(defaultSubreddit);
   
 //   Node View
-    let nodeView = new NodeView(data, updateSelectedSubreddit);
+    nodeView = new NodeView(data, updateSelectedSubreddit);
     nodeView.drawPlots();
   
 //   Ranked View
@@ -59,6 +61,8 @@ Promise.all([
   
     rankedTable.drawTable();
     rankedTimeSeries.drawTimeSeries();
+    
+    updateSelectedSubreddit("leagueoflegends");
 
     switchView('.home-view')
 });
@@ -87,6 +91,8 @@ function updateSelectedSubreddit(selection) {
     violinPlot.draw(selection);
     postsLineChart.draw(selection);
     readabilityViolinPlot.draw(selection);
+    nodeView.updatePlots(selection);
+    $('#subreddit-dropdown-container').find("button").text(selection);
 }
 
 function flattenValues(data, column) {
@@ -204,4 +210,24 @@ function calcMetrics(values) {
         metrics.upperInnerFence = metrics.max;
     }
     return metrics
+}
+
+function setupDropDown(data, eventFun) {
+    let gamingSubreddits = Object.keys(data)
+    let dropDown = document.getElementById("dropdown-items");
+    console.log(dropDown);
+
+    for (let subreddit of gamingSubreddits) {
+      let option = document.createElement("a");
+      option.text = subreddit;
+      option.setAttribute("class", "dropdown-item");
+      option.setAttribute("href", "#");
+      dropDown.appendChild(option);
+    }
+
+    // https://stackoverflow.com/questions/45854862/selected-value-in-drop-down-returning-undefined-in-javascript
+    $('#subreddit-dropdown-container').find('a').click(event => {
+      let selection = event.target.innerText;
+      eventFun(selection);
+     })
 }
