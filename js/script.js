@@ -30,7 +30,8 @@ Promise.all([
         });
 
     setupDropDown(data, updateSelectedSubreddit);
-    d3.selectAll(".load-notifier").classed("hidden", true)
+    d3.selectAll(".load-notifier").style("display", "none")
+    d3.selectAll(".loading-container").style("height",0)
 
     console.log(data)
     console.log(hotCommentData)
