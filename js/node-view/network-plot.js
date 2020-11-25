@@ -13,7 +13,7 @@ class NetworkPlot {
     this.nodes = nodes;
     // this.nodes = this.removeUnconnectedNodes(nodes, links);
     this.links = links;
-    this.shiftX = 255;
+    this.shiftX = 275;
     this.shiftY = 310;
     this.circles;
     this.paths;
@@ -35,57 +35,48 @@ class NetworkPlot {
     this.addTitle();
     this.addLegend();
     this.setupSlider();
+    // this.setupCheckbox();
+  }
+
+  setupCheckbox() {
+    // https://stackoverflow.com/questions/38260431/onchange-event-in-a-bootstrap-checkbox
+    $("#link-checkbox").change(function () {
+      alert($(this).prop("checked"));
+    });
   }
 
   setupSlider() {
     // https://github.com/johnwalley/d3-simple-slider
-    d3.select("#node")
-      .append("div")
-      .attr("id", "slider")
-      // .style("background-color", "darkgrey")
-      // .style("background-color", "lightblue")
-      // .classed("col-sm", true);
-      .style("opacity", 0.5);
-    d3.select("body").append("div").attr("id", "value");
 
     var slider = d3
       .sliderHorizontal()
       .min(1)
-      .max(24)
+      .max(26)
       .step(1)
       .width(200)
       .height(60)
+      .height(30)
       .fill("lightblue")
       .displayValue(false)
-      // .tickPadding("2px")
       .on("onchange", (val) => {
         d3.select("#value").text(val);
         this.trimLinks(val);
       });
 
-    let added = this.root
+    let sliderElem = this.root
       .append("g")
       .call(slider)
-      // .attr("stroke", "black")
-      .attr("transform", "translate(30,55)");
+      .attr("transform", "translate(750,55)");
 
-    added.selectAll("text").attr("fill", "black");
+    sliderElem.selectAll("text").attr("fill", "black");
 
-    added.append("text").attr("y", -10).text("Minimum #hyperlinks");
-
-    // d3.select("#slider")
-    //   .style("position", "absolute")
-    //   .style("left", "0px")
-    //   .style("top", "500px")
-    //   .append("svg")
-    //   .attr("width", 260)
-    //   .attr("height", 90)
-    //   .append("g")
-    //   .attr("transform", "translate(30,50)")
-    //   .call(slider)
-    //   .append("text")
-    //   .attr("y", -20)
-    //   .text("Minimum #hyperlinks")
+    sliderElem
+      .append("text")
+      .attr("y", -10)
+      .attr("x", 105)
+      .attr("font-size", 12)
+      .attr("text-anchor", "middle")
+      .text("Minimum #hyperlinks");
   }
 
   trimLinks(minMentions) {
@@ -131,19 +122,83 @@ class NetworkPlot {
   }
 
   addLegend() {
+    // https://observablehq.com/@d3/color-legend
+    // https://stackoverflow.com/questions/60443356/legend-not-appearing-when-using-document-createelementcanvas
+
+    const tickSize = 6;
+    const width = 200;
+    const height = 44 + tickSize;
+    const marginTop = 18;
+    const marginRight = 0;
+    const marginBottom = 16 + tickSize;
+    const marginLeft = 0;
+    const ticks = width / 64;
+    const shiftX = 750;
+    const shiftY = 530;
+
+    let tickAdjust = (g) =>
+      g.selectAll(".tick line").attr("y1", marginTop + marginBottom - height);
+
+    function ramp(color, n = 256) {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      d3.select(canvas).attr("width", n).attr("height", 1);
+      for (let i = 0; i < n; ++i) {
+        context.fillStyle = color((n - i) / (n - 1));
+        context.fillRect(i, 0, 1, 1);
+      }
+      return canvas;
+    }
+
+    let color = d3.scaleSequential(d3.interpolateRdBu).domain([-1, 1]);
+
+    let x = Object.assign(
+      color
+        .copy()
+        .interpolator(d3.interpolateRound(marginLeft, width - marginRight)),
+      {
+        range() {
+          return [marginLeft, width - marginRight];
+        },
+      }
+    );
+
+    this.root
+      .append("image")
+      .attr("x", marginLeft + shiftX)
+      .attr("y", marginTop + shiftY)
+      .attr("width", width - marginLeft - marginRight)
+      .attr("height", height - marginTop - marginBottom)
+      .attr("preserveAspectRatio", "none")
+      .attr("xlink:href", ramp(color.interpolator()).toDataURL());
+
     this.root
       .append("g")
-      .attr("class", "legendSequential")
-      .attr("transform", "translate(600,500)");
-
-    let legendSequential = d3
-      .legendColor()
-      .shapeWidth(100)
-      .cells(10)
-      .orient("horizontal")
-      .scale(this.colorScale);
-
-    this.root.select(".legendSequential").call(legendSequential);
+      .attr(
+        "transform",
+        `translate(${0 + shiftX},${height - marginBottom + shiftY})`
+      )
+      .call(
+        d3
+          .axisBottom(x)
+          .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
+          .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
+          .tickSize(tickSize)
+      )
+      .call(tickAdjust)
+      .call((g) => g.select(".domain").remove())
+      .call((g) =>
+        g
+          .append("text")
+          // .attr("x", marginLeft)
+          .attr("x", width / 2)
+          .attr("y", marginTop + marginBottom - height - 6)
+          .attr("fill", "currentColor")
+          .attr("text-anchor", "middle")
+          // .attr("font-weight", "bold")
+          .attr("font-size", 12)
+          .text("Compound Sentiment")
+      );
   }
 
   addTitle() {
@@ -244,7 +299,7 @@ class NetworkPlot {
       .attr("fill", "black")
       .attr("x", 5)
       .attr("y", -14)
-      .style("font-size", "10")
+      .style("font-size", 12)
       .raise()
       .text((d) => d.id)
       .clone(true)
@@ -301,15 +356,6 @@ class NetworkPlot {
     let max = d3.max(this.nodes, (node) => node.interactions);
     return d3.scaleLinear().domain([min, max]).range([6, 12]);
   }
-
-  /** Apply diverging color scale to link sentiment values */
-  getColor = function (link) {
-    return d3.interpolateRdBu(1 - link.sentiment);
-  };
-
-  getNodeColor = function (node) {
-    return d3.interpolateRdBu(1 - node.positivity);
-  };
 
   makeStrokeWidthScale(links) {
     let maximum = d3.max(links, (link) => link.mentions);
