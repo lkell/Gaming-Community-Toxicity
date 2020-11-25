@@ -4,12 +4,12 @@ class RankedTimeSeries {
         this.redditData = Object.entries(redditData);
         this.statsTimeSeries = this.calcStats()
         this.statsMinMax = this.getMinMax()
-        this.xMargin = 10;
+        this.xMargin = 15;
         this.yMargin = 10;
-        this.width = 1650;
+        this.width = 1735;
         this.height = 300;
         this.colorMap =
-            {0: '#FF8b60', 1: '#9494FF', 2:'grey'};
+            {0: '#FF8b60', 1: '#9494FF', 2:'#ffd635'};
     }
 
     drawTimeSeries(){
@@ -18,11 +18,10 @@ class RankedTimeSeries {
             .attr('width', this.width)
             .attr('height', this.height)
             .attr('id', 'ranked-ts-svg')
-            .attr("transform", "translate("+2*this.xMargin+",0)");
         let dateRange = this.statsTimeSeries[0].map(d=>d['key'])
         var xAxis = d3.scaleTime()
             .domain(d3.extent(dateRange))
-            .range([2*this.xMargin, this.width-this.xMargin]);
+            .range([3*this.xMargin, this.width-2*this.xMargin]);
 
         var yAxis = d3.scaleLinear()
             .domain(this.statsMinMax)
@@ -35,17 +34,9 @@ class RankedTimeSeries {
 
         svg.append("g")
             .attr("transform", "translate("+2*this.xMargin+",0)")
-            .call(d3.axisLeft(yAxis).tickSize(0))
+            .call(d3.axisLeft(yAxis).tickSize(0).ticks(5))
             .call(g => g.select(".domain").remove());
 
-        svg.append("path")
-            .datum(dateRange)
-            .attr("fill", "none")
-            .attr("stroke", "black")
-            .attr("stroke-width", 1)
-            .attr("d", d3.line().x(function(d) {return xAxis(d)})
-                .y(function() {return yAxis(0)})
-            );
 
         let that = this;
         this.statsTimeSeries.forEach(function(stats,i){

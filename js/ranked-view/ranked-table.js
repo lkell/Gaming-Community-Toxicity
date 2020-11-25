@@ -45,7 +45,7 @@ class RankedTable {
         this.colorMap =
             {'positive': '#FF8b60',
                 'negative': '#9494FF',
-                'compound':'grey'};
+                'compound':'#ffd635'};
         this.drawTable();
         this.drawLegend();
     }
@@ -64,8 +64,11 @@ class RankedTable {
             .text(function (d){
                 let returnVal = ""
                 d.type === "text" ? returnVal = d.value : {};
+                d.type === "sentiment-text" ? returnVal = d.value : {};
                 return returnVal
             })
+            .style('background-color',d=>d.backgroundColor);
+
 
         let vizSelection = tableSelection.filter(d => d.type === 'density');
         let svgSelect = vizSelection.selectAll('svg')
@@ -89,37 +92,43 @@ class RankedTable {
         let PosAvg = subData.reduce((total, next) => total + next[1].PositiveSentiment, 0) / subData.length;
         let NegAvg = subData.reduce((total, next) => total + next[1].NegativeSentiment, 0) / subData.length;
         let flatList = subData.map(function(d){return d[1]})
-
+        let that = this;
         let subreddit = {
             type: 'text',
             class: 'subreddit',
+            backgroundColor:'',
             value: d[0]
         };
         let links = {
             type: 'text',
             class: 'links',
+            backgroundColor: '',
             value: subData.length
         };
         let densityData = {
             type: 'density',
             class: 'density',
+            backgroundColor: '',
             positive: flatList.map(d=>d.PositiveSentiment),
             negative: flatList.map(d=>d.NegativeSentiment),
             compound: flatList.map(d=>d.CompoundSentiment)
         };
         let positiveData = {
-            type: 'text',
+            type: 'sentiment-text',
             class: 'positive',
+            backgroundColor: 'rgb(255, 139, 96, '+PosAvg.toFixed(2)+')',
             value: PosAvg.toFixed(2)
         };
         let negativeData = {
-            type: 'text',
+            type: 'sentiment-text',
             class: 'negative',
+            backgroundColor: 'rgb(148, 148, 255, '+NegAvg.toFixed(2)+')',
             value: NegAvg.toFixed(2)
         };
         let compoundData = {
-            type: 'text',
+            type: 'sentiment-text',
             class: 'compound',
+            backgroundColor:'rgb(255, 214, 53, '+CompoundAvg.toFixed(2)+')',
             value: CompoundAvg.toFixed(2)
         };
         return  [subreddit, links, densityData, positiveData, negativeData, compoundData];
@@ -147,27 +156,28 @@ class RankedTable {
             let kde = kernelDensityEstimator(eKernel(that.bandwidth), that.densityX.ticks(that.resolution));
             return kde(data);
         }
+
         containerSelect
             .join("path")
             .append("path")
             .datum(d=>kdeTransform(d.compound))
             .attr("fill", this.colorMap['compound'])
             .attr("opacity", ".5")
-            .attr("stroke", "#000")
+            .attr("stroke", "white")
             .attr("stroke-width", 1)
             .attr("stroke-linejoin", "round")
             .attr("d",  d3.line()
                 .curve(d3.curveBasis)
                 .x(d=>that.densityX(d['x']))
                 .y(d=>(-1*that.densityY(d['y']))+this.vizHeight)
-            );
+            )
         containerSelect
             .join("path")
             .append("path")
             .datum(d=>kdeTransform(d.positive))
             .attr("fill", this.colorMap['positive'])
             .attr("opacity", ".5")
-            .attr("stroke", "#000")
+            .attr("stroke", "white")
             .attr("stroke-width", 1)
             .attr("stroke-linejoin", "round")
             .attr("d",  d3.line()
@@ -181,7 +191,7 @@ class RankedTable {
             .datum(d=>kdeTransform(d.negative))
             .attr("fill", this.colorMap['negative'])
             .attr("opacity", ".5")
-            .attr("stroke", "#000")
+            .attr("stroke", "white")
             .attr("stroke-width", 1)
             .attr("stroke-linejoin", "round")
             .attr("d",  d3.line()
