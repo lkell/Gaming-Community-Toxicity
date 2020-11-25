@@ -3,11 +3,9 @@ let globalData;
 Promise.all([
     d3.json('./data_processing/config/reddit-hyperlinks-body.json'),
     d3.json('./data_processing/config/reddit-hot-comment-sentiment-analysis.json'),
-    d3.json('./data_processing/config/reddit-controversial-comment-sentiment-analysis.json'),
 ]).then(files => {
     let data = files[0];
     let hotCommentData = files[1];
-    let controversialCommentData = files[2];
     Object.keys(data).forEach(function(subreddit) {
             Object.keys(data[subreddit]).forEach(function(postId) {
                 Object.keys(data[subreddit][postId]).forEach(function(column) {
@@ -35,16 +33,16 @@ Promise.all([
 
     console.log(data)
     console.log(hotCommentData)
-    console.log(controversialCommentData)
+    console.log(hotCommentData)
 
     addNavigation();
     globalData = data;
 
 //   Summary View
 
-    readabilityViolinPlot = new ReadabilityViolinPlot(controversialCommentData);
+    readabilityViolinPlot = new ReadabilityViolinPlot(hotCommentData);
     postsLineChart = new PostsLineChart(data);
-    violinPlot = new ViolinPlot(controversialCommentData);  
+    violinPlot = new ViolinPlot(hotCommentData);  
     let defaultSubreddit = 'leagueoflegends';
   
     violinPlot.draw(defaultSubreddit);

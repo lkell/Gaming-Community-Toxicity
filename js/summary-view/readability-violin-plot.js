@@ -187,7 +187,7 @@ class ReadabilityViolinPlot {
                 that.tooltip.html(that.medianTooltipRender(that.plotInfo.metrics, that.subreddit))
                     .style('opacity', .9)
                     .style('left', (event.pageX) + 10 + 'px')
-                    .style('top', (event.pageY) + 10 + 'px');
+                    .style('top', (event.pageY) - 40 + 'px');
                 }
             )
             .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})
@@ -213,7 +213,7 @@ class ReadabilityViolinPlot {
                 that.tooltip.html(that.metricsTooltipRender(that.plotInfo.metrics, that.subreddit))
                     .style('opacity', .9)
                     .style('left', (event.pageX) + 10 + 'px')
-                    .style('top', (event.pageY) + 10 + 'px');
+                    .style('top', (event.pageY) - 150 + 'px');
                 }
             )
             .on('mouseout', function(d) {that.tooltip.style('opacity', 0)})

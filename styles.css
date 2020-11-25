@@ -26,11 +26,13 @@ div.tooltip {
     padding: 4px;
 	border-radius: 8px;
     pointer-events: none;
+    font-color: white;
 }
 
-.tooltip h2 {
+.tooltip h2, p {
     margin: auto;
     font-size: 18px;
+    color: white;
 }
 
 
@@ -184,12 +186,12 @@ body {
 /* Node/network styles */
 .selectedNode {
 	stroke: #FF8b60;
-	fill: white
+	fill: grey;
 }
 
 .otherNode {
 	stroke: #9494FF;
-	fill: white
+	fill: grey;
 }
 
 .hidden {
@@ -208,6 +210,11 @@ body {
     width: 190px;
     top:40px;
     left:25px;
+    color: white;
+}
+
+.nodeSelection option {
+	color: white;
 }
 
 /*.network-plot {*/
