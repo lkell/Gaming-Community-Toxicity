@@ -20,39 +20,33 @@
 </head>
 
 <body>
-</div>
-</div>
-<nav class="navbar navbar-expand-lg navbar-light bg-white">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
     <a class="navbar-brand">Gaming Community Toxicity</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse bg-white" id="navbarNav">
+    <div class="collapse navbar-collapse navbar-dark bg-secondary" id="navbarNav">
         <ul class="navbar-nav">
-            <li class="nav-item active bg-white" id = "home-toggle">
+            <li class="nav-item active bg-secondary" id = "home-toggle">
                 <a class="nav-link" href="#">Home</a>
             </li>
-            <li class="nav-item bg-white" id="ranked-toggle" >
+            <li class="nav-item bg-secondary" id="ranked-toggle" >
                 <a class="nav-link" href="#">Ranked</a>
             </li>
-            <li class="nav-item bg-white" id="about-toggle">
+            <li class="nav-item bg-secondary" id="about-toggle">
                 <a class="nav-link" href="#">About</a>
             </li>
         </ul>
     </div>
-    <div class="spinner-border text-primary load-notifier" role="status" style="background-color:white">
-        <span class="sr-only">Loading...</span>
-    </div>
-    <div class="load-notifier" style="background-color:white;">   Loading data...</div>
     <div class="dropdown" id="subreddit-dropdown-container">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Select a subreddit
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-items"></div>
     </div>
-    <p><strong>or</strong></p>
     <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle dropdown-toggle-split" type="button" id="storytellingButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" type="button" id="storytellingButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Show me...
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="#">The most loving subreddit</a>
@@ -104,6 +98,16 @@
     </div>
 </div>
 
+<div class="loading-container d-flex flex-column align-items-center justify-content-center" style="height: 750px;">
+
+    <div class="row justify-content-center load-notifier align-self-center">
+        <img src="assets/loading.gif">
+    </div>
+    <div class="row justify-content-center align-self-center load-notifier align-middle">
+        <strong>Loading data...</strong>
+    </div>
+</div>
+
 <script src="js/script.js"></script>
 <script src="js/summary-view/sentiment-breakout-summary.js"></script>
 <script src="js/summary-view/ts-posts-line-chart.js"></script>
@@ -113,7 +117,7 @@
 <script src="js/node-view/node-view.js"></script>
 <script src="js/node-view/network-plot.js"></script>
 <script src="js/node-view/node-plot.js"></script>
-  
+
 <script src="js/ranked-view/ranked-table.js"></script>
 <script src="js/ranked-view/ranked-time-series.js"></script>
 
