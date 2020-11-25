@@ -119,7 +119,6 @@ class NetworkPlot {
 
   makeColorScale() {
     return d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
-    // return d3.scaleDivergingSqrt([1, 0, -1], d3.interpolateRdBu)
   }
 
   addLegend() {
@@ -357,15 +356,6 @@ class NetworkPlot {
     let max = d3.max(this.nodes, (node) => node.interactions);
     return d3.scaleLinear().domain([min, max]).range([6, 12]);
   }
-
-
-  getColor = function (link) {
-    return d3.interpolateRdBu(1 - link.sentiment);
-  };
-
-  getNodeColor = function (node) {
-    return d3.interpolateRdBu(1 - node.positivity);
-  };
 
   makeStrokeWidthScale(links) {
     let maximum = d3.max(links, (link) => link.mentions);

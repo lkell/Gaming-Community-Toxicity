@@ -1,3 +1,6 @@
+// TODO: Fix bug of mismatched tooltips and bubble names.
+// E.G. for smashbros
+
 class NodePlot {
   constructor(root, width, height, nodes, links, colorScale, gamingSubreddits) {
     this.width = width;
