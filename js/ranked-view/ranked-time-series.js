@@ -6,49 +6,51 @@ class RankedTimeSeries {
         this.statsMinMax = this.getMinMax()
         this.xMargin = 15;
         this.yMargin = 10;
-        this.width = 1735;
+        this.width = 545;
         this.height = 300;
-        this.colorMap =
-            {0: '#FF8b60', 1: '#9494FF', 2:'#ffd635'};
+        this.sentiments = ['positive','negative','compound']
+        this.colorMap = {'positive': '#FF8b60',
+                         'negative': '#9494FF',
+                         'compound':'#ffd635'};
     }
 
     drawTimeSeries(){
-        let svg = d3.select('#ranked-timeseries')
-            .append('svg')
-            .attr('width', this.width)
-            .attr('height', this.height)
-            .attr('id', 'ranked-ts-svg')
-        let dateRange = this.statsTimeSeries[0].map(d=>d['key'])
-        var xAxis = d3.scaleTime()
-            .domain(d3.extent(dateRange))
-            .range([3*this.xMargin, this.width-2*this.xMargin]);
-
-        var yAxis = d3.scaleLinear()
-            .domain(this.statsMinMax)
-            .range([this.height-2*this.yMargin, 2*this.yMargin]);
-
-        svg.append("g")
-            .attr("transform", "translate(0," +(this.height-2*this.yMargin)+ ")")
-            .call(d3.axisBottom(xAxis).tickSize(0))
-            .call(g => g.select(".domain").remove());
-
-        svg.append("g")
-            .attr("transform", "translate("+2*this.xMargin+",0)")
-            .call(d3.axisLeft(yAxis).tickSize(0).ticks(5))
-            .call(g => g.select(".domain").remove());
-
-
         let that = this;
-        this.statsTimeSeries.forEach(function(stats,i){
-                svg.append("path")
-                    .datum(stats)
-                    .attr("fill", "none")
-                    .attr("stroke", that.colorMap[i])
-                    .attr("stroke-width", 1)
-                    .attr("d", d3.line().x(function(d) {return xAxis(d.key)})
-                        .y(function(d) {return yAxis(d.value)})
-                    )
-            })
+        this.sentiments.forEach(function(d){
+            let svg = d3.select('#ranked-timeseries-'+d)
+                .append('svg')
+                .attr('width', that.width)
+                .attr('height', that.height)
+                .attr('id', 'ranked-ts-svg-'+d)
+            let dateRange = that.statsTimeSeries[d].map(d=>d['key'])
+            var xAxis = d3.scaleTime()
+                .domain(d3.extent(dateRange))
+                .range([3*that.xMargin, that.width-2*that.xMargin]);
+
+            var yAxis = d3.scaleLinear()
+                .domain(that.statsMinMax)
+                .range([that.height-2*that.yMargin, 2*that.yMargin]);
+
+            svg.append("g")
+                .attr("transform", "translate(0," +(that.height-2*that.yMargin)+ ")")
+                .call(d3.axisBottom(xAxis).tickSize(0).ticks(3))
+                .call(g => g.select(".domain").remove());
+
+            svg.append("g")
+                .attr("transform", "translate("+2*that.xMargin+",0)")
+                .call(d3.axisLeft(yAxis).tickSize(0).ticks(5))
+                .call(g => g.select(".domain").remove());
+
+            console.log(that.statsTimeSeries)
+            svg.append("path")
+                .datum(that.statsTimeSeries[d])
+                .attr("fill", "none")
+                .attr("stroke", that.colorMap[d])
+                .attr("stroke-width", 1)
+                .attr("d", d3.line().x(function(d) {return xAxis(d.key)})
+                    .y(function(d) {return yAxis(d.value)})
+                )
+        })
     };
 
 
@@ -57,7 +59,8 @@ class RankedTimeSeries {
         let positiveAverage = this.calcAverage(flatLinks, 'PositiveSentiment')
         let negativeAverage = this.calcAverage(flatLinks, 'NegativeSentiment')
         let compoundAverage = this.calcAverage(flatLinks, 'CompoundSentiment')
-        return [positiveAverage, negativeAverage, compoundAverage]
+
+        return {'positive':positiveAverage, 'negative':negativeAverage, 'compound':compoundAverage}
         };
 
     calcAverage(flatLinks, key){

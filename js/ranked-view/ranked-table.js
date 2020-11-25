@@ -47,7 +47,6 @@ class RankedTable {
                 'negative': '#9494FF',
                 'compound':'#ffd635'};
         this.drawTable();
-        this.drawLegend();
     }
 
     drawTable() {
@@ -56,6 +55,10 @@ class RankedTable {
             .selectAll('tr')
             .data(this.redditData)
             .join('tr');
+        rowSelection.on('click', () =>
+        {
+            console.log('clicked')
+        });
 
         let tableSelection = rowSelection.selectAll('td')
             .data(this.rowToCellDataTransform)
@@ -92,23 +95,22 @@ class RankedTable {
         let PosAvg = subData.reduce((total, next) => total + next[1].PositiveSentiment, 0) / subData.length;
         let NegAvg = subData.reduce((total, next) => total + next[1].NegativeSentiment, 0) / subData.length;
         let flatList = subData.map(function(d){return d[1]})
-        let that = this;
         let subreddit = {
             type: 'text',
             class: 'subreddit',
-            backgroundColor:'',
+            backgroundColor:'transparent',
             value: d[0]
         };
         let links = {
             type: 'text',
             class: 'links',
-            backgroundColor: '',
+            backgroundColor: 'transparent',
             value: subData.length
         };
         let densityData = {
             type: 'density',
             class: 'density',
-            backgroundColor: '',
+            backgroundColor: 'transparent',
             positive: flatList.map(d=>d.PositiveSentiment),
             negative: flatList.map(d=>d.NegativeSentiment),
             compound: flatList.map(d=>d.CompoundSentiment)
@@ -140,7 +142,7 @@ class RankedTable {
             .tickValues([-1,-.5,0,.5,1])
             .tickFormat((d,i) => densityLabels[i]);
 
-        let densitySelection = d3.select('#densityAxis')
+        d3.select('#densityAxis')
             .attr('height', this.axisHeight)
             .attr('width', this.densityWidth)
             .join("g")
@@ -212,5 +214,6 @@ class RankedTable {
         return d3.scaleLinear()
             .domain([-0.1,15])
             .range([0, this.vizHeight])
-        }
+        };
+
 }
