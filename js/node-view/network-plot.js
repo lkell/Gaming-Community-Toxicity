@@ -78,27 +78,6 @@ class NetworkPlot {
     this.addSizeLegend();
   }
 
-  addSizeLegend() {
-    let min = d3.min(this.nodes, (node) => node.totalHyperlinks);
-    let max = d3.max(this.nodes, (node) => node.totalHyperlinks);
-
-    let legendCircles = [
-      { radius: this.radiusScale(min), x: 0, y: 0 },
-      { radius: this.radiusScale(max), x: 100, y: 0 },
-    ];
-
-    this.root
-      .append("g")
-      .attr("id", "network-radius-legend")
-      .attr("transform", "translate(800,500)")
-      .selectAll("circle")
-      .data(legendCircles)
-      .join("circle")
-      .attr("r", (d) => d.radius)
-      .attr("cx", (d) => d.x)
-      .attr("cy", (d) => d.y);
-  }
-
   addColorLegend() {
     // https://observablehq.com/@d3/color-legend
     // https://stackoverflow.com/questions/60443356/legend-not-appearing-when-using-document-createelementcanvas
@@ -178,6 +157,56 @@ class NetworkPlot {
       );
   }
 
+  addSizeLegend() {
+    let min = d3.min(this.nodes, (node) => node.totalHyperlinks);
+    let max = d3.max(this.nodes, (node) => node.totalHyperlinks);
+
+    let circleSpacing = 100;
+
+    let legendData = [
+      { totalHyperlinks: min, radius: this.radiusScale(min), x: 0, y: 0 },
+      {
+        totalHyperlinks: max,
+        radius: this.radiusScale(max),
+        x: circleSpacing,
+        y: 0,
+      },
+    ];
+
+    let legend = this.root
+      .append("g")
+      .attr("id", "network-radius-legend")
+      .attr("transform", "translate(800,490)")
+      .attr("fill", "white");
+
+    legend
+      .append("text")
+      .attr("x", circleSpacing / 2)
+      .attr("y", -20)
+      .attr("text-anchor", "middle")
+      .attr("font-size", 12)
+      .text("Total #Hyperlinks");
+
+    let legendCircles = legend.selectAll("g").data(legendData).join("g");
+
+    legendCircles
+      .append("circle")
+      .attr("r", (d) => d.radius)
+      .attr("cx", (d) => d.x)
+      .attr("cy", (d) => d.y)
+      .attr("stroke", "#9494FF")
+      .attr("stroke-width", 3)
+      .style("fill-opacity", 0);
+
+    legendCircles
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("x", (d) => d.x + 1)
+      .attr("y", 25)
+      .attr("font-size", 10)
+      .text((d) => d.totalHyperlinks);
+  }
+
   setupSlider() {
     // https://github.com/johnwalley/d3-simple-slider
 
@@ -251,7 +280,7 @@ class NetworkPlot {
   makeRadiusSale() {
     let min = d3.min(this.nodes, (node) => node.totalHyperlinks);
     let max = d3.max(this.nodes, (node) => node.totalHyperlinks);
-    return d3.scaleLinear().domain([min, max]).range([7, 13]);
+    return d3.scaleLinear().domain([min, max]).range([6, 13]);
   }
 
   makeStrokeWidthScale(links) {
@@ -303,6 +332,11 @@ class NetworkPlot {
       .attr("stroke", (d) => this.colorScale(d.sentiment))
       .attr("stroke-width", (d) => this.widthScale(d.mentions))
       .style("opacity", this.unselectedPathOpacity)
+      .on("click", (e) => {
+        this.clearHighlights();
+        this.circles.selectAll("circle").style("opacity", 1);
+        this.clicked = true;
+      })
       .on("mouseover", () => {
         this.highlightRegion(null);
         if (this.clicked) {
@@ -376,6 +410,13 @@ class NetworkPlot {
   }
 
   highlightRegion(selection) {
+    // https://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
+    d3.selection.prototype.moveToFront = function () {
+      return this.each(function () {
+        this.parentNode.appendChild(this);
+      });
+    };
+
     this.clearHighlights();
 
     if (selection !== null) {
@@ -383,7 +424,8 @@ class NetworkPlot {
       this.paths
         .filter((d) => d.mentions >= this.minMentions)
         .filter((d) => d.target.id == selection || d.source.id == selection)
-        .style("opacity", 1);
+        .style("opacity", 1)
+        .moveToFront();
 
       // fill in the selected node
       this.circles
@@ -404,7 +446,8 @@ class NetworkPlot {
             d.target.id == this.activeSubreddit ||
             d.source.id == this.activeSubreddit
         )
-        .style("opacity", 1);
+        .style("opacity", 1)
+        .moveToFront();
 
       let activeCircle = this.circles
         .filter((d) =>
