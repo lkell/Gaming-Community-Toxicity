@@ -1,7 +1,16 @@
 class NetworkPlot {
   constructor(root, width, height, nodes, links, colorscale, updateFun) {
+    this.nodes = nodes;
+    this.links = links;
+
+    // numeric constants
     this.width = width;
     this.height = height;
+    this.shiftX = 275;
+    this.shiftY = 310;
+    this.unselectedPathOpacity = 0.07;
+
+    // initialize SVG elements
     this.root = d3
       .select(root)
       .append("svg")
@@ -28,27 +37,19 @@ class NetworkPlot {
           this.circles.selectAll("circle").style("opacity", 1);
         }
       });
-
-    this.root;
-    this.nodes = nodes;
-    // this.nodes = this.removeUnconnectedNodes(nodes, links);
-    this.links = links;
-    this.shiftX = 275;
-    this.shiftY = 310;
     this.circles;
     this.paths;
-    this.activeSubreddit;
 
+    // scales
     this.colorScale = colorscale;
     this.radiusScale = this.makeRadiusSale();
+    this.widthScale = this.makeStrokeWidthScale(this.links);
 
+    // properties for subreddit updating
     this.updateFun = updateFun;
-
-    this.unselectedPathOpacity = 0.07;
-
+    this.activeSubreddit;
     this.minMentions = 0;
     this.connectedNodes = this.nodes.map((node) => node.id);
-
     this.clicked = false;
     this.highlightedNode;
 
@@ -59,81 +60,17 @@ class NetworkPlot {
     this.addTitle();
     this.addLegend();
     this.setupSlider();
-    // this.setupCheckbox();
   }
 
-  setupCheckbox() {
-    // https://stackoverflow.com/questions/38260431/onchange-event-in-a-bootstrap-checkbox
-    $("#link-checkbox").change(function () {
-      alert($(this).prop("checked"));
-    });
-  }
-
-  setupSlider() {
-    // https://github.com/johnwalley/d3-simple-slider
-
-    var slider = d3
-      .sliderHorizontal()
-      .min(1)
-      .max(24)
-      .step(1)
-      .width(200)
-      .height(60)
-      .height(30)
-      .fill("#9494FF")
-      .displayValue(false)
-      .on("onchange", (val) => {
-        d3.select("#value").text(val);
-        this.trimLinks(val);
-        this.highlightRegion(null);
-        if (this.clicked) {
-          this.circles.selectAll("circle").style("opacity", 1);
-        }
-      });
-
-    let sliderElem = this.root
-      .append("g")
-      .call(slider)
-      .attr("transform", "translate(750,55)");
-
-    sliderElem.selectAll("text").attr("fill", "black");
-
-    sliderElem
+  addTitle() {
+    this.root
       .append("text")
-      .attr("y", -10)
-      .attr("x", 105)
-      .attr("font-size", 12)
-      .attr("text-anchor", "middle")
-      .text("Minimum #hyperlinks");
-  }
-
-  trimLinks(minMentions) {
-    this.minMentions = minMentions;
-    this.paths.filter((d) => d.mentions < this.minMentions).style("opacity", 0);
-    this.paths
-      .filter((d) => d.mentions >= minMentions)
-      .style("opacity", this.unselectedPathOpacity);
-    let allowedLinks = this.links.filter(
-      (link) => link.mentions >= this.minMentions
-    );
-    let outNodes = allowedLinks.map((d) => d.target.id);
-    let inNodes = allowedLinks.map((d) => d.source.id);
-    this.connectedNodes = outNodes.concat(inNodes);
-    this.circles
-      .filter(
-        (d) =>
-          !this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-      )
-      .style("opacity", 0);
-    this.circles
-      .filter((d) =>
-        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-      )
-      .style("opacity", 1);
-  }
-
-  makeColorScale() {
-    return d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
+      .classed("title", true)
+      .attr("x", 15)
+      .attr("y", 25)
+      .style("font-size", 20)
+      .attr("text-decoration", "underline")
+      .text("The Gaming Landscape");
   }
 
   addLegend() {
@@ -232,30 +169,95 @@ class NetworkPlot {
       .call((g) =>
         g
           .append("text")
-          // .attr("x", marginLeft)
           .attr("x", width / 2)
           .attr("y", marginTop + marginBottom - height - 6)
           .attr("fill", "currentColor")
           .attr("text-anchor", "middle")
-          // .attr("font-weight", "bold")
           .attr("font-size", 12)
           .text("Compound Sentiment")
       );
   }
 
-  addTitle() {
-    this.root
+  setupSlider() {
+    // https://github.com/johnwalley/d3-simple-slider
+
+    var slider = d3
+      .sliderHorizontal()
+      .min(1)
+      .max(24)
+      .step(1)
+      .width(200)
+      .height(60)
+      .height(30)
+      .fill("#9494FF")
+      .displayValue(false)
+      .on("onchange", (val) => {
+        d3.select("#value").text(val);
+        this.trimLinks(val);
+        this.highlightRegion(null);
+        if (this.clicked) {
+          this.circles.selectAll("circle").style("opacity", 1);
+        }
+      });
+
+    let sliderElem = this.root
+      .append("g")
+      .call(slider)
+      .attr("transform", "translate(750,55)");
+
+    sliderElem.selectAll("text").attr("fill", "black");
+
+    sliderElem
       .append("text")
-      .classed("title", true)
-      .attr("x", 15)
-      .attr("y", 25)
-      .style("font-size", 20)
-      .attr("text-decoration", "underline")
-      .text("The Gaming Landscape");
+      .attr("y", -10)
+      .attr("x", 105)
+      .attr("font-size", 12)
+      .attr("text-anchor", "middle")
+      .text("Minimum #hyperlinks");
   }
 
-  setUpdateFun(updateFun) {
-    this.updateFun = updateFun;
+  trimLinks(minMentions) {
+    this.minMentions = minMentions;
+    this.paths.filter((d) => d.mentions < this.minMentions).style("opacity", 0);
+    this.paths
+      .filter((d) => d.mentions >= minMentions)
+      .style("opacity", this.unselectedPathOpacity);
+    let allowedLinks = this.links.filter(
+      (link) => link.mentions >= this.minMentions
+    );
+    let outNodes = allowedLinks.map((d) => d.target.id);
+    let inNodes = allowedLinks.map((d) => d.source.id);
+    this.connectedNodes = outNodes.concat(inNodes);
+    this.circles
+      .filter(
+        (d) =>
+          !this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
+      .style("opacity", 0);
+    this.circles
+      .filter((d) =>
+        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      )
+      .style("opacity", 1);
+  }
+
+  setupCheckbox() {
+    // https://stackoverflow.com/questions/38260431/onchange-event-in-a-bootstrap-checkbox
+    $("#link-checkbox").change(function () {
+      alert($(this).prop("checked"));
+    });
+  }
+
+  makeRadiusSale() {
+    let min = d3.min(this.nodes, (node) => node.totalHyperlinks);
+    let max = d3.max(this.nodes, (node) => node.totalHyperlinks);
+    return d3.scaleLinear().domain([min, max]).range([7, 13]);
+  }
+
+  makeStrokeWidthScale(links) {
+    let maximum = d3.max(links, (link) => link.mentions);
+    let minimum = d3.min(links, (link) => link.mentions);
+    return d3.scaleLinear().domain([minimum, maximum]).range([3, 8]);
   }
 
   /**  Note: The following tutorial is heavily used:
@@ -292,8 +294,6 @@ class NetworkPlot {
       .style("fill", "#9494FF")
       .attr("stroke", "black");
 
-    let widthScale = this.makeStrokeWidthScale(this.links);
-
     this.paths = this.root
       .append("g")
       .attr("fill", "none")
@@ -301,7 +301,7 @@ class NetworkPlot {
       .data(this.links)
       .join("path")
       .attr("stroke", (d) => this.colorScale(d.sentiment))
-      .attr("stroke-width", (d) => widthScale(d.mentions))
+      .attr("stroke-width", (d) => this.widthScale(d.mentions))
       .style("opacity", this.unselectedPathOpacity)
       .on("mouseover", () => {
         this.highlightRegion(null);
@@ -360,16 +360,6 @@ class NetworkPlot {
     this.clicked = false;
     this.activeSubreddit = selection;
     this.highlightRegion(selection);
-    // this.clearCircleHighlights();
-  }
-
-  removeUnconnectedNodes(nodes, links) {
-    let outNodes = links.map((d) => d.target);
-    let inNodes = links.map((d) => d.source);
-    let connectedNodes = outNodes.concat(inNodes);
-    return nodes.filter((node) =>
-      connectedNodes.some((connectedNode) => connectedNode == node.id)
-    );
   }
 
   linkArc(link) {
@@ -383,18 +373,6 @@ class NetworkPlot {
       link.target.y + this.shiftY
     }
   `;
-  }
-
-  makeRadiusSale() {
-    let min = d3.min(this.nodes, (node) => node.totalHyperlinks);
-    let max = d3.max(this.nodes, (node) => node.totalHyperlinks);
-    return d3.scaleLinear().domain([min, max]).range([7, 13]);
-  }
-
-  makeStrokeWidthScale(links) {
-    let maximum = d3.max(links, (link) => link.mentions);
-    let minimum = d3.min(links, (link) => link.mentions);
-    return d3.scaleLinear().domain([minimum, maximum]).range([3, 8]);
   }
 
   highlightRegion(selection) {
@@ -443,14 +421,6 @@ class NetworkPlot {
         .style("opacity", 100)
         .attr("stroke-width", 3)
         .attr("stroke", "#FFBE33");
-
-      // this.circles
-      //   .filter((d) =>
-      //     this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-      //   )
-      //   .selectAll("circle")
-      //   .filter((circle) => circle.id !== this.activeSubreddit)
-      //   .style("opacity", 0.6);
     }
   }
 
