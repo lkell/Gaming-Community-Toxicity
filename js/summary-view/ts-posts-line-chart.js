@@ -26,7 +26,6 @@ class PostsLineChart {
 		this.drawPostAxis();
 	}
 
-	// TODO: Figure out why dateMin is is off by ~1 month PJW
 	createTimeScale() {
 		let tsArray = flattenValues(this.data, 'TIMESTAMP');
 		let dateMin = d3.min(tsArray);
@@ -38,12 +37,7 @@ class PostsLineChart {
 
 	createPostScale() {
 		let postArray = flattenValues(this.data, 'TIMESTAMP');
-		// TODO: Find better way to get max PJW
-		// for (let [_, value] of Object.entries(this.data)) {
-			// console.log(objectToArray(value).length)
-		// }
 		let postMin = 0;
-		// let postMax = postArray.length
 		let postMax = 100
 		return d3.scaleLinear()
 			.domain([postMin, postMax])
@@ -65,6 +59,7 @@ class PostsLineChart {
 		let summaryData = objectToArray(this.data[sourceSubreddit]);
 
 		summaryData = this.groupByYearAndMonth(summaryData);
+		summaryData.sort((a, b) => d3.ascending(+a.key, +b.key))
 
 		let postLineGenerator = d3.line()
 			.x(d => this.timeScale(d.key))
@@ -98,8 +93,6 @@ class PostsLineChart {
 			.duration(this.transitionDuration)
 			.attr("d", postLineGenerator)
 			.attr('transform', 'translate(' + (this.xMargin) + ',0)');
-
-		
 	}
 
     addTitle() {
