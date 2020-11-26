@@ -33,7 +33,6 @@ Promise.all([
 
     console.log(data)
     console.log(hotCommentData)
-    console.log(hotCommentData)
 
     addNavigation();
     globalData = data;
@@ -60,19 +59,10 @@ Promise.all([
     rankedTable.drawTable();
     rankedTimeSeries.drawTimeSeries();
     
-    updateSelectedSubreddit("leagueoflegends");
+    updateSelectedSubreddit(defaultSubreddit);
 
     switchView('.home-view')
 });
-
-// async function loadData() {
-//     let jsonFile = './data_processing/config/reddit-hyperlinks-body.json';
-//     return await d3.json(jsonFile);
-// };
-
-// async function loadOtherData() {
-//     let jsonFile = './data_processing/config/reddit-sentiment-analysis.json';
-//     return await d3.json(jsonFile);
 
 function drawSummaryView(data) {
     readabilityViolinPlot = new ReadabilityViolinPlot(data);
