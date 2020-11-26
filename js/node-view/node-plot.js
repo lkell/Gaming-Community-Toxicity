@@ -50,7 +50,7 @@ class NodePlot {
       .width(200)
       .height(60)
       .height(30)
-      .fill("lightpink")
+      .fill("#FF8b60")
       .displayValue(false)
       .on("onchange", (val) => {
         this.minLinks = val;
@@ -146,7 +146,7 @@ class NodePlot {
       .attr("orient", "auto")
       .append("polygon")
       .attr("points", "0 0, 15 5.25, 0 10.5")
-      .style("fill", "#336EFF")
+      .style("fill", "#9494FF")
       .attr("stroke", "black");
 
     let links = this.filterLinks(this.activeSubreddit, this.minLinks);
@@ -215,6 +215,7 @@ class NodePlot {
   }
 
   toolTipRender(data) {
+    console.log(data);
     let header = `<h2><strong>${data.id}</strong></h2>`;
     let summaryFirstLine = `<p>Mentioned <strong>${data.mentions}</strong> times by ${this.activeSubreddit}`;
     let summarySecondLine = `<br>with AVG sentiment of <strong>${data.sentiment.toFixed(
@@ -272,6 +273,8 @@ class NodePlot {
   }
 
   addNodeAttributes(nodes, links, selected) {
+    nodes = JSON.parse(JSON.stringify(nodes));
+
     let angle = 0;
     let adjust = Math.PI / 5;
 
@@ -290,8 +293,6 @@ class NodePlot {
       targetNode.mentions = link.mentions;
       targetNode.sentiment = link.sentiment;
     }
-    console.log(sourceNode);
-    console.log(targetNodes);
 
     if (this.sortTargetsBy === "mentions") {
       targetNodes.sort((a, b) => b.mentions - a.mentions);
@@ -310,7 +311,7 @@ class NodePlot {
       targetNodes[i].angle = angle;
       targetNodes[i].font = 12;
       angle += adjust;
-      targetNodes[i].displayName = this.truncateName(nodes[i].id);
+      targetNodes[i].displayName = this.truncateName(targetNodes[i].id);
     }
     return targetNodes.concat(sourceNode);
   }

@@ -10,6 +10,26 @@ class NetworkPlot {
       .attr("height", this.height + "px")
       .attr("overflow", "scroll");
 
+    this.root
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", this.width)
+      .attr("height", this.height)
+      .style("opacity", 0)
+      .on("click", (e) => {
+        this.clearHighlights();
+        this.circles.selectAll("circle").style("opacity", 1);
+        this.clicked = true;
+      })
+      .on("mouseover", (e) => {
+        this.highlightRegion(null);
+        if (this.clicked) {
+          this.circles.selectAll("circle").style("opacity", 1);
+        }
+      });
+
+    this.root;
     this.nodes = nodes;
     // this.nodes = this.removeUnconnectedNodes(nodes, links);
     this.links = links;
@@ -20,6 +40,7 @@ class NetworkPlot {
     this.activeSubreddit;
 
     this.colorScale = colorscale;
+    this.radiusScale = this.makeRadiusSale();
 
     this.updateFun = updateFun;
 
@@ -27,6 +48,9 @@ class NetworkPlot {
 
     this.minMentions = 0;
     this.connectedNodes = this.nodes.map((node) => node.id);
+
+    this.clicked = false;
+    this.highlightedNode;
 
     this.setupPlot();
   }
@@ -51,16 +75,20 @@ class NetworkPlot {
     var slider = d3
       .sliderHorizontal()
       .min(1)
-      .max(26)
+      .max(24)
       .step(1)
       .width(200)
       .height(60)
       .height(30)
-      .fill("lightblue")
+      .fill("#9494FF")
       .displayValue(false)
       .on("onchange", (val) => {
         d3.select("#value").text(val);
         this.trimLinks(val);
+        this.highlightRegion(null);
+        if (this.clicked) {
+          this.circles.selectAll("circle").style("opacity", 1);
+        }
       });
 
     let sliderElem = this.root
@@ -91,7 +119,6 @@ class NetworkPlot {
     let outNodes = allowedLinks.map((d) => d.target.id);
     let inNodes = allowedLinks.map((d) => d.source.id);
     this.connectedNodes = outNodes.concat(inNodes);
-    console.log(this.connectedNodes[0]);
     this.circles
       .filter(
         (d) =>
@@ -103,18 +130,6 @@ class NetworkPlot {
         this.connectedNodes.some((connectedNode) => connectedNode == d.id)
       )
       .style("opacity", 1);
-    // let removeCircles = this.circles.filter(
-    //   (d) => !this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-    // );
-    // removeCircles.style("opacity", 0)
-    // removeCircles.selectAll("circle").style("opacity", 0);
-    // removeCircles.selectAll("text").style("opacity", 0);
-
-    // let keepCircles = this.circles.filter((d) =>
-    //   this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-    // );
-    // keepCircles.selectAll("circle").style("opacity", 0.6);
-    // keepCircles.selectAll("text").style("opacity", 1);
   }
 
   makeColorScale() {
@@ -122,6 +137,32 @@ class NetworkPlot {
   }
 
   addLegend() {
+    this.addColorLegend();
+    this.addSizeLegend();
+  }
+
+  addSizeLegend() {
+    let min = d3.min(this.nodes, (node) => node.totalHyperlinks);
+    let max = d3.max(this.nodes, (node) => node.totalHyperlinks);
+
+    let legendCircles = [
+      { radius: this.radiusScale(min), x: 0, y: 0 },
+      { radius: this.radiusScale(max), x: 100, y: 0 },
+    ];
+
+    this.root
+      .append("g")
+      .attr("id", "network-radius-legend")
+      .attr("transform", "translate(800,500)")
+      .selectAll("circle")
+      .data(legendCircles)
+      .join("circle")
+      .attr("r", (d) => d.radius)
+      .attr("cx", (d) => d.x)
+      .attr("cy", (d) => d.y);
+  }
+
+  addColorLegend() {
     // https://observablehq.com/@d3/color-legend
     // https://stackoverflow.com/questions/60443356/legend-not-appearing-when-using-document-createelementcanvas
 
@@ -165,6 +206,7 @@ class NetworkPlot {
 
     this.root
       .append("image")
+      .attr("alt", "Sentiment Color Legend")
       .attr("x", marginLeft + shiftX)
       .attr("y", marginTop + shiftY)
       .attr("width", width - marginLeft - marginRight)
@@ -247,10 +289,8 @@ class NetworkPlot {
       .attr("orient", "auto")
       .append("polygon")
       .attr("points", "0 0, 15 5.25, 0 10.5")
-      .style("fill", "#336EFF")
+      .style("fill", "#9494FF")
       .attr("stroke", "black");
-
-    let radiusScale = this.makeRadiusSale();
 
     let widthScale = this.makeStrokeWidthScale(this.links);
 
@@ -263,6 +303,12 @@ class NetworkPlot {
       .attr("stroke", (d) => this.colorScale(d.sentiment))
       .attr("stroke-width", (d) => widthScale(d.mentions))
       .style("opacity", this.unselectedPathOpacity)
+      .on("mouseover", () => {
+        this.highlightRegion(null);
+        if (this.clicked) {
+          this.circles.selectAll("circle").style("opacity", 1);
+        }
+      })
       .attr("marker-end", "url(#arrow)");
 
     this.circles = this.root
@@ -278,28 +324,22 @@ class NetworkPlot {
       .attr("fill", (d) => this.colorScale(d.positivity))
       .attr("stroke", "black")
       .attr("stroke-width", 2)
-      .attr("r", (d) => radiusScale(d.interactions));
+      .attr("r", (d) => this.radiusScale(d.totalHyperlinks));
 
     this.circles
       .selectAll("circle")
-      .on("mouseenter", (event, d) => this.highlightRegion(d.id, this));
+      .on("mouseenter", (event, d) => this.highlightRegion(d.id));
 
     this.circles
       .selectAll("circle")
       .on("click", (event, d) => this.updateFun(d.id));
 
-    // this.circles.selectAll("circle").on("click", (event, d) => {
-    //   this.activeSubreddit = d.id;
-    //   this.clearCircleHighlights();
-    //   this.updateFun(d.id);
-    // });
-
     this.circles
       .append("text")
       .attr("fill", "black")
-      .attr("x", 5)
-      .attr("y", -14)
-      .style("font-size", 12)
+      .attr("x", 9)
+      .attr("y", -18)
+      .style("font-size", 10)
       .raise()
       .text((d) => d.id)
       .clone(true)
@@ -314,19 +354,13 @@ class NetworkPlot {
       "transform",
       (d) => `translate(${d.x + this.shiftX},${d.y + this.shiftY})`
     );
-
-    // this.root.on("click", e => {
-    //   this.clearHighlights()
-    //   this.activeSubreddit = null;
-    // });
-    // this.root.on("mouseover", e => this.reHighlightRegion(this));
-    // this.root.on("mouseover", (e) => this.clearHighlights());
   }
 
   updateSelectedSubreddit(selection) {
+    this.clicked = false;
     this.activeSubreddit = selection;
-    this.highlightRegion(selection, this);
-    this.clearCircleHighlights();
+    this.highlightRegion(selection);
+    // this.clearCircleHighlights();
   }
 
   removeUnconnectedNodes(nodes, links) {
@@ -352,9 +386,9 @@ class NetworkPlot {
   }
 
   makeRadiusSale() {
-    let min = d3.min(this.nodes, (node) => node.interactions);
-    let max = d3.max(this.nodes, (node) => node.interactions);
-    return d3.scaleLinear().domain([min, max]).range([6, 12]);
+    let min = d3.min(this.nodes, (node) => node.totalHyperlinks);
+    let max = d3.max(this.nodes, (node) => node.totalHyperlinks);
+    return d3.scaleLinear().domain([min, max]).range([7, 13]);
   }
 
   makeStrokeWidthScale(links) {
@@ -363,62 +397,61 @@ class NetworkPlot {
     return d3.scaleLinear().domain([minimum, maximum]).range([3, 8]);
   }
 
-  highlightRegion(selection, view) {
+  highlightRegion(selection) {
     this.clearHighlights();
-    this.circles
-      .filter((d) =>
-        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-      )
-      .selectAll("circle")
-      .filter((circle) => circle.id !== this.activeSubreddit)
-      .style("opacity", 0.6);
 
-    let selectedNode = selection;
-    this.paths
-      .filter((d) => d.mentions >= this.minMentions)
-      .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode)
-      .style("opacity", 1);
+    if (selection !== null) {
+      // fill in paths around selected node
+      this.paths
+        .filter((d) => d.mentions >= this.minMentions)
+        .filter((d) => d.target.id == selection || d.source.id == selection)
+        .style("opacity", 1);
 
-    this.circles
-      .filter((d) =>
-        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-      )
-      .filter((d) => d.id == selectedNode)
-      .selectAll("circle")
-      .style("opacity", 100)
-      .attr("stroke", "#FFBE33")
-      .attr("stroke-width", 3);
-  }
-
-  reHighlightRegion(view) {
-    if (view.activeSubreddit === null) {
-      return;
+      // fill in the selected node
+      this.circles
+        .filter((d) =>
+          this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+        )
+        .filter((d) => d.id == selection)
+        .selectAll("circle")
+        .style("opacity", 100);
     }
-    this.clearHighlights();
-    this.circles
-      .filter((d) =>
-        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-      )
-      .selectAll("circle")
-      .filter((circle) => circle.id !== this.activeSubreddit)
-      .style("opacity", 0.6);
 
-    let selectedNode = this.activeSubreddit;
-    this.paths
-      .filter((d) => d.mentions >= this.minMentions)
-      .filter((d) => d.target.id == selectedNode || d.source.id == selectedNode)
-      .style("opacity", 1);
+    if (!this.clicked) {
+      // fill in paths around active node
+      this.paths
+        .filter((d) => d.mentions >= this.minMentions)
+        .filter(
+          (d) =>
+            d.target.id == this.activeSubreddit ||
+            d.source.id == this.activeSubreddit
+        )
+        .style("opacity", 1);
 
-    this.circles
-      .filter((d) =>
-        this.connectedNodes.some((connectedNode) => connectedNode == d.id)
-      )
-      .filter((d) => d.id == selectedNode)
-      .selectAll("circle")
-      .style("opacity", 100)
-      // .attr("stroke", "#FFBE33")
-      .attr("stroke", "#FFBE33")
-      .attr("stroke-width", 3);
+      let activeCircle = this.circles
+        .filter((d) =>
+          this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+        )
+        .filter((d) => d.id == this.activeSubreddit);
+
+      // emphasize the label of the active node
+      activeCircle.selectAll("text").attr("font-weight", "bold");
+
+      // emphasize the active node
+      activeCircle
+        .selectAll("circle")
+        .style("opacity", 100)
+        .attr("stroke-width", 3)
+        .attr("stroke", "#FFBE33");
+
+      // this.circles
+      //   .filter((d) =>
+      //     this.connectedNodes.some((connectedNode) => connectedNode == d.id)
+      //   )
+      //   .selectAll("circle")
+      //   .filter((circle) => circle.id !== this.activeSubreddit)
+      //   .style("opacity", 0.6);
+    }
   }
 
   clearHighlights() {
@@ -429,14 +462,18 @@ class NetworkPlot {
   }
 
   clearCircleHighlights() {
-    this.circles
+    let unHighlightedCircles = this.circles
       .filter((d) =>
         this.connectedNodes.some((connectedNode) => connectedNode == d.id)
       )
+      .filter((circle) => circle.id !== this.activeSubreddit);
+
+    unHighlightedCircles
       .selectAll("circle")
-      .filter((circle) => circle.id !== this.activeSubreddit)
       .attr("stroke", "black")
       .attr("stroke-width", 2)
-      .style("opacity", 1);
+      .style("opacity", 0.6);
+
+    unHighlightedCircles.selectAll("text").attr("font-weight", "normal");
   }
 }
