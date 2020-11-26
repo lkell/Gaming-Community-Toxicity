@@ -123,6 +123,7 @@ class PostsLineChart {
 		    .attr('class', 'y-label')
 		    .attr('transform', 'translate(15, 175) rotate(-90)')
 		    .style('font-size', 13)
+		    .style('fill', 'white')
 		    .text('Links');
     }
 
