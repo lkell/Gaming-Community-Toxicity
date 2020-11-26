@@ -275,7 +275,8 @@ class NodePlot {
   addNodeAttributes(nodes, links, selected) {
     nodes = JSON.parse(JSON.stringify(nodes));
 
-    let angle = 0;
+    // let angle = 0;
+    let angle = -Math.PI / 2;
     let adjust = Math.PI / 5;
 
     let sourceNode = nodes.find((node) => node.id == selected);
