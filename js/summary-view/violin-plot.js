@@ -177,6 +177,26 @@ class ViolinPlot {
                     .tickFormat('')
             )
             .classed('summary-violin-x-axis', true);
+
+        this.addAxisLabels();
+    }
+
+    addAxisLabels() {
+        this.svg.append('text')
+            .attr('x', this.sentimentScale(-1))
+            .attr('y', this.yScale(15) + 35)
+            .style('text-anchor', 'start')
+            .style('font-size', 14)
+            .style('fill', 'white')
+            .text('Negative');
+
+        this.svg.append('text')
+            .attr('x', this.sentimentScale(1))
+            .attr('y', this.yScale(15) + 35)
+            .style('text-anchor', 'end')
+            .style('font-size', 14)
+            .style('fill', 'white')
+            .text('Positive');
     }
 
     drawMedian() {

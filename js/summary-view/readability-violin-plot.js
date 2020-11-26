@@ -35,7 +35,7 @@ class ReadabilityViolinPlot {
 
 	createReadabilityScale() {
 		return d3.scaleLinear()
-			.domain([0, 50])
+			.domain([-5, 25])
 			.range([this.xMargin / 2, this.width])
 			.clamp(true);
 	}
@@ -95,7 +95,7 @@ class ReadabilityViolinPlot {
         this.plotInfo.objs.left.g.attr("transform", "translate(0," + 150 + ")  scale(1,-1)");
         this.plotInfo.objs.right.g.attr("transform", "translate(0," + 150 + ")");
 
-        this.drawSentimentAxis();
+        this.drawReadabilityAxis();
         this.drawQuartileBox();
         this.drawMedian();
         
@@ -157,7 +157,7 @@ class ReadabilityViolinPlot {
             .classed('summary-violin-line', true);
     }
 
-    drawSentimentAxis() {
+    drawReadabilityAxis() {
         this.svg.selectAll('.summary-violin-x-axis').remove();
         this.svg.append('g')
             .attr('transform', 'translate(0' + ',' + (this.height / 2) + ')')
@@ -177,6 +177,26 @@ class ReadabilityViolinPlot {
                     .tickFormat('')
             )
             .classed('summary-violin-x-axis', true);
+
+        this.addAxisLabels();
+    }
+
+    addAxisLabels() {
+        this.svg.append('text')
+            .attr('x', this.readabilityScale(1))
+            .attr('y', this.yScale(5) + 30)
+            .style('text-anchor', 'middle')
+            .style('font-size', 14)
+            .style('fill', 'white')
+            .text('1=5-6 y/o');
+
+        this.svg.append('text')
+            .attr('x', this.readabilityScale(14))
+            .attr('y', this.yScale(5) + 30)
+            .style('text-anchor', 'middle')
+            .style('font-size', 14)
+            .style('fill', 'white')
+            .text('14=24+ y/o');
     }
 
     drawMedian() {
