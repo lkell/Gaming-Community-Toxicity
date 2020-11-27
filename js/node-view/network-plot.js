@@ -90,7 +90,8 @@ class NetworkPlot {
     const marginBottom = 16 + tickSize;
     const marginLeft = 0;
     const ticks = width / 64;
-    const shiftX = 750;
+    // const shiftX = 750;
+    const shiftX = 770;
     const shiftY = 530;
 
     let tickAdjust = (g) =>
@@ -176,7 +177,7 @@ class NetworkPlot {
     let legend = this.root
       .append("g")
       .attr("id", "network-radius-legend")
-      .attr("transform", "translate(800,490)")
+      .attr("transform", "translate(820,490)")
       .attr("fill", "white");
 
     legend
@@ -185,7 +186,7 @@ class NetworkPlot {
       .attr("y", -20)
       .attr("text-anchor", "middle")
       .attr("font-size", 12)
-      .text("Total #Hyperlinks");
+      .text("#Outbound Gaming Hyperlinks");
 
     let legendCircles = legend.selectAll("g").data(legendData).join("g");
 
