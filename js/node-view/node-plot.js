@@ -73,14 +73,14 @@ class NodePlot {
       .attr("x", tickData[1].x)
       .attr("y", -12)
       .attr("text-anchor", "middle")
-      .text("Link Width Scale: #Hyperlinks");
+      .text("Edge Width Scale: #Hyperlinks");
 
     let ticks = legend
       .selectAll("g")
       .data(tickData)
       .join("g")
       .attr("fill", "white");
-    
+
     ticks
       .append("line")
       .attr("x1", (d) => d.x)
@@ -101,16 +101,16 @@ class NodePlot {
       .attr("y1", tickHeight / 2)
       .attr("y2", tickHeight / 2)
       .attr("stroke", arrowColor)
-      .attr("opacity", arrowOpacity)
+      .attr("opacity", arrowOpacity);
 
     legend
       .append("line")
       .attr("x1", tickData[2].x - 7)
       .attr("x2", tickData[2].x)
-      .attr("y1", (tickHeight / 2) - 7)
+      .attr("y1", tickHeight / 2 - 7)
       .attr("y2", tickHeight / 2)
       .attr("stroke", arrowColor)
-      .attr("opacity", arrowOpacity)
+      .attr("opacity", arrowOpacity);
 
     legend
       .append("line")
@@ -119,7 +119,7 @@ class NodePlot {
       .attr("y1", tickHeight / 2 + 7)
       .attr("y2", tickHeight / 2)
       .attr("stroke", arrowColor)
-      .attr("opacity", arrowOpacity)
+      .attr("opacity", arrowOpacity);
 
     ticks
       .append("text")
@@ -309,10 +309,22 @@ class NodePlot {
   toolTipRender(data) {
     console.log(data);
     let header = `<h2><strong>${data.id}</strong></h2>`;
-    let summaryFirstLine = `<p>Mentioned <strong>${data.mentions}</strong> times by ${this.activeSubreddit}`;
-    let summarySecondLine = `<br>with AVG sentiment of <strong>${data.sentiment.toFixed(
-      2
-    )}</strong></p>`;
+    let summaryFirstLine;
+    let summarySecondLine;
+    if (data.class == "otherNode") {
+      summaryFirstLine = `<p>Linked <strong>${data.mentions}</strong> times by ${this.activeSubreddit}`;
+      summarySecondLine = `<br>with AVG sentiment of <strong>${data.sentiment.toFixed(
+        2
+      )}</strong></p>`;
+    } else {
+      console.log(data.totalHyperlinks)
+      console.log(data.positivity)
+      summaryFirstLine = `<p>${data.totalHyperlinks} links to other subreddits`
+      summarySecondLine = `<br>with AVG sentiment of <strong>${data.positivity.toFixed(
+        2
+      )}</strong></p>`;
+    }
+      console.log(header + summaryFirstLine + summarySecondLine)
     return header + summaryFirstLine + summarySecondLine;
   }
 
