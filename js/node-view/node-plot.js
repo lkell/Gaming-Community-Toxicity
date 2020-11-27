@@ -307,7 +307,6 @@ class NodePlot {
   }
 
   toolTipRender(data) {
-    console.log(data);
     let header = `<h2><strong>${data.id}</strong></h2>`;
     let summaryFirstLine;
     let summarySecondLine;
@@ -317,14 +316,14 @@ class NodePlot {
         2
       )}</strong></p>`;
     } else {
-      console.log(data.totalHyperlinks)
-      console.log(data.positivity)
-      summaryFirstLine = `<p>${data.totalHyperlinks} links to other subreddits`
+      console.log(data.totalHyperlinks);
+      console.log(data.positivity);
+      summaryFirstLine = `<p>${data.totalHyperlinks} links to other subreddits`;
       summarySecondLine = `<br>with AVG sentiment of <strong>${data.positivity.toFixed(
         2
       )}</strong></p>`;
     }
-      console.log(header + summaryFirstLine + summarySecondLine)
+    console.log(header + summaryFirstLine + summarySecondLine);
     return header + summaryFirstLine + summarySecondLine;
   }
 
@@ -387,9 +386,9 @@ class NodePlot {
     sourceNode.x = this.center[0];
     sourceNode.y = this.center[1];
     sourceNode.selected = true;
-    sourceNode.radius = 60;
+    sourceNode.radius = 63;
     sourceNode.class = "selectedNode";
-    sourceNode.font = 14;
+    sourceNode.font = sourceNode.id.length >= 17 ? 12 : 14;
     sourceNode.displayName = sourceNode.id;
 
     let targetNodes = nodes.filter((node) => node.id != selected);
@@ -411,7 +410,7 @@ class NodePlot {
       targetNodes[i].x = this.center[0] + this.radius * Math.cos(angle);
       targetNodes[i].y = this.center[1] + this.radius * Math.sin(angle);
       targetNodes[i].selected = false;
-      targetNodes[i].radius = 40;
+      targetNodes[i].radius = 43;
       targetNodes[i].class = "otherNode";
       targetNodes[i].angle = angle;
       targetNodes[i].font = 12;
