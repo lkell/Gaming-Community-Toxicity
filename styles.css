@@ -200,7 +200,6 @@ body {
 #node {
   height: 600px;
   width: 950px;
-  /* overflow: scroll; */
 }
 
 /* https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg */
@@ -216,14 +215,6 @@ body {
 	color: white;
 }
 
-/*.network-plot {*/
-/*	background-color: darkgrey*/
-/*}*/
-
-/*.node-plot {*/
-/*	background-color: darkgrey*/
-/*}*/
-
 /* Styling for buttons and dropdowns */
 #storytellingButton {
 	min-width: 300px;
@@ -234,8 +225,3 @@ body {
   max-height: 818px;
   overflow-y: auto;
 }
-
-/* .axis text,
-.slider text {
-  font-size: 10px;
-} */
