@@ -219,3 +219,9 @@ function setupDropDown(data, eventFun) {
       eventFun(selection);
      })
 }
+
+function formatNumberToDecimalPlaces(num, decimalPlaces) {
+    let fraction = parseFloat((parseFloat(num) % 1).toFixed(decimalPlaces));
+    let wholeNumber = parseInt(num);
+    return wholeNumber + fraction;
+}
