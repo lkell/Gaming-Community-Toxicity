@@ -58,7 +58,13 @@ Promise.all([
     
     updateSelectedSubreddit(defaultSubreddit);
 
-    let storyTeller = new StoryTeller();
+    let storySubreddits = new Object();
+    storySubreddits.toxicSubreddit = 'kotakuinaction';
+    storySubreddits.lovingSubreddit = 'stardewvalley';
+    storySubreddits.spikeLinksSubreddit = 'pokemongo';
+    storySubreddits.mostActiveSubreddit = 'gaming';
+    storySubreddits.mostPolarizedSubreddit = 'truegaming';
+    let storyTeller = new StoryTeller(storySubreddits);
     setupStoryTellingDropDown(storyTeller);
 
     switchView('.home-view')
