@@ -85,11 +85,13 @@ class NodeView {
     return subreddits.map(function (subreddit) {
       let relatedLinks = getRelatedLinks(subreddit);
       let interactions = d3.count(relatedLinks, (link) => link.mentions);
+      let totalHyperlinks = d3.sum(relatedLinks, (link) => link.mentions);
       let positivity = d3.mean(relatedLinks, (link) => link.sentiment);
       return {
         id: subreddit,
         label: subreddit,
         interactions: interactions,
+        totalHyperlinks: totalHyperlinks,
         positivity: positivity,
       };
     });
