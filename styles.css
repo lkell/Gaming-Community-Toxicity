@@ -35,6 +35,12 @@ div.tooltip {
     color: white;
 }
 
+#story-teller-div {
+	height: 600px;
+	width: 1000px;
+	opacity: 0.9;
+}
+
 
 /*Styling toggle between views */
 .home-view {
