@@ -65,3 +65,6 @@ Creates the violin plot detailing the Automated Readability Index comment of the
 
 ### script.js
 This is our main file for running the visualization code. It also contains some util functions that are used across several different visualizations. Additionally, this is where our callback functions are located.
+
+### story-telling
+#### story-telling.js

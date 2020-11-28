@@ -28,11 +28,8 @@ Promise.all([
         });
 
     setupDropDown(data, updateSelectedSubreddit);
-    d3.selectAll(".load-notifier").style("display", "none")
-    d3.selectAll(".loading-container").style("height",0)
-
-    console.log(data)
-    console.log(hotCommentData)
+    d3.selectAll(".load-notifier").style("display", "none");
+    d3.selectAll(".loading-container").style("height",0);
 
     addNavigation();
     globalData = data;
@@ -60,6 +57,15 @@ Promise.all([
     rankedTimeSeries.drawTimeSeries();
     
     updateSelectedSubreddit(defaultSubreddit);
+
+    let storySubreddits = new Object();
+    storySubreddits.toxicSubreddit = 'kotakuinaction';
+    storySubreddits.lovingSubreddit = 'stardewvalley';
+    storySubreddits.spikeLinksSubreddit = 'pokemongo';
+    storySubreddits.mostActiveSubreddit = 'gaming';
+    storySubreddits.mostPolarizedSubreddit = 'truegaming';
+    let storyTeller = new StoryTeller(storySubreddits);
+    setupStoryTellingDropDown(storyTeller);
 
     switchView('.home-view')
 });
@@ -203,7 +209,6 @@ function calcMetrics(values) {
 function setupDropDown(data, eventFun) {
     let gamingSubreddits = Object.keys(data)
     let dropDown = document.getElementById("dropdown-items");
-    console.log(dropDown);
 
     for (let subreddit of gamingSubreddits) {
       let option = document.createElement("a");
@@ -218,6 +223,13 @@ function setupDropDown(data, eventFun) {
       let selection = event.target.innerText;
       eventFun(selection);
      })
+}
+
+function setupStoryTellingDropDown(storyTeller) {
+    let dropDown = document.getElementById('story-teller-dropdown');
+    $('#loving-choice').click(event => storyTeller.displayMostLovingSubreddit());
+    $('#toxic-choice').click(event => storyTeller.displayMostToxicSubreddit());
+    $('#highest-activity-choice').click(event => storyTeller.displayLargestFluctuationInActivity());
 }
 
 function formatNumberToDecimalPlaces(num, decimalPlaces) {

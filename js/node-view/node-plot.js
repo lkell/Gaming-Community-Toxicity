@@ -163,7 +163,6 @@ class NodePlot {
       .attr("text-anchor", "middle")
       .text("Minimum #hyperlinks");
 
-    console.log(sliderElem);
   }
 
   setupDropDown() {
