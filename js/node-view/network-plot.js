@@ -209,8 +209,8 @@ class NetworkPlot {
       .attr("cx", (d) => d.x)
       .attr("cy", (d) => d.y)
       .attr("stroke", "black")
-      .attr("stroke-width", 3)
-      .style("fill-opacity", 0);
+      .attr("stroke-width", 2)
+      .attr("fill", "none");
 
     legendCircles
       .append("text")

@@ -310,7 +310,6 @@ class NodePlot {
   }
 
   toolTipRender(data) {
-    console.log(data);
     let header = `<h2><strong>${data.id}</strong></h2>`;
     let summaryFirstLine;
     let summarySecondLine;
@@ -320,14 +319,11 @@ class NodePlot {
         2
       )}</strong></p>`;
     } else {
-      console.log(data.totalHyperlinks);
-      console.log(data.positivity);
       summaryFirstLine = `<p>${data.totalHyperlinks} links to ${data.interactions} other subreddits`;
       summarySecondLine = `<br>with AVG sentiment of <strong>${data.positivity.toFixed(
         2
       )}</strong></p>`;
     }
-    console.log(header + summaryFirstLine + summarySecondLine);
     return header + summaryFirstLine + summarySecondLine;
   }
 

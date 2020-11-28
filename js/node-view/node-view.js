@@ -80,8 +80,6 @@ class NodeView {
     let getRelatedLinks = function (subreddit) {
       let outbound = links.filter((link) => link.source == subreddit);
       return outbound;
-      // let inbound = links.filter((link) => link.target == subreddit);
-      // return outbound.concat(inbound);
     };
 
     return subreddits.map(function (subreddit) {
