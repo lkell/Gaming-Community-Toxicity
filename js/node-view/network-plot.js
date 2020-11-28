@@ -91,7 +91,6 @@ class NetworkPlot {
     let outNodes = allowedLinks.map((d) => d.target.id);
     let inNodes = allowedLinks.map((d) => d.source.id);
     this.connectedNodes = outNodes.concat(inNodes);
-    console.log(this.connectedNodes[0]);
     this.circles
       .filter(
         (d) =>

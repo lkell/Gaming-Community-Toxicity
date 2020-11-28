@@ -72,7 +72,6 @@ class NodePlot {
       .attr("text-anchor", "middle")
       .text("Minimum #hyperlinks");
 
-    console.log(sliderElem);
   }
 
   setupDropDown() {
@@ -290,8 +289,6 @@ class NodePlot {
       targetNode.mentions = link.mentions;
       targetNode.sentiment = link.sentiment;
     }
-    console.log(sourceNode);
-    console.log(targetNodes);
 
     if (this.sortTargetsBy === "mentions") {
       targetNodes.sort((a, b) => b.mentions - a.mentions);
