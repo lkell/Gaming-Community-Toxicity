@@ -1,3 +1,6 @@
+/**
+ * Manage the graph data structure and handle the network and node plots.
+ */
 class NodeView {
   constructor(data, updateFun) {
     this.data = this.unnestData(data);
@@ -16,16 +19,15 @@ class NodeView {
       this.gamingSubreddits
     );
 
-    this.colorScale =  d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
+    this.colorScale = d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
 
     this.nodePlot = new NodePlot(
       "#node-summary",
-      610,
+      700,
       600,
       this.nodes,
       this.links,
-      this.colorScale,
-      this.gamingSubreddits
+      this.colorScale
     );
 
     // this.updateFun = this.extendUpdateFun(updateFun);

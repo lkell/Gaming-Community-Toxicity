@@ -1,5 +1,9 @@
+/**
+ * Visualize the close up outgoing sentiment interactions of a selected gaming
+ * subreddit.
+ */
 class NodePlot {
-  constructor(root, width, height, nodes, links, colorScale, gamingSubreddits) {
+  constructor(root, width, height, nodes, links, colorScale) {
     this.width = width;
     this.height = height;
     this.center = [this.width / 2, this.height / 2];
@@ -306,6 +310,7 @@ class NodePlot {
   }
 
   toolTipRender(data) {
+    console.log(data);
     let header = `<h2><strong>${data.id}</strong></h2>`;
     let summaryFirstLine;
     let summarySecondLine;
@@ -317,7 +322,7 @@ class NodePlot {
     } else {
       console.log(data.totalHyperlinks);
       console.log(data.positivity);
-      summaryFirstLine = `<p>${data.totalHyperlinks} links to other subreddits`;
+      summaryFirstLine = `<p>${data.totalHyperlinks} links to ${data.interactions} other subreddits`;
       summarySecondLine = `<br>with AVG sentiment of <strong>${data.positivity.toFixed(
         2
       )}</strong></p>`;

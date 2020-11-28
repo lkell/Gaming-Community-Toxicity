@@ -1,3 +1,6 @@
+/**
+ * Visualize the sentiment/link topology of the redding gaming community.
+ */
 class NetworkPlot {
   constructor(root, width, height, nodes, links, colorscale, updateFun) {
     this.nodes = nodes;
@@ -74,6 +77,16 @@ class NetworkPlot {
   }
 
   addLegend() {
+    this.root
+      .append("rect")
+      .attr("x", 765)
+      .attr("y", 450)
+      .attr("width", 230)
+      .attr("height", 140)
+      .attr("rx", 10)
+      .attr("fill", "none")
+      // .attr("stroke-width", 2)
+      .attr("stroke", "white");
     this.addColorLegend();
     this.addSizeLegend();
   }
@@ -91,7 +104,7 @@ class NetworkPlot {
     const marginLeft = 0;
     const ticks = width / 64;
     // const shiftX = 750;
-    const shiftX = 770;
+    const shiftX = 780;
     const shiftY = 530;
 
     let tickAdjust = (g) =>
@@ -177,7 +190,7 @@ class NetworkPlot {
     let legend = this.root
       .append("g")
       .attr("id", "network-radius-legend")
-      .attr("transform", "translate(820,490)")
+      .attr("transform", "translate(830,490)")
       .attr("fill", "white");
 
     legend
@@ -195,7 +208,7 @@ class NetworkPlot {
       .attr("r", (d) => d.radius)
       .attr("cx", (d) => d.x)
       .attr("cy", (d) => d.y)
-      .attr("stroke", "#9494FF")
+      .attr("stroke", "black")
       .attr("stroke-width", 3)
       .style("fill-opacity", 0);
 
