@@ -223,10 +223,10 @@ function setupDropDown(data, eventFun) {
 
 function setupStoryTellingDropDown(storyTeller) {
     let dropDown = document.getElementById('story-teller-dropdown');
-    $('#loving-choice').click(event => storyTeller.displayMostLovingSubreddit());
-    $('#toxic-choice').click(event => storyTeller.displayMostToxicSubreddit());
-    $('#highest-activity-choice').click(event => storyTeller.displayLargestFluctuationInActivity());
-    $('#link-choice').click(event => storyTeller.displayMostLinksSubreddit());
+    $('#loving-choice').click(event => storyTeller.displayMostLovingSubreddit(event));
+    $('#toxic-choice').click(event => storyTeller.displayMostToxicSubreddit(event));
+    $('#highest-activity-choice').click(event => storyTeller.displayLargestFluctuationInActivity(event));
+    $('#link-choice').click(event => storyTeller.displayMostLinksSubreddit(event));
 }
 
 function formatNumberToDecimalPlaces(num, decimalPlaces) {
