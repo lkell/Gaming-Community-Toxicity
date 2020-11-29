@@ -220,7 +220,7 @@ class ReadabilityViolinPlot {
 
     medianTooltipRender(d, subreddit) {
         let outputString = ''
-        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>Median:\t' + formatNumberToDecimalPlaces(d.median, 2) + '</p>';
         return outputString;
     }
@@ -247,7 +247,7 @@ class ReadabilityViolinPlot {
 
     metricsTooltipRender(d, subreddit) {
         let outputString = ''
-        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>Median:\t' + formatNumberToDecimalPlaces(d.median, 2) + '</p>';
         outputString += '<p>Mean:\t' + formatNumberToDecimalPlaces(d.mean, 2) + '</p>';
         outputString += '<p>Max:\t' + formatNumberToDecimalPlaces(d.max, 2) + '</p>';
