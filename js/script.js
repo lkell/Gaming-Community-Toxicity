@@ -52,7 +52,6 @@ Promise.all([
     rankedTable = new RankedTable(data, updateSelectedSubreddit);
     rankedTimeSeries = new RankedTimeSeries(data);
 
-    
     updateSelectedSubreddit(defaultSubreddit);
 
     let storySubreddits = new Object();
@@ -61,6 +60,7 @@ Promise.all([
     storySubreddits.spikeLinksSubreddit = 'pokemongo';
     storySubreddits.mostActiveSubreddit = 'gaming';
     storySubreddits.mostPolarizedSubreddit = 'truegaming';
+    storySubreddits.mostLinksSubreddit = nodeView.getMostLinksSubreddit();
     let storyTeller = new StoryTeller(storySubreddits);
     setupStoryTellingDropDown(storyTeller);
     switchView('.home-view')
@@ -226,6 +226,7 @@ function setupStoryTellingDropDown(storyTeller) {
     $('#loving-choice').click(event => storyTeller.displayMostLovingSubreddit());
     $('#toxic-choice').click(event => storyTeller.displayMostToxicSubreddit());
     $('#highest-activity-choice').click(event => storyTeller.displayLargestFluctuationInActivity());
+    $('#link-choice').click(event => storyTeller.displayMostLinksSubreddit());
 }
 
 function formatNumberToDecimalPlaces(num, decimalPlaces) {

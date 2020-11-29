@@ -1,3 +1,6 @@
+/**
+ * Manage the graph data structure and handle the network and node plots.
+ */
 class NodeView {
   constructor(data, updateFun) {
     this.data = this.unnestData(data);
@@ -16,16 +19,15 @@ class NodeView {
       this.gamingSubreddits
     );
 
-    this.colorScale =  d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
+    this.colorScale = d3.scaleSequential(d3.interpolateRdBu).domain([1, -1]);
 
     this.nodePlot = new NodePlot(
       "#node-summary",
-      610,
+      620,
       600,
       this.nodes,
       this.links,
-      this.colorScale,
-      this.gamingSubreddits
+      this.colorScale
     );
 
     // this.updateFun = this.extendUpdateFun(updateFun);
@@ -78,8 +80,6 @@ class NodeView {
     let getRelatedLinks = function (subreddit) {
       let outbound = links.filter((link) => link.source == subreddit);
       return outbound;
-      // let inbound = links.filter((link) => link.target == subreddit);
-      // return outbound.concat(inbound);
     };
 
     return subreddits.map(function (subreddit) {
@@ -121,5 +121,30 @@ class NodeView {
     }
 
     return links;
+  }
+
+  getMostLinksSubreddit() {
+    let mostLinking = this.nodes.sort(
+      (a, b) => b.totalHyperlinks - a.totalHyperlinks
+    )[0];
+    let mostLinkingGaming = this.gamingOnlyNodes.filter(
+      (node) => node.id == mostLinking.id
+    )[0];
+
+    let linkingTo = this.gamingOnlyLinks.filter(
+      (link) => link.target.id == mostLinking.id
+    );
+    let targetLinkCount = d3.sum(linkingTo, (d) => d.mentions);
+
+    let description = `
+    This subreddit contains <strong>${mostLinking.totalHyperlinks}</strong> hyperlinks to <strong>${mostLinking.interactions}</strong> different subreddits.
+    <br><strong>${mostLinkingGaming.totalHyperlinks}</strong> of these links go to <strong>${mostLinkingGaming.interactions}</strong> of the gaming list subreddits.
+    <br>On the receiving end, this subreddit was linked to <strong>${targetLinkCount}</strong> times by the other gaming subreddits.
+    `;
+
+    return {
+      id: mostLinking.id,
+      description: description,
+    };
   }
 }
