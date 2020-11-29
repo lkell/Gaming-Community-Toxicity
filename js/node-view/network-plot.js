@@ -1,3 +1,6 @@
+/**
+ * Visualize the sentiment/link topology of the redding gaming community.
+ */
 class NetworkPlot {
   constructor(root, width, height, nodes, links, colorscale, updateFun) {
     this.nodes = nodes;
@@ -60,6 +63,7 @@ class NetworkPlot {
     this.addTitle();
     this.addLegend();
     this.setupSlider();
+    this.setupArrowMarkers();
   }
 
   addTitle() {
@@ -74,6 +78,16 @@ class NetworkPlot {
   }
 
   addLegend() {
+    this.root
+      .append("rect")
+      .attr("x", 765)
+      .attr("y", 450)
+      .attr("width", 230)
+      .attr("height", 140)
+      .attr("rx", 10)
+      .attr("fill", "none")
+      .style("opacity", 0.5)
+      .attr("stroke", "white");
     this.addColorLegend();
     this.addSizeLegend();
   }
@@ -91,7 +105,7 @@ class NetworkPlot {
     const marginLeft = 0;
     const ticks = width / 64;
     // const shiftX = 750;
-    const shiftX = 770;
+    const shiftX = 780;
     const shiftY = 530;
 
     let tickAdjust = (g) =>
@@ -177,7 +191,7 @@ class NetworkPlot {
     let legend = this.root
       .append("g")
       .attr("id", "network-radius-legend")
-      .attr("transform", "translate(820,490)")
+      .attr("transform", "translate(830,490)")
       .attr("fill", "white");
 
     legend
@@ -195,9 +209,9 @@ class NetworkPlot {
       .attr("r", (d) => d.radius)
       .attr("cx", (d) => d.x)
       .attr("cy", (d) => d.y)
-      .attr("stroke", "#9494FF")
-      .attr("stroke-width", 3)
-      .style("fill-opacity", 0);
+      .attr("stroke", "black")
+      .attr("stroke-width", 2)
+      .attr("fill", "none");
 
     legendCircles
       .append("text")
@@ -244,6 +258,24 @@ class NetworkPlot {
       .attr("font-size", 12)
       .attr("text-anchor", "middle")
       .text("Minimum #hyperlinks");
+  }
+
+  setupArrowMarkers() {
+    // http://thenewcode.com/1068/Making-Arrows-in-SVG
+    this.root
+      .append("defs")
+      .append("marker")
+      .attr("id", "arrow")
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("markerHeight", 100)
+      .attr("markerWidth", 100)
+      .attr("refX", 22)
+      .attr("refY", 3.25)
+      .attr("orient", "auto")
+      .append("polygon")
+      .attr("points", "0 0, 15 5.25, 0 10.5")
+      .style("fill", "#9494FF")
+      .attr("stroke", "black");
   }
 
   trimLinks(minMentions) {
@@ -307,22 +339,6 @@ class NetworkPlot {
       .force("charge", d3.forceManyBody().strength(-1000))
       .force("x", d3.forceX().strength(0.01))
       .force("y", d3.forceY().strength(0.1));
-
-    // http://thenewcode.com/1068/Making-Arrows-in-SVG
-    this.root
-      .append("defs")
-      .append("marker")
-      .attr("id", "arrow")
-      .attr("markerUnits", "userSpaceOnUse")
-      .attr("markerHeight", 100)
-      .attr("markerWidth", 100)
-      .attr("refX", 22)
-      .attr("refY", 3.25)
-      .attr("orient", "auto")
-      .append("polygon")
-      .attr("points", "0 0, 15 5.25, 0 10.5")
-      .style("fill", "#9494FF")
-      .attr("stroke", "black");
 
     this.paths = this.root
       .append("g")

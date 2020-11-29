@@ -15,6 +15,7 @@
     <script src="https://unpkg.com/d3-simple-slider"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js" integrity="sha512-wNH6xsp2n8CfB91nrBtfc4sfLwYPBMjSWVUwQOp60AYYXH6i8yCwuKFZ4rgK2i6pQek/b+bSyR7b01/922IBzQ==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
@@ -48,12 +49,13 @@
     <div class="dropdown">
       <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" type="button" id="storytellingButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Show me...
-        <div id='story-teller-dropdown' class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a id='loving-choice' class="dropdown-item" href="#">The most loving subreddit</a>
-            <a id='toxic-choice' class="dropdown-item" href="#">The most toxic subreddit</a>
-            <a id='highest-activity-choice' class="dropdown-item" href="#">The subreddit with highest change in activity</a>
-        </div>
       </button>
+      <div id='story-teller-dropdown' class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a id='loving-choice' class="dropdown-item" href="#">The most loving subreddit</a>
+          <a id='toxic-choice' class="dropdown-item" href="#">The most toxic subreddit</a>
+          <a id='highest-activity-choice' class="dropdown-item" href="#">The subreddit with highest change in activity</a>
+          <a id='link-choice' class="dropdown-item" href="#">The subreddit with the most links</a>
+      </div>
     </div>
 </nav>
 
@@ -66,18 +68,19 @@
         <div class="card" id="summary-view-readability-violin-card"></div>
     </div>
     <div class="ranked-view mainView">
-        <div class="card" id="ranked-timeseries"></div>
-
+        <div class="card" id="ranked-timeseries-positive"></div>
+        <div class="card" id="ranked-timeseries-negative"></div>
+        <div class="card" id="ranked-timeseries-compound"></div>
         <div class="card" id="ranked-density">
             <table id="density-table">
                 <thead>
                 <tr id="columnHeaders">
                     <th class="sortable subreddit">Subreddit<i class="fas no-display"></i></th>
-                    <th class="sortable subreddit">Links<i class="fas no-display"></i></th>
-                    <th class="sortable density">Density<i class="fas no-display"></i></th>
-                    <th class="sortable positive">Positive<i class="fas no-display"></i></th>
-                    <th class="sortable negative">Negative<i class="fas no-display"></i></th>
-                    <th class="sortable compound">Compound<i class="fas no-display"></i></th>
+                    <th class="sortable links">Links <i class="fas no-display"></i></th>
+                    <th class="sortable density">Density <i class="fas no-display"></i></th>
+                    <th class="sortable positive">Positive <i class="fas no-display"></i></th>
+                    <th class="sortable negative">Negative <i class="fas no-display"></i></th>
+                    <th class="sortable compound">Compound <i class="fas no-display"></i></th>
                 </tr>
                 <tr>
                     <td class="subreddit table-axis"></td>
@@ -99,7 +102,7 @@
 <div class="loading-container d-flex flex-column align-items-center justify-content-center" style="height: 750px;">
 
     <div class="row justify-content-center load-notifier align-self-center">
-        <img src="assets/loading.gif">
+        <img src="assets/loading.gif" alt="loading">
     </div>
     <div class="row justify-content-center align-self-center load-notifier align-middle">
         <strong>Loading data...</strong>

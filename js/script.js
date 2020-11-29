@@ -40,7 +40,6 @@ Promise.all([
     postsLineChart = new PostsLineChart(data);
     violinPlot = new ViolinPlot(hotCommentData);  
     let defaultSubreddit = 'leagueoflegends';
-  
     violinPlot.draw(defaultSubreddit);
     postsLineChart.draw(defaultSubreddit);
     readabilityViolinPlot.draw(defaultSubreddit);
@@ -50,23 +49,19 @@ Promise.all([
     nodeView.drawPlots();
   
 //   Ranked View
-    let rankedTable = new RankedTable(data);
-    let rankedTimeSeries = new RankedTimeSeries(data);
-  
-    rankedTable.drawTable();
-    rankedTimeSeries.drawTimeSeries();
-    
-    updateSelectedSubreddit(defaultSubreddit);
+    rankedTable = new RankedTable(hotCommentData, updateSelectedSubreddit);
+    rankedTimeSeries = new RankedTimeSeries(data);
 
+    updateSelectedSubreddit(defaultSubreddit);
     let storySubreddits = new Object();
-    storySubreddits.toxicSubreddit = 'kotakuinaction';
-    storySubreddits.lovingSubreddit = 'stardewvalley';
+    storySubreddits.toxicSubreddit = rankedTable.mostToxic;
+    storySubreddits.lovingSubreddit = rankedTable.mostLoving;
     storySubreddits.spikeLinksSubreddit = 'pokemongo';
     storySubreddits.mostActiveSubreddit = 'gaming';
     storySubreddits.mostPolarizedSubreddit = 'truegaming';
+    storySubreddits.mostLinksSubreddit = nodeView.getMostLinksSubreddit();
     let storyTeller = new StoryTeller(storySubreddits);
     setupStoryTellingDropDown(storyTeller);
-
     switchView('.home-view')
 });
 
@@ -227,9 +222,10 @@ function setupDropDown(data, eventFun) {
 
 function setupStoryTellingDropDown(storyTeller) {
     let dropDown = document.getElementById('story-teller-dropdown');
-    $('#loving-choice').click(event => storyTeller.displayMostLovingSubreddit());
-    $('#toxic-choice').click(event => storyTeller.displayMostToxicSubreddit());
-    $('#highest-activity-choice').click(event => storyTeller.displayLargestFluctuationInActivity());
+    $('#loving-choice').click(event => storyTeller.displayMostLovingSubreddit(event));
+    $('#toxic-choice').click(event => storyTeller.displayMostToxicSubreddit(event));
+    $('#highest-activity-choice').click(event => storyTeller.displayLargestFluctuationInActivity(event));
+    $('#link-choice').click(event => storyTeller.displayMostLinksSubreddit(event));
 }
 
 function formatNumberToDecimalPlaces(num, decimalPlaces) {
