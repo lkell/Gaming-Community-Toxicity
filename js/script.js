@@ -40,7 +40,6 @@ Promise.all([
     postsLineChart = new PostsLineChart(data);
     violinPlot = new ViolinPlot(hotCommentData);  
     let defaultSubreddit = 'leagueoflegends';
-  
     violinPlot.draw(defaultSubreddit);
     postsLineChart.draw(defaultSubreddit);
     readabilityViolinPlot.draw(defaultSubreddit);
@@ -50,11 +49,9 @@ Promise.all([
     nodeView.drawPlots();
   
 //   Ranked View
-    let rankedTable = new RankedTable(data);
-    let rankedTimeSeries = new RankedTimeSeries(data);
-  
-    rankedTable.drawTable();
-    rankedTimeSeries.drawTimeSeries();
+    rankedTable = new RankedTable(data, updateSelectedSubreddit);
+    rankedTimeSeries = new RankedTimeSeries(data);
+
     
     updateSelectedSubreddit(defaultSubreddit);
 
@@ -66,7 +63,6 @@ Promise.all([
     storySubreddits.mostPolarizedSubreddit = 'truegaming';
     let storyTeller = new StoryTeller(storySubreddits);
     setupStoryTellingDropDown(storyTeller);
-
     switchView('.home-view')
 });
 
