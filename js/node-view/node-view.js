@@ -23,7 +23,7 @@ class NodeView {
 
     this.nodePlot = new NodePlot(
       "#node-summary",
-      700,
+      620,
       600,
       this.nodes,
       this.links,
@@ -121,5 +121,30 @@ class NodeView {
     }
 
     return links;
+  }
+
+  getMostLinksSubreddit() {
+    let mostLinking = this.nodes.sort(
+      (a, b) => b.totalHyperlinks - a.totalHyperlinks
+    )[0];
+    let mostLinkingGaming = this.gamingOnlyNodes.filter(
+      (node) => node.id == mostLinking.id
+    )[0];
+
+    let linkingTo = this.gamingOnlyLinks.filter(
+      (link) => link.target.id == mostLinking.id
+    );
+    let targetLinkCount = d3.sum(linkingTo, (d) => d.mentions);
+
+    let description = `
+    This subreddit contains <strong>${mostLinking.totalHyperlinks}</strong> hyperlinks to <strong>${mostLinking.interactions}</strong> different subreddits.
+    <br><strong>${mostLinkingGaming.totalHyperlinks}</strong> of these links go to <strong>${mostLinkingGaming.interactions}</strong> of the gaming list subreddits.
+    <br>On the receiving end, this subreddit was linked to <strong>${targetLinkCount}</strong> times by the other gaming subreddits.
+    `;
+
+    return {
+      id: mostLinking.id,
+      description: description,
+    };
   }
 }

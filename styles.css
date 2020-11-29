@@ -269,7 +269,7 @@ body {
 
 /* Styling for buttons and dropdowns */
 #storytellingButton {
-	min-width: 300px;
+	min-width: 350px;
 }
 
 /* https://stackoverflow.com/questions/47645634/bootstrap-4-making-dropdown-scrollable/47646286 */
