@@ -97,7 +97,7 @@ function flattenValues(data, column) {
 function addNavigation() {
     d3.selectAll('#home-toggle').on('click' , ()=>switchView('.home-view'))
     d3.selectAll('#ranked-toggle').on('click' , ()=>switchView('.ranked-view'))
-    d3.selectAll('#about-toggle').on('click' , ()=>switchView('about'))
+    d3.selectAll('#about-toggle').on('click' , ()=>switchView('.about-view'))
 }
 
 function switchView(newView){
@@ -108,7 +108,6 @@ function switchView(newView){
     }
     var endTranslateState = 'translate(0px,0px)';
     var translateInterpolator = d3.interpolateString(startTranslateState, endTranslateState);
-
     d3.selectAll(newView).style("display","grid")
         .transition()
         .duration(1000)
