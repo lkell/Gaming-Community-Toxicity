@@ -8,21 +8,26 @@ class StoryTeller {
 	addStoryTellerDiv() {
 		let that = this;
 		d3.select('#story-teller-div').remove();
-		document.body.addEventListener('click', this.removeDiv)
+		document.body.addEventListener('click', this.removeStory);
 		this.storyTellerDiv = this.root.append('div')
             .attr('id', 'story-teller-div')
-            .classed('tooltip', true);
+			.classed('tooltip', true);
 	}
 
-	removeDiv() {
+	removeStory(event) {
+		if (event.target.parentNode.id == "story-teller-dropdown") {
+			return;
+		}
 		d3.select('#story-teller-div').style('display', 'none');
+		d3.select("#storytellingButton").text("Show me...")
 	}
 
-	displayMostLovingSubreddit() {
+	displayMostLovingSubreddit(event) {
 		this.addStoryTellerDiv();
 		let subreddit = this.storySubreddits.lovingSubreddit;
 		updateSelectedSubreddit(subreddit);
 		this.storyTellerDiv.html(this.lovingSubredditHtml(subreddit));
+		this.updateStorytellingLabel(event);
 	}
 
 	lovingSubredditHtml(subreddit) {
@@ -32,11 +37,12 @@ class StoryTeller {
         return outputString;
 	}
 
-	displayMostToxicSubreddit() {
+	displayMostToxicSubreddit(event) {
 		this.addStoryTellerDiv();
 		let subreddit = this.storySubreddits.toxicSubreddit;
 		updateSelectedSubreddit(subreddit);
 		this.storyTellerDiv.html(this.toxicSubredditHtml(subreddit));
+		this.updateStorytellingLabel(event);
 	}
 
 	toxicSubredditHtml(subreddit) {
@@ -46,12 +52,13 @@ class StoryTeller {
         return outputString;
 	}
 
-	displayLargestFluctuationInActivity() {
+	displayLargestFluctuationInActivity(event) {
 		this.addStoryTellerDiv();
 		// FYI: the pokemongo subreddit goes off the scale, so we would like to highlight it PJW
 		let subreddit = this.storySubreddits.spikeLinksSubreddit;
 		updateSelectedSubreddit(subreddit);
 		this.storyTellerDiv.html(this.linksSubredditHtml(subreddit));
+		this.updateStorytellingLabel(event);
 	}
 
 	linksSubredditHtml(subreddit) {
@@ -61,15 +68,20 @@ class StoryTeller {
         return outputString;
 	}
 
-	displayMostLinksSubreddit() {
+	displayMostLinksSubreddit(event) {
 		this.addStoryTellerDiv();
 		let subreddit = this.storySubreddits.mostLinksSubreddit;
 		updateSelectedSubreddit(subreddit.id);
 		this.storyTellerDiv.html(this.mostLinksHTML(subreddit));
+		this.updateStorytellingLabel(event);
 	}
 
 	mostLinksHTML(subreddit) {
 		return `<h3>r/${subreddit.id}</h3><p>${subreddit.description}</p>`;
+	}
+
+	updateStorytellingLabel(event) {
+		d3.select("#storytellingButton").text(event.target.innerHTML);
 	}
 
 }

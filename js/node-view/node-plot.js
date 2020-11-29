@@ -6,7 +6,7 @@ class NodePlot {
   constructor(root, width, height, nodes, links, colorScale) {
     this.width = width;
     this.height = height;
-    this.center = [this.width / 2, this.height / 2];
+    this.center = [this.width / 2 - 30, this.height / 2];
     this.parent = root;
     this.root = d3
       .select(root)
@@ -39,99 +39,79 @@ class NodePlot {
     this.setupDropDown();
     this.setupSlider();
     this.addWidthLegend();
+    this.setupArrowMarkers();
   }
 
   addWidthLegend() {
     let maximum = d3.max(this.links, (link) => link.mentions);
-    let minimum = d3.min(this.links, (link) => link.mentions);
-    // return d3.scaleLinear().domain([minimum, maximum]).range([3, 50]);
+    let minimum = 1;
+
+    let edgeHeight = 40;
+    let edgeSpacing = 60;
+
+    let edgeData = [
+      {
+        label: minimum,
+        width: this.widthScale(minimum) / 2,
+        x: 0,
+      },
+      {
+        label: maximum,
+        width: this.widthScale(maximum) / 2,
+        x: this.widthScale(minimum) / 2 + edgeSpacing,
+      },
+    ];
+
     let legend = this.root
       .append("g")
       .attr("id", "node-plot-width-legend", true)
-      .attr("transform", "translate(440,550)")
+      .attr("transform", "translate(488,526)")
       .attr("fill", "white");
-
-    let tickHeight = 30;
-
-    let tickData = [
-      {
-        val: 0,
-        x: 0,
-        dashed: false,
-      },
-      {
-        val: Math.round(maximum / 2),
-        x: this.widthScale(Math.round(maximum / 2)),
-        dashed: true,
-      },
-      {
-        val: maximum,
-        x: this.widthScale(maximum),
-        dashed: false,
-      },
-    ];
+    
+  legend
+      .append("rect")
+      .attr("x", -58)
+      .attr("y", -35)
+      .attr("width", 180)
+      .attr("height", 100)
+      .attr("rx", 10)
+      .attr("fill", "none")
+      .style("opacity", 0.5)
+      .attr("stroke", "white");
 
     legend
       .append("text")
       .attr("font-size", 12)
-      .attr("x", tickData[1].x)
+      .attr("x", (edgeData[1].x - edgeData[0].x) / 2)
       .attr("y", -12)
       .attr("text-anchor", "middle")
-      .text("Edge Width Scale: #Hyperlinks");
+      .text("Edge Widths: #Hyperlinks");
 
-    let ticks = legend
+    let edges = legend
       .selectAll("g")
-      .data(tickData)
+      .data(edgeData)
       .join("g")
       .attr("fill", "white");
 
-    ticks
+    edges
       .append("line")
       .attr("x1", (d) => d.x)
       .attr("x2", (d) => d.x)
-      .attr("y1", 0)
-      .attr("y2", tickHeight)
-      .attr("stroke-dasharray", (d) => (d.dashed ? "4 2" : "none"))
-      .attr("stroke-width", 2)
-      .attr("stroke", "#FF8b60");
+      .attr("y1", edgeHeight)
+      .attr("y2", 0)
+      .attr("stroke", "white")
+      .attr("stroke-width", (d) => d.width)
+      .attr("marker-end", "url(#nodeArrowLegend)");
 
-    let arrowColor = "#9494FF";
-    let arrowOpacity = 1;
-
-    legend
-      .append("line")
-      .attr("x1", 0)
-      .attr("x2", tickData[2].x)
-      .attr("y1", tickHeight / 2)
-      .attr("y2", tickHeight / 2)
-      .attr("stroke", arrowColor)
-      .attr("opacity", arrowOpacity);
-
-    legend
-      .append("line")
-      .attr("x1", tickData[2].x - 7)
-      .attr("x2", tickData[2].x)
-      .attr("y1", tickHeight / 2 - 7)
-      .attr("y2", tickHeight / 2)
-      .attr("stroke", arrowColor)
-      .attr("opacity", arrowOpacity);
-
-    legend
-      .append("line")
-      .attr("x1", tickData[2].x - 7)
-      .attr("x2", tickData[2].x)
-      .attr("y1", tickHeight / 2 + 7)
-      .attr("y2", tickHeight / 2)
-      .attr("stroke", arrowColor)
-      .attr("opacity", arrowOpacity);
-
-    ticks
+    edges
       .append("text")
       .attr("x", (d) => d.x)
-      .attr("y", tickHeight + 12)
+      .attr("y", edgeHeight + 12)
       .attr("font-size", 10)
       .attr("text-anchor", "middle")
-      .text((d) => d.val);
+      .text((d) => d.label);
+
+    return;
   }
 
   setupSlider() {
@@ -166,7 +146,6 @@ class NodePlot {
       .attr("font-size", 12)
       .attr("text-anchor", "middle")
       .text("Minimum #hyperlinks");
-
   }
 
   setupDropDown() {
@@ -215,19 +194,7 @@ class NodePlot {
       .text(`${activeSubreddit}'s Top Outgoing Subreddits by`);
   }
 
-  updatePlot(activeSubreddit) {
-    this.activeSubreddit = activeSubreddit;
-    this.draw();
-  }
-
-  draw() {
-    if (this.isDrawn) {
-      this.clearPlot();
-    } else {
-      d3.select(".nodeSelection").style("opacity", 1);
-    }
-    this.addTitle(this.activeSubreddit);
-
+  setupArrowMarkers() {
     this.root
       .append("defs")
       .append("marker")
@@ -242,6 +209,35 @@ class NodePlot {
       .attr("points", "0 0, 15 5.25, 0 10.5")
       .style("fill", "#9494FF")
       .attr("stroke", "black");
+
+    this.root
+      .append("defs")
+      .append("marker")
+      .attr("id", "nodeArrowLegend")
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("markerHeight", 100)
+      .attr("markerWidth", 100)
+      .attr("refX", 27)
+      .attr("refY", 5.2)
+      .attr("orient", "auto")
+      .append("polygon")
+      .attr("points", "0 0, 15 5.25, 0 10.5")
+      .style("fill", "#9494FF")
+      .attr("stroke", "black");
+  }
+
+  updatePlot(activeSubreddit) {
+    this.activeSubreddit = activeSubreddit;
+    this.draw();
+  }
+
+  draw() {
+    if (this.isDrawn) {
+      this.clearPlot();
+    } else {
+      d3.select(".nodeSelection").style("opacity", 1);
+    }
+    this.addTitle(this.activeSubreddit);
 
     let links = this.filterLinks(this.activeSubreddit, this.minLinks);
     let nodes = this.removeUnconnectedNodes(links);

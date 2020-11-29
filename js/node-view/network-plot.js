@@ -63,6 +63,7 @@ class NetworkPlot {
     this.addTitle();
     this.addLegend();
     this.setupSlider();
+    this.setupArrowMarkers();
   }
 
   addTitle() {
@@ -85,7 +86,7 @@ class NetworkPlot {
       .attr("height", 140)
       .attr("rx", 10)
       .attr("fill", "none")
-      // .attr("stroke-width", 2)
+      .style("opacity", 0.5)
       .attr("stroke", "white");
     this.addColorLegend();
     this.addSizeLegend();
@@ -259,6 +260,24 @@ class NetworkPlot {
       .text("Minimum #hyperlinks");
   }
 
+  setupArrowMarkers() {
+    // http://thenewcode.com/1068/Making-Arrows-in-SVG
+    this.root
+      .append("defs")
+      .append("marker")
+      .attr("id", "arrow")
+      .attr("markerUnits", "userSpaceOnUse")
+      .attr("markerHeight", 100)
+      .attr("markerWidth", 100)
+      .attr("refX", 22)
+      .attr("refY", 3.25)
+      .attr("orient", "auto")
+      .append("polygon")
+      .attr("points", "0 0, 15 5.25, 0 10.5")
+      .style("fill", "#9494FF")
+      .attr("stroke", "black");
+  }
+
   trimLinks(minMentions) {
     this.minMentions = minMentions;
     this.paths.filter((d) => d.mentions < this.minMentions).style("opacity", 0);
@@ -320,22 +339,6 @@ class NetworkPlot {
       .force("charge", d3.forceManyBody().strength(-1000))
       .force("x", d3.forceX().strength(0.01))
       .force("y", d3.forceY().strength(0.1));
-
-    // http://thenewcode.com/1068/Making-Arrows-in-SVG
-    this.root
-      .append("defs")
-      .append("marker")
-      .attr("id", "arrow")
-      .attr("markerUnits", "userSpaceOnUse")
-      .attr("markerHeight", 100)
-      .attr("markerWidth", 100)
-      .attr("refX", 22)
-      .attr("refY", 3.25)
-      .attr("orient", "auto")
-      .append("polygon")
-      .attr("points", "0 0, 15 5.25, 0 10.5")
-      .style("fill", "#9494FF")
-      .attr("stroke", "black");
 
     this.paths = this.root
       .append("g")
