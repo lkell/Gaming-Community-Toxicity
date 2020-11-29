@@ -39,6 +39,7 @@ class NodePlot {
     this.setupDropDown();
     this.setupSlider();
     this.addWidthLegend();
+    this.setupArrowMarkers();
   }
 
   addWidthLegend() {
@@ -166,7 +167,6 @@ class NodePlot {
       .attr("font-size", 12)
       .attr("text-anchor", "middle")
       .text("Minimum #hyperlinks");
-
   }
 
   setupDropDown() {
@@ -215,19 +215,7 @@ class NodePlot {
       .text(`${activeSubreddit}'s Top Outgoing Subreddits by`);
   }
 
-  updatePlot(activeSubreddit) {
-    this.activeSubreddit = activeSubreddit;
-    this.draw();
-  }
-
-  draw() {
-    if (this.isDrawn) {
-      this.clearPlot();
-    } else {
-      d3.select(".nodeSelection").style("opacity", 1);
-    }
-    this.addTitle(this.activeSubreddit);
-
+  setupArrowMarkers() {
     this.root
       .append("defs")
       .append("marker")
@@ -242,6 +230,20 @@ class NodePlot {
       .attr("points", "0 0, 15 5.25, 0 10.5")
       .style("fill", "#9494FF")
       .attr("stroke", "black");
+  }
+
+  updatePlot(activeSubreddit) {
+    this.activeSubreddit = activeSubreddit;
+    this.draw();
+  }
+
+  draw() {
+    if (this.isDrawn) {
+      this.clearPlot();
+    } else {
+      d3.select(".nodeSelection").style("opacity", 1);
+    }
+    this.addTitle(this.activeSubreddit);
 
     let links = this.filterLinks(this.activeSubreddit, this.minLinks);
     let nodes = this.removeUnconnectedNodes(links);
