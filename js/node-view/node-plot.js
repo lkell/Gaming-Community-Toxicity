@@ -1,11 +1,8 @@
-// TODO: Fix bug of mismatched tooltips and bubble names.
-// E.G. for smashbros
-
 class NodePlot {
   constructor(root, width, height, nodes, links, colorScale, gamingSubreddits) {
     this.width = width;
     this.height = height;
-    this.center = [this.width / 2, this.height / 2 + 30];
+    this.center = [this.width / 2, this.height / 2];
     this.parent = root;
     this.root = d3
       .select(root)
@@ -37,6 +34,100 @@ class NodePlot {
 
     this.setupDropDown();
     this.setupSlider();
+    this.addWidthLegend();
+  }
+
+  addWidthLegend() {
+    let maximum = d3.max(this.links, (link) => link.mentions);
+    let minimum = d3.min(this.links, (link) => link.mentions);
+    // return d3.scaleLinear().domain([minimum, maximum]).range([3, 50]);
+    let legend = this.root
+      .append("g")
+      .attr("id", "node-plot-width-legend", true)
+      .attr("transform", "translate(440,550)")
+      .attr("fill", "white");
+
+    let tickHeight = 30;
+
+    let tickData = [
+      {
+        val: 0,
+        x: 0,
+        dashed: false,
+      },
+      {
+        val: Math.round(maximum / 2),
+        x: this.widthScale(Math.round(maximum / 2)),
+        dashed: true,
+      },
+      {
+        val: maximum,
+        x: this.widthScale(maximum),
+        dashed: false,
+      },
+    ];
+
+    legend
+      .append("text")
+      .attr("font-size", 12)
+      .attr("x", tickData[1].x)
+      .attr("y", -12)
+      .attr("text-anchor", "middle")
+      .text("Edge Width Scale: #Hyperlinks");
+
+    let ticks = legend
+      .selectAll("g")
+      .data(tickData)
+      .join("g")
+      .attr("fill", "white");
+
+    ticks
+      .append("line")
+      .attr("x1", (d) => d.x)
+      .attr("x2", (d) => d.x)
+      .attr("y1", 0)
+      .attr("y2", tickHeight)
+      .attr("stroke-dasharray", (d) => (d.dashed ? "4 2" : "none"))
+      .attr("stroke-width", 2)
+      .attr("stroke", "#FF8b60");
+
+    let arrowColor = "#9494FF";
+    let arrowOpacity = 1;
+
+    legend
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", tickData[2].x)
+      .attr("y1", tickHeight / 2)
+      .attr("y2", tickHeight / 2)
+      .attr("stroke", arrowColor)
+      .attr("opacity", arrowOpacity);
+
+    legend
+      .append("line")
+      .attr("x1", tickData[2].x - 7)
+      .attr("x2", tickData[2].x)
+      .attr("y1", tickHeight / 2 - 7)
+      .attr("y2", tickHeight / 2)
+      .attr("stroke", arrowColor)
+      .attr("opacity", arrowOpacity);
+
+    legend
+      .append("line")
+      .attr("x1", tickData[2].x - 7)
+      .attr("x2", tickData[2].x)
+      .attr("y1", tickHeight / 2 + 7)
+      .attr("y2", tickHeight / 2)
+      .attr("stroke", arrowColor)
+      .attr("opacity", arrowOpacity);
+
+    ticks
+      .append("text")
+      .attr("x", (d) => d.x)
+      .attr("y", tickHeight + 12)
+      .attr("font-size", 10)
+      .attr("text-anchor", "middle")
+      .text((d) => d.val);
   }
 
   setupSlider() {
@@ -50,7 +141,7 @@ class NodePlot {
       .width(200)
       .height(60)
       .height(30)
-      .fill("lightpink")
+      .fill("#FF8b60")
       .displayValue(false)
       .on("onchange", (val) => {
         this.minLinks = val;
@@ -72,7 +163,6 @@ class NodePlot {
       .attr("text-anchor", "middle")
       .text("Minimum #hyperlinks");
 
-    console.log(sliderElem);
   }
 
   setupDropDown() {
@@ -142,11 +232,11 @@ class NodePlot {
       .attr("markerHeight", 100)
       .attr("markerWidth", 100)
       .attr("refX", 80)
-      .attr("refY", 5)
+      .attr("refY", 5.2)
       .attr("orient", "auto")
       .append("polygon")
       .attr("points", "0 0, 15 5.25, 0 10.5")
-      .style("fill", "#336EFF")
+      .style("fill", "#9494FF")
       .attr("stroke", "black");
 
     let links = this.filterLinks(this.activeSubreddit, this.minLinks);
@@ -182,6 +272,7 @@ class NodePlot {
           .style("opacity", 1)
           .style("left", event.pageX + 20 + "px")
           .style("top", event.pageY - 40 + "px")
+          .style("opacity", 0.9)
           .html(this.toolTipRender(d))
       )
       .on("mouseleave", () =>
@@ -216,10 +307,22 @@ class NodePlot {
 
   toolTipRender(data) {
     let header = `<h2><strong>${data.id}</strong></h2>`;
-    let summaryFirstLine = `<p>Mentioned <strong>${data.mentions}</strong> times by ${this.activeSubreddit}`;
-    let summarySecondLine = `<br>with AVG sentiment of <strong>${data.sentiment.toFixed(
-      2
-    )}</strong></p>`;
+    let summaryFirstLine;
+    let summarySecondLine;
+    if (data.class == "otherNode") {
+      summaryFirstLine = `<p>Linked <strong>${data.mentions}</strong> times by ${this.activeSubreddit}`;
+      summarySecondLine = `<br>with AVG sentiment of <strong>${data.sentiment.toFixed(
+        2
+      )}</strong></p>`;
+    } else {
+      console.log(data.totalHyperlinks);
+      console.log(data.positivity);
+      summaryFirstLine = `<p>${data.totalHyperlinks} links to other subreddits`;
+      summarySecondLine = `<br>with AVG sentiment of <strong>${data.positivity.toFixed(
+        2
+      )}</strong></p>`;
+    }
+    console.log(header + summaryFirstLine + summarySecondLine);
     return header + summaryFirstLine + summarySecondLine;
   }
 
@@ -244,7 +347,7 @@ class NodePlot {
   makeStrokeWidthScale(links) {
     let maximum = d3.max(links, (link) => link.mentions);
     let minimum = d3.min(links, (link) => link.mentions);
-    return d3.scaleLinear().domain([minimum, maximum]).range([3, 50]);
+    return d3.scaleLinear().domain([minimum, maximum]).range([4, 100]);
   }
 
   filterLinks(selected) {
@@ -272,16 +375,19 @@ class NodePlot {
   }
 
   addNodeAttributes(nodes, links, selected) {
-    let angle = 0;
+    nodes = JSON.parse(JSON.stringify(nodes));
+
+    // let angle = 0;
+    let angle = -Math.PI / 2;
     let adjust = Math.PI / 5;
 
     let sourceNode = nodes.find((node) => node.id == selected);
     sourceNode.x = this.center[0];
     sourceNode.y = this.center[1];
     sourceNode.selected = true;
-    sourceNode.radius = 55;
+    sourceNode.radius = 63;
     sourceNode.class = "selectedNode";
-    sourceNode.font = 14;
+    sourceNode.font = sourceNode.id.length >= 17 ? 12 : 14;
     sourceNode.displayName = sourceNode.id;
 
     let targetNodes = nodes.filter((node) => node.id != selected);
@@ -290,8 +396,6 @@ class NodePlot {
       targetNode.mentions = link.mentions;
       targetNode.sentiment = link.sentiment;
     }
-    console.log(sourceNode);
-    console.log(targetNodes);
 
     if (this.sortTargetsBy === "mentions") {
       targetNodes.sort((a, b) => b.mentions - a.mentions);
@@ -305,12 +409,12 @@ class NodePlot {
       targetNodes[i].x = this.center[0] + this.radius * Math.cos(angle);
       targetNodes[i].y = this.center[1] + this.radius * Math.sin(angle);
       targetNodes[i].selected = false;
-      targetNodes[i].radius = 40;
+      targetNodes[i].radius = 43;
       targetNodes[i].class = "otherNode";
       targetNodes[i].angle = angle;
       targetNodes[i].font = 12;
       angle += adjust;
-      targetNodes[i].displayName = this.truncateName(nodes[i].id);
+      targetNodes[i].displayName = this.truncateName(targetNodes[i].id);
     }
     return targetNodes.concat(sourceNode);
   }
@@ -326,7 +430,7 @@ class NodePlot {
   addLinkAttributes(links, nodes) {
     for (let link of links) {
       let node = nodes.find((node) => node.id == link.target);
-      let width = this.widthScale(link.mentions);
+      let width = this.widthScale(link.mentions) / 2;
       link.width = width;
       link.x = node.x;
       link.y = node.y;

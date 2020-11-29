@@ -35,6 +35,12 @@ div.tooltip {
     color: white;
 }
 
+#story-teller-div {
+	height: 600px;
+	width: 1000px;
+	opacity: 0.9;
+}
+
 
 /*Styling toggle between views */
 .home-view {
@@ -127,7 +133,6 @@ div.tooltip {
 	stroke: #9494FF;;
 	stroke-width: 1.5;
 }
-
 
 /*Ranked view styles*/
 .ranked-view {
@@ -247,7 +252,6 @@ body {
 #node {
   height: 600px;
   width: 950px;
-  /* overflow: scroll; */
 }
 
 /* https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg */
@@ -263,14 +267,6 @@ body {
 	color: white;
 }
 
-/*.network-plot {*/
-/*	background-color: darkgrey*/
-/*}*/
-
-/*.node-plot {*/
-/*	background-color: darkgrey*/
-/*}*/
-
 /* Styling for buttons and dropdowns */
 #storytellingButton {
 	min-width: 300px;
@@ -281,8 +277,3 @@ body {
   max-height: 818px;
   overflow-y: auto;
 }
-
-/* .axis text,
-.slider text {
-  font-size: 10px;
-} */

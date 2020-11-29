@@ -177,6 +177,26 @@ class ViolinPlot {
                     .tickFormat('')
             )
             .classed('summary-violin-x-axis', true);
+
+        this.addAxisLabels();
+    }
+
+    addAxisLabels() {
+        this.svg.append('text')
+            .attr('x', this.sentimentScale(-1))
+            .attr('y', this.yScale(15) + 35)
+            .style('text-anchor', 'start')
+            .style('font-size', 14)
+            .style('fill', 'white')
+            .text('Negative');
+
+        this.svg.append('text')
+            .attr('x', this.sentimentScale(1))
+            .attr('y', this.yScale(15) + 35)
+            .style('text-anchor', 'end')
+            .style('font-size', 14)
+            .style('fill', 'white')
+            .text('Positive');
     }
 
     drawMedian() {
@@ -201,7 +221,7 @@ class ViolinPlot {
     medianTooltipRender(d, subreddit) {
         let outputString = ''
         outputString += '<h2>r/' + subreddit + '</h2>';
-        outputString += '<p>Median:\t' + d.median + '</p>';
+        outputString += '<p>Median:\t' + formatNumberToDecimalPlaces(d.median, 4) + '</p>';
         return outputString;
     }
 
@@ -228,13 +248,13 @@ class ViolinPlot {
     metricsTooltipRender(d, subreddit) {
         let outputString = ''
         outputString += '<h2>r/' + subreddit + '</h2>';
-        outputString += '<p>Median:\t' + d.median + '</p>';
-        outputString += '<p>Mean:\t' + d.mean + '</p>';
-        outputString += '<p>Max:\t' + d.max + '</p>';
-        outputString += '<p>Min:\t' + d.min + '</p>';
-        outputString += '<p>Interquartile Range:\t' + d.iqr + '</p>';
-        outputString += '<p>1st Quartile:\t' + d.quartile1 + '</p>';
-        outputString += '<p>3rd Quartile:\t' + d.quartile3 + '</p>';
+        outputString += '<p>Median:\t' + formatNumberToDecimalPlaces(d.median, 4) + '</p>';
+        outputString += '<p>Mean:\t' + formatNumberToDecimalPlaces(d.mean, 4) + '</p>';
+        outputString += '<p>Max:\t' + formatNumberToDecimalPlaces(d.max, 4) + '</p>';
+        outputString += '<p>Min:\t' + formatNumberToDecimalPlaces(d.min, 4) + '</p>';
+        outputString += '<p>Interquartile Range:\t' + formatNumberToDecimalPlaces(d.iqr, 4) + '</p>';
+        outputString += '<p>1st Quartile:\t' + formatNumberToDecimalPlaces(d.quartile1, 4) + '</p>';
+        outputString += '<p>3rd Quartile:\t' + formatNumberToDecimalPlaces(d.quartile3, 4) + '</p>';
         return outputString;
     }
 	
