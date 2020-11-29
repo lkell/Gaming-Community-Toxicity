@@ -86,7 +86,7 @@ class NetworkPlot {
       .attr("height", 140)
       .attr("rx", 10)
       .attr("fill", "none")
-      .attr("opacity", 0.6)
+      .style("opacity", 0.5)
       .attr("stroke", "white");
     this.addColorLegend();
     this.addSizeLegend();
