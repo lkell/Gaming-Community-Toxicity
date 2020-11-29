@@ -181,15 +181,22 @@ tr:hover {
 	background-color: #d1d1d1;
 }
 
+.fas{
+	color: white;
+	background: #6c757d;
+}
+
 .sortable:hover {
 	background: #d1d1d1;
 }
 
-.sortable.sorting:hover {
-	background: #232323;
-}
 
 .subreddit{
+	height: 50px;
+	width: 100px;
+}
+
+.links{
 	height: 50px;
 	width: 100px;
 }
