@@ -77,7 +77,7 @@ class StoryTeller {
 	}
 
 	mostLinksHTML(subreddit) {
-		return `<h3>r/${subreddit.id}</h3><p>${subreddit.description}</p>`;
+		return `<h2>${subreddit.id}</h2><p>${subreddit.description}</p>`;
 	}
 
 	updateStorytellingLabel(event) {

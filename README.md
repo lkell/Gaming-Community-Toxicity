@@ -68,3 +68,4 @@ This is our main file for running the visualization code. It also contains some 
 
 ### story-telling
 #### story-telling.js
+This creates the story telling code. Links to the "Show me..." dropdown, which will create a div over the graph plot. To remove the div overlay, simply click anywhere.
