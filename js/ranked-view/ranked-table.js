@@ -292,17 +292,17 @@ class RankedTable {
     getMostLoving(){
         let that = this;
         let descendingData = that.cleanData.sort(function(x,y){
-                return d3.descending(x.filter(d=>d.class==='compound')[0].value, y.filter(d=>d.class==='positive')[0].value)
+                return d3.descending(x.filter(d=>d.class==='compound')[0].value, y.filter(d=>d.class==='compound')[0].value)
         })
         return descendingData[0][0].value
     };
 
     getMostToxic(){
         let that = this;
-        let ascendingData = that.cleanData.sort(function(x,y){
-            return d3.ascending(x.filter(d=>d.class==='positive')[0].value, y.filter(d=>d.class==='compound')[0].value)
+        let descendingData = that.cleanData.sort(function(x,y){
+            return d3.descending(x.filter(d=>d.class==='compound')[0].value, y.filter(d=>d.class==='compound')[0].value)
         })
-        return ascendingData[0][0].value
+        return descendingData[descendingData.length-1][0].value
     };
 
 }

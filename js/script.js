@@ -49,14 +49,13 @@ Promise.all([
     nodeView.drawPlots();
   
 //   Ranked View
-    rankedTable = new RankedTable(data, updateSelectedSubreddit);
+    rankedTable = new RankedTable(hotCommentData, updateSelectedSubreddit);
     rankedTimeSeries = new RankedTimeSeries(data);
 
     updateSelectedSubreddit(defaultSubreddit);
-
     let storySubreddits = new Object();
-    storySubreddits.toxicSubreddit = 'kotakuinaction';
-    storySubreddits.lovingSubreddit = 'stardewvalley';
+    storySubreddits.toxicSubreddit = rankedTable.mostToxic;
+    storySubreddits.lovingSubreddit = rankedTable.mostLoving;
     storySubreddits.spikeLinksSubreddit = 'pokemongo';
     storySubreddits.mostActiveSubreddit = 'gaming';
     storySubreddits.mostPolarizedSubreddit = 'truegaming';
