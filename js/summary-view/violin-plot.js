@@ -220,7 +220,7 @@ class ViolinPlot {
 
     medianTooltipRender(d, subreddit) {
         let outputString = ''
-        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>Median:\t' + formatNumberToDecimalPlaces(d.median, 4) + '</p>';
         return outputString;
     }
@@ -247,7 +247,7 @@ class ViolinPlot {
 
     metricsTooltipRender(d, subreddit) {
         let outputString = ''
-        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>Median:\t' + formatNumberToDecimalPlaces(d.median, 4) + '</p>';
         outputString += '<p>Mean:\t' + formatNumberToDecimalPlaces(d.mean, 4) + '</p>';
         outputString += '<p>Max:\t' + formatNumberToDecimalPlaces(d.max, 4) + '</p>';

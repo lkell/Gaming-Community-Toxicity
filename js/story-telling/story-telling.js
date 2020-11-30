@@ -32,7 +32,7 @@ class StoryTeller {
 
 	lovingSubredditHtml(subreddit) {
         let outputString = ''
-        outputString += '<h3>r/' + subreddit + '</h3>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>We found this to be the most loving subreddit, according to the median compound comment sentiment</p>';
         return outputString;
 	}
@@ -47,7 +47,7 @@ class StoryTeller {
 
 	toxicSubredditHtml(subreddit) {
         let outputString = ''
-        outputString += '<h3>r/' + subreddit + '</h3>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>We found this to be the most toxic subreddit, according to the 1st quartile compound comment sentiment</p>';
         return outputString;
 	}
@@ -63,7 +63,7 @@ class StoryTeller {
 
 	linksSubredditHtml(subreddit) {
         let outputString = ''
-        outputString += '<h3>r/' + subreddit + '</h3>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>The pokemongo subreddit broke our subreddits time series plots scale for the month of July 2016, when the massively popular mobile game was first released.</p>';
         return outputString;
 	}
@@ -77,7 +77,7 @@ class StoryTeller {
 	}
 
 	mostLinksHTML(subreddit) {
-		return `<h3>r/${subreddit.id}</h3><p>${subreddit.description}</p>`;
+		return `<h2>${subreddit.id}</h2><p>${subreddit.description}</p>`;
 	}
 
 	updateStorytellingLabel(event) {
