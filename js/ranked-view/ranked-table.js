@@ -269,10 +269,10 @@ class RankedTable {
             curId === 'density' ? curId = 'compound': {}
             that.cleanData = that.cleanData.sort(function(x,y){
                 if (ascending) {
-                    return d3.ascending(x.filter(d=>d.class===curId)[0].value, y.filter(d=>d.class===curId)[0].value)
+                    return d3.ascending(x.filter(d=>d.class===curId)[0].value*1, y.filter(d=>d.class===curId)[0].value*1)
                 }
                 else {
-                    return d3.descending(x.filter(d=>d.class===curId)[0].value, y.filter(d=>d.class===curId)[0].value)
+                    return d3.descending(x.filter(d=>d.class===curId)[0].value*1, y.filter(d=>d.class===curId)[0].value*1)
                 }
             })
             toSort.sorted = true;
