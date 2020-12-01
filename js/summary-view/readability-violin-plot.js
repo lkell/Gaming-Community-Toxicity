@@ -31,6 +31,7 @@ class ReadabilityViolinPlot {
             .append('div')
             .attr('id', 'summary-view-readability-violin-plot-tooltip')
             .classed('tooltip', true);
+        this.addLegend();
 	}
 
 	createReadabilityScale() {
@@ -46,6 +47,75 @@ class ReadabilityViolinPlot {
             .domain([0, 0.095])
             .clamp(true);
 	}
+
+    addLegend() {
+        let legend = this.svg
+            .append("g")
+            .attr("id", "summary-plot-width-legend", true)
+            .attr("transform", "translate(450,250)")
+            .attr("fill", "white");
+
+        legend
+            .append("rect")
+            .attr("x", -58)
+            .attr("y", -45)
+            .attr("width", 100)
+            .attr("height", 105)
+            .attr("rx", 10)
+            .attr("fill", "none")
+            .style("opacity", 0.5)
+            .attr("stroke", "white");
+
+        legend
+            .append("text")
+            .attr("font-size", 12)
+            .attr('x', -53)
+            .attr('y', -25)
+            .attr("text-anchor", "start")
+            .text('Score Legend')
+            .style('text-decoration', 'underline')
+            .style('font-weight', 'bold');
+
+        legend
+            .append("text")
+            .attr("font-size", 12)
+            .attr('x', -50)
+            .attr('y', -10)
+            .attr("text-anchor", "start")
+            .text('1:  5-6   y/o');
+
+        legend
+            .append("text")
+            .attr("font-size", 12)
+            .attr('x', -50)
+            .attr('y', 5)
+            .attr("text-anchor", "start")
+            .text('4:  9-10  y/o');
+
+        legend
+            .append("text")
+            .attr("font-size", 12)
+            .attr('x', -50)
+            .attr('y', 20)
+            .attr("text-anchor", "start")
+            .text('7:  12-13 y/o');
+
+        legend
+            .append("text")
+            .attr("font-size", 12)
+            .attr('x', -50)
+            .attr('y', 35)
+            .attr("text-anchor", "start")
+            .text('10: 15-16 y/o');
+
+        legend
+            .append("text")
+            .attr("font-size", 12)
+            .attr('x', -50)
+            .attr('y', 50)
+            .attr("text-anchor", "start")
+            .text('14: 24+ y/o');
+    }
 
 	draw(subreddit) {
         this.subreddit = subreddit;
@@ -177,26 +247,6 @@ class ReadabilityViolinPlot {
                     .tickFormat('')
             )
             .classed('summary-violin-x-axis', true);
-
-        this.addAxisLabels();
-    }
-
-    addAxisLabels() {
-        this.svg.append('text')
-            .attr('x', this.readabilityScale(1))
-            .attr('y', this.yScale(5) + 30)
-            .style('text-anchor', 'middle')
-            .style('font-size', 14)
-            .style('fill', 'white')
-            .text('1=5-6 y/o');
-
-        this.svg.append('text')
-            .attr('x', this.readabilityScale(14))
-            .attr('y', this.yScale(5) + 30)
-            .style('text-anchor', 'middle')
-            .style('font-size', 14)
-            .style('fill', 'white')
-            .text('14=24+ y/o');
     }
 
     drawMedian() {
@@ -220,7 +270,7 @@ class ReadabilityViolinPlot {
 
     medianTooltipRender(d, subreddit) {
         let outputString = ''
-        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>Median:\t' + formatNumberToDecimalPlaces(d.median, 2) + '</p>';
         return outputString;
     }
@@ -247,7 +297,7 @@ class ReadabilityViolinPlot {
 
     metricsTooltipRender(d, subreddit) {
         let outputString = ''
-        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>Median:\t' + formatNumberToDecimalPlaces(d.median, 2) + '</p>';
         outputString += '<p>Mean:\t' + formatNumberToDecimalPlaces(d.mean, 2) + '</p>';
         outputString += '<p>Max:\t' + formatNumberToDecimalPlaces(d.max, 2) + '</p>';

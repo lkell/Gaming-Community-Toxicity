@@ -52,6 +52,8 @@ div.tooltip {
 	grid-auto-rows: minmax(36px, auto);
 }
 
+
+
 #node {
 	grid-column: 2/11;
 	grid-row: 1/9;
@@ -276,4 +278,27 @@ body {
 .dropdown-menu {         
   max-height: 818px;
   overflow-y: auto;
+}
+
+
+/*About view styling*/
+.about-view {
+	display: none;
+	padding:10px;
+	background-color: #272727;
+	grid-template-columns: repeat(15, 1fr);
+	grid-gap: 10px;
+	grid-auto-rows: minmax(36px, auto);
+}
+
+#about-content {
+	grid-column: 2/15;
+	grid-row: 1/6;
+	background: #6c757d;
+	padding-left: 15px;
+	padding-top: 15px;
+}
+
+#about-content h1 {
+	background: #6c757d;
 }

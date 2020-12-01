@@ -49,7 +49,13 @@ Runs from index.html, referencing our ./js/ directory for javascript static file
 Creates the graph and node visualizations, which are the top two cards on the Home page. DESCRIBE FEATURES.
 
 ### ranked-view
-Create the ranked view. DESCRIBE FEATURES.
+Create the ranked view, including the timeseries charts and sortable table.
+
+#### ranked-time-series.js
+Creates the three timeseries charts at the top of the ranked view.
+
+#### ranked-table.js
+Creates the table on the bottom of the ranked view. Includes subreddit, links, density plots and the positive/negative/compound heatmap
 
 ### summary-view
 Creates the summary view, specifically the bottom three visualizations on the Home Page.
@@ -68,3 +74,4 @@ This is our main file for running the visualization code. It also contains some 
 
 ### story-telling
 #### story-telling.js
+This creates the story telling code. Links to the "Show me..." dropdown, which will create a div over the graph plot. To remove the div overlay, simply click anywhere.

@@ -149,7 +149,7 @@ class PostsLineChart {
     postsTooltipRender(d, subreddit) {
     	let thisDate = new Date(+d.key);
         let outputString = ''
-        outputString += '<h2>r/' + subreddit + '</h2>';
+        outputString += '<h2>' + subreddit + '</h2>';
         outputString += '<p>Date:\t' + thisDate.toLocaleString('default', { month: 'long' }) + ' ' + thisDate.getFullYear() + '</p>';
         outputString += '<p>Links:\t' + d.value + '</p>';
         return outputString;

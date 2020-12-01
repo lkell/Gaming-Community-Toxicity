@@ -76,7 +76,7 @@
                 <thead>
                 <tr id="columnHeaders">
                     <th class="sortable subreddit">Subreddit<i class="fas no-display"></i></th>
-                    <th class="sortable links">Links <i class="fas no-display"></i></th>
+                    <th class="sortable links">Comments <i class="fas no-display"></i></th>
                     <th class="sortable density">Density <i class="fas no-display"></i></th>
                     <th class="sortable positive">Positive <i class="fas no-display"></i></th>
                     <th class="sortable negative">Negative <i class="fas no-display"></i></th>
@@ -97,6 +97,15 @@
             </table>
         </div>
     </div>
+    <div class="about-view mainView">
+        <div class="card" id="about-content">
+            <h1>Authors</h1>
+            The visualizations on this site were built by Paul Wissler, Leo Kell and Michael Northrup,
+            graduate students at the University of Utah. This project was created Fall 2020.
+            <h1>References</h1>
+            Data was collected from https://snap.stanford.edu/data/soc-RedditHyperlinks.html
+        </div>
+    </div>
 </div>
 
 <div class="loading-container d-flex flex-column align-items-center justify-content-center" style="height: 750px;">
@@ -110,7 +119,6 @@
 </div>
 
 <script src="js/script.js"></script>
-<script src="js/summary-view/sentiment-breakout-summary.js"></script>
 <script src="js/summary-view/ts-posts-line-chart.js"></script>
 <script src="js/summary-view/violin-plot.js"></script>
 <script src="js/summary-view/readability-violin-plot.js"></script>

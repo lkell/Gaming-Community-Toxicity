@@ -73,22 +73,15 @@ def create_sentiment_yaml(target_file_path, reddit, subreddits, user_config, com
             submission = reddit.submission(id=post_id)
             timestamp = dt.datetime.fromtimestamp(int(submission.created_utc))
             submission.comments.replace_more(limit=0)
-            # for top_level_comment in submission.comments:
-            #   print(top_level_comment.body)
-
-            # submission.comments.replace_more(limit=0)
-            # for comment in submission.comments.list():
-            #   print(comment.body)
             comments = set()
             # collect top level comment body
-            # submission.comments.replace_more(limit=0)
             for top_level_comment in submission.comments:
                 if len(comments) <= 200:
                     comments.add(top_level_comment.body)
                 else:
                     break
 
-            # nltk.download('vader_lexicon')
+            nltk.download('vader_lexicon')
             sia = SIA()
             
             for line in comments:
@@ -123,6 +116,6 @@ def create_sentiment_yaml(target_file_path, reddit, subreddits, user_config, com
     with open(target_file_path, 'w') as dump_data:
         json.dump(nested_data, dump_data)
 
-# create_sentiment_yaml(hot_comment_file_path, reddit, subreddits, user_config, 'hot')
+create_sentiment_yaml(hot_comment_file_path, reddit, subreddits, user_config, 'hot')
 # create_sentiment_yaml(top_comment_file_path, reddit, subreddits, user_config, 'controversial')
-create_sentiment_yaml(controversial_comment_file_path, reddit, subreddits, user_config, 'top')
+# create_sentiment_yaml(controversial_comment_file_path, reddit, subreddits, user_config, 'top')
