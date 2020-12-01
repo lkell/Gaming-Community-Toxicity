@@ -6,6 +6,7 @@ Promise.all([
 ]).then(files => {
     let data = files[0];
     let hotCommentData = files[1];
+    removeUnconnectedSubreddits(hotCommentData, data);
     Object.keys(data).forEach(function(subreddit) {
             Object.keys(data[subreddit]).forEach(function(postId) {
                 Object.keys(data[subreddit][postId]).forEach(function(column) {
@@ -231,4 +232,13 @@ function formatNumberToDecimalPlaces(num, decimalPlaces) {
     let fraction = parseFloat((parseFloat(num) % 1).toFixed(decimalPlaces));
     let wholeNumber = parseInt(num);
     return wholeNumber + fraction;
+}
+
+function removeUnconnectedSubreddits(hotCommentData, data) {
+    let keepSubreddits = Object.keys(data);
+    for (let subreddit of Object.keys(hotCommentData)) {
+        if (!keepSubreddits.includes(subreddit)) {
+            delete hotCommentData[subreddit];
+        }
+    }
 }
