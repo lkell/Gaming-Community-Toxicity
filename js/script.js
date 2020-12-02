@@ -213,7 +213,11 @@ function setupDropDown(data, eventFun) {
       dropDown.appendChild(option);
     }
 
-    // https://stackoverflow.com/questions/45854862/selected-value-in-drop-down-returning-undefined-in-javascript
+    /** 
+     * FYI: Used the following as a reference:
+     * https://stackoverflow.com/questions/45854862/selected-value-in-drop-down-returning-undefined-in-javascript
+     * LJK
+    */
     $('#subreddit-dropdown-container').find('a').click(event => {
       let selection = event.target.innerText;
       eventFun(selection);
