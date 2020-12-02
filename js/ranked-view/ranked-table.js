@@ -268,11 +268,17 @@ class RankedTable {
             let ascending = !toSort.ascending;
             curId === 'density' ? curId = 'compound': {}
             that.cleanData = that.cleanData.sort(function(x,y){
+                let valX = x.filter(d=>d.class===curId)[0].value
+                let valY = y.filter(d=>d.class===curId)[0].value
+                if (curId !== 'subreddit'){
+                    valX = valX * 1
+                    valY = valY * 1
+                }
                 if (ascending) {
-                    return d3.ascending(x.filter(d=>d.class===curId)[0].value*1, y.filter(d=>d.class===curId)[0].value*1)
+                    return d3.ascending(valX, valY)
                 }
                 else {
-                    return d3.descending(x.filter(d=>d.class===curId)[0].value*1, y.filter(d=>d.class===curId)[0].value*1)
+                    return d3.descending(valX, valY)
                 }
             })
             toSort.sorted = true;

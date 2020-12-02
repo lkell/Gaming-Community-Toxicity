@@ -33,7 +33,7 @@ class StoryTeller {
 	lovingSubredditHtml(subreddit) {
         let outputString = ''
         outputString += '<h2>' + subreddit + '</h2>';
-        outputString += '<p>We found this to be the most loving subreddit, according to the median compound comment sentiment</p>';
+        outputString += '<p>We found this to be the most loving subreddit, according to the mean compound comment sentiment</p>';
         return outputString;
 	}
 
@@ -48,7 +48,7 @@ class StoryTeller {
 	toxicSubredditHtml(subreddit) {
         let outputString = ''
         outputString += '<h2>' + subreddit + '</h2>';
-        outputString += '<p>We found this to be the most toxic subreddit, according to the 1st quartile compound comment sentiment</p>';
+        outputString += '<p>We found this to be the most toxic subreddit, according to the mean compound comment sentiment</p>';
         return outputString;
 	}
 

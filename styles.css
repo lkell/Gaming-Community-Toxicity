@@ -259,10 +259,11 @@ body {
 /* https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg */
 .nodeSelection {
     position: absolute;
-    width: 190px;
+    width: 210px;
     top:40px;
     left:25px;
     color: white;
+	background: #6c757d;
 }
 
 .nodeSelection option {
@@ -271,13 +272,13 @@ body {
 
 /* Styling for buttons and dropdowns */
 #storytellingButton {
-	min-width: 350px;
+	min-width: 400px;
 }
 
 /* https://stackoverflow.com/questions/47645634/bootstrap-4-making-dropdown-scrollable/47646286 */
-.dropdown-menu {         
-  max-height: 818px;
-  overflow-y: auto;
+.dropdown-menu {
+	max-height: 818px;
+	overflow-y: auto;
 }
 
 
@@ -293,7 +294,7 @@ body {
 
 #about-content {
 	grid-column: 2/15;
-	grid-row: 1/6;
+	grid-row: 1/12;
 	background: #6c757d;
 	padding-left: 15px;
 	padding-top: 15px;

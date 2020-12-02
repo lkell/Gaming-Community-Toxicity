@@ -17,7 +17,7 @@ DESCRIBE WEBSITE, FOCUSING ON NON-OBVIOUS ASPECTS.
 `pip install -r requirements.txt`
 
 ## JavaScript Libraries
-All libraries are linked from outside sources. BREAK DOWN WHAT SOURCES WE ARE CURRENTLY USING.
+All libraries are linked from outside sources.
 
 ## Data Processing
 Used Python for data processing, can find files in ./data_processing/ directory. Use spec-file.txt to create a Python venv and run code with it. There are two data processing files, one to get our links data set (used primarily in graph view) and one to mine comment data through the Reddit API. 
