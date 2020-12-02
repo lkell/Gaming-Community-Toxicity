@@ -115,8 +115,11 @@ class NodePlot {
   }
 
   setupSlider() {
-    // https://github.com/johnwalley/d3-simple-slider
-
+    /** 
+     * FYI: Used the following as a reference:
+     * https://github.com/johnwalley/d3-simple-slider
+     * LJK
+    */
     var slider = d3
       .sliderHorizontal()
       .min(1)
@@ -149,7 +152,11 @@ class NodePlot {
   }
 
   setupDropDown() {
-    // https://stackoverflow.com/questions/26709969/call-javascript-function-onchange-event-of-dropdown-list
+    /**
+     * FYI: Used the following as a reference:
+     * https://stackoverflow.com/questions/26709969/call-javascript-function-onchange-event-of-dropdown-list
+     * LJK
+    */
     this.addDropDown();
     let dropdown = d3.select(".nodeSelection");
     dropdown.style("opacity", 0);
@@ -162,7 +169,11 @@ class NodePlot {
   }
 
   addDropDown() {
-    // https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg
+    /** 
+     * FYI: Used the following as a reference
+     * https://stackoverflow.com/questions/33705412/drop-down-menu-over-d3-svg
+     * LJK
+    */
     let dropdown = d3
       .select(this.parent)
       .append("select")

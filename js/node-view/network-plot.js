@@ -93,8 +93,12 @@ class NetworkPlot {
   }
 
   addColorLegend() {
-    // https://observablehq.com/@d3/color-legend
-    // https://stackoverflow.com/questions/60443356/legend-not-appearing-when-using-document-createelementcanvas
+    /** 
+     * FYI: Used the following links as references (made heavy use of tutorial/example code):
+     * https://observablehq.com/@d3/color-legend
+     * https://stackoverflow.com/questions/60443356/legend-not-appearing-when-using-document-createelementcanvas
+     * LJK
+    */
 
     const tickSize = 6;
     const width = 200;
@@ -104,7 +108,6 @@ class NetworkPlot {
     const marginBottom = 16 + tickSize;
     const marginLeft = 0;
     const ticks = width / 64;
-    // const shiftX = 750;
     const shiftX = 780;
     const shiftY = 530;
 
@@ -223,8 +226,11 @@ class NetworkPlot {
   }
 
   setupSlider() {
-    // https://github.com/johnwalley/d3-simple-slider
-
+    /** 
+     * FYI: Used the following as a reference: 
+     * https://github.com/johnwalley/d3-simple-slider
+     * LJK
+    */
     var slider = d3
       .sliderHorizontal()
       .min(1)
@@ -261,7 +267,11 @@ class NetworkPlot {
   }
 
   setupArrowMarkers() {
-    // http://thenewcode.com/1068/Making-Arrows-in-SVG
+    /** 
+     * FYI: Used the following as a reference: 
+     * http://thenewcode.com/1068/Making-Arrows-in-SVG
+     * LJK
+    */
     this.root
       .append("defs")
       .append("marker")
@@ -304,7 +314,11 @@ class NetworkPlot {
   }
 
   setupCheckbox() {
-    // https://stackoverflow.com/questions/38260431/onchange-event-in-a-bootstrap-checkbox
+    /** 
+     * FYI: Used the following as a reference:
+     * https://stackoverflow.com/questions/38260431/onchange-event-in-a-bootstrap-checkbox
+     * LJK
+    */
     $("#link-checkbox").change(function () {
       alert($(this).prop("checked"));
     });
@@ -322,8 +336,10 @@ class NetworkPlot {
     return d3.scaleLinear().domain([minimum, maximum]).range([3, 8]);
   }
 
-  /**  Note: The following tutorial is heavily used:
-  https://observablehq.com/@d3/mobile-patent-suits?collection=@d3/d3-force
+  /** 
+   * FYI: Used the following as a reference (made heavy use of tutorial/example code): 
+   * https://observablehq.com/@d3/mobile-patent-suits?collection=@d3/d3-force
+   * LJK
   */
   draw() {
     if (this.updateFun === undefined) {
@@ -414,6 +430,11 @@ class NetworkPlot {
   }
 
   linkArc(link) {
+  /** 
+   * FYI: Used the following as a reference (made heavy use of tutorial/example code): 
+   * https://observablehq.com/@d3/mobile-patent-suits?collection=@d3/d3-force
+   * LJK
+  */
     const r = Math.hypot(
       link.target.x - link.source.x,
       link.target.y - link.source.y
@@ -427,7 +448,11 @@ class NetworkPlot {
   }
 
   highlightRegion(selection) {
-    // https://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
+    /** 
+     * FYI: Used the following as a reference:
+     * https://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
+     * LJK
+    */
     d3.selection.prototype.moveToFront = function () {
       return this.each(function () {
         this.parentNode.appendChild(this);
