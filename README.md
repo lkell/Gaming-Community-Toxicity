@@ -46,7 +46,13 @@ We already provide the necessary data as calculated in our Python scripts. Howev
 Runs from index.html, referencing our ./js/ directory for javascript static files. Stylings can be found in styles.css. Within the ./js/ directory are the node-view, ranked-view, and summary-view directories, as well as our node-plot.js and script.js files.
 
 ### node-view
-Creates the graph and node visualizations, which are the top two cards on the Home page. DESCRIBE FEATURES.
+Creates the graph and node visualizations, which are the top two cards on the Home page.
+
+### network-plot.js
+Creates the force-directed network plot. Gaming subreddits are encoded as nodes in the graph. The node size is proportional to the number of hyperlinks directed towards other gamining subreddits, and the color encodes the average VADER sentiment of the posts containing those links. The directed edges represent hyperlinks specifically pointing from one subreddit to another. Quantity of hyperlinks is encoded by edge width and average sentiment is encoded by color. The slider at the top right corner of the chart allows a minimum number of hyperlinks to be selected such that any edge below the threshold is removed. Clicking on a node updates the selected subreddit in the other charts of the home page.
+
+### node-plot.js
+Creates the node plot which displays top outgoing linked subreddits from the selected subreddit. The links are encoded as directed edges, which, similar to the network plot, encode the number of links and average sentiment associated with the links by edge width and color. The dropdown selector allows the user to specifiy "top 10" outgoing subreddit criterion according to highest number of links, most positive average sentiment, or most negative average sentiment. Hovering the mouse over each node brings up a tooltip which specifies the number of links and average sentiment.
 
 ### ranked-view
 Create the ranked view, including the timeseries charts and sortable table.
