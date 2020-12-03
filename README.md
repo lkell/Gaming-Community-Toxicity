@@ -1,23 +1,21 @@
 ﻿# Gaming-Community-Toxicity
- 
-README - The README file must give an overview of what you are handing in: which parts are your code, which parts are libraries, and so on. The README must contain URLs to your project websites and screencast videos. The README must also explain any non-obvious features of your interface.
 
-Find proposal here: https://docs.google.com/document/d/1CQiJoDG1dnF1_4Cy0uXYOsIm74Qw-bKKDAcXCxzYb0k/edit#
+## Documents
+Proposal: https://docs.google.com/document/d/1CQiJoDG1dnF1_4Cy0uXYOsIm74Qw-bKKDAcXCxzYb0k/edit#
  
-Find process book here: https://docs.google.com/document/d/1c6NqrIbZIaTO6lEIoFvRx7uOhNRhHHb-7e5cdiad27g/edit#
+Process Book: https://docs.google.com/document/d/1c6NqrIbZIaTO6lEIoFvRx7uOhNRhHHb-7e5cdiad27g/edit#
 
 ## Website Description
-https://lkell.github.io/Gaming-Community-Toxicity/#
+Website: https://lkell.github.io/Gaming-Community-Toxicity/#
 
-LINK TO SCREENCAST YOUTUBE/VIMEO LINK HERE
-
-DESCRIBE WEBSITE, FOCUSING ON NON-OBVIOUS ASPECTS.
+Screencast: https://www.youtube.com/watch?v=lKTIW7_fnnw&feature=emb_title
 
 ## Python Libraries
+Run this command:
 `pip install -r requirements.txt`
 
 ## JavaScript Libraries
-All libraries are linked from outside sources.
+All libraries are linked from outside sources in index.html.
 
 ## Data Processing
 Used Python for data processing, can find files in ./data_processing/ directory. Use spec-file.txt to create a Python venv and run code with it. There are two data processing files, one to get our links data set (used primarily in graph view) and one to mine comment data through the Reddit API. 
